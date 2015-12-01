@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceCloudcaInstance() *schema.Resource {
+func ResourceCloudcaInstance() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudcaInstanceCreate,
 		Read:   resourceCloudcaInstanceRead,
@@ -54,22 +54,22 @@ func resourceCloudcaInstance() *schema.Resource {
 				Optional: true,
 			},
 
-			"sshKeyName": &schema.Schema{
+			"ssh_keyname": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 
-			"publicKey": &schema.Schema{
+			"public_key": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 
-			"volumeToAttach": &schema.Schema{
+			"volume": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 			},
 
-			"userData": &schema.Schema{
+			"user_data": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 			},

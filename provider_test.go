@@ -1,4 +1,4 @@
-package cloudca
+package main
 
 import "testing"
 

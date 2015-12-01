@@ -1,8 +1,9 @@
-package cloudca
+package main
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/cloud-ca/terraform-cloudca/cloudca" 
 )
 
 func Provider() terraform.ResourceProvider {
@@ -10,8 +11,8 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"api_url": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("CLOUDCA_API_URL", nil),
+				Optional: true,
+				DefaultFunc: schema.EnvDefaultFunc("CLOUDCA_API_URL", "https://api.cloud.ca/v1"),
 			},
 			"api_key": &schema.Schema{
 				Type:        schema.TypeString,
@@ -20,7 +21,7 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"cloudca_instance": resourceCloudcaInstance(),
+			"cloudca_instance": cloudca.ResourceCloudcaInstance(),
 		},
 
 		ConfigureFunc: providerConfigure,
