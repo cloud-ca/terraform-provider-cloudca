@@ -63,7 +63,7 @@ func resourceCloudcaInstance() *schema.Resource {
 				Description: "Create and attach a volume with this disk offering (name or id) to the new instance",
 			},
 
-			"ssh_keyname": &schema.Schema{
+			"ssh_key_name": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
 				Description: "SSH key name to attach to the new instance. Note: Cannot be used with public key.",
@@ -122,7 +122,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		NetworkId:         networkId,
 	}
 
-	if sshKeyname, ok := d.GetOk("ssk_keyname"); ok {
+	if sshKeyname, ok := d.GetOk("ssh_key_name"); ok {
 		instanceToCreate.SSHKeyName = sshKeyname.(string)
 	}
 	if publicKey, ok := d.GetOk("public_key"); ok {
@@ -182,6 +182,38 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
+	ccaClient := meta.(*gocca.CcaClient)
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
+
+	d.Partial(true)
+
+	if d.HasChange("compute_offering") {
+		newComputeOffering := d.Get("compute_offering").(string)
+		log.Printf("[DEBUG] Compute offering has changed for %s, changing compute offering...", newComputeOffering)
+		newComputeOfferingId, ferr := retrieveComputeOfferingID(&ccaResources, newComputeOffering)
+		if ferr != nil {
+			return ferr
+		}
+		_, err := ccaResources.Instances.ChangeComputeOffering(d.Id(), newComputeOfferingId)
+		if err != nil {
+			return err
+		}
+		d.SetPartial("compute_offering")
+	}
+
+	if d.HasChange("ssh_key_name") {
+		sshKeyName := d.Get("ssh_key_name").(string)
+		log.Printf("[DEBUG] SSH key name has changed for %s, associating new SSH key...", sshKeyName)
+		_, err := ccaResources.Instances.AssociateSSHKey(d.Id(), sshKeyName)
+		if err != nil {
+			return err
+		}
+		d.SetPartial("ssh_key_name")
+	}
+
+	d.Partial(false)
+
 	return nil
 }
 
