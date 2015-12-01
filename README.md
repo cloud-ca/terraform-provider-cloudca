@@ -6,7 +6,7 @@ Terraform plugin for cloud.ca
 
 First step is to create a terraform configuration file.
 
-In that file, define a variable that will hold your API key. This variable will have the value of the environment variable "TF_VAR_my_api_key". Create un new "cloudca" provider with the api_key. Optionally, you can override the api_url field of the provider.
+In that file, define a variable that will hold your API key. This variable will have the value of the environment variable "TF_VAR_my_api_key". Create a new "cloudca" provider with the api_key. Optionally, you can override the api_url field of the provider.
 ```
 var "my_api_key" {}
 
