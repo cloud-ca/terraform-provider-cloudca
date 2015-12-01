@@ -20,10 +20,9 @@ func Provider() terraform.ResourceProvider {
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDCA_API_KEY", nil),
 			},
 		},
-		ResourcesMap: map[string]*schema.Resource{
-			"cloudca_instance": cloudca.ResourceCloudcaInstance(),
-		},
-
+		ResourcesMap: mergeResourceMaps(
+						cloudca.GetCloudCAResourceMap(),
+		),
 		ConfigureFunc: providerConfigure,
 	}
 }
@@ -35,4 +34,14 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	return config.NewClient()
+}
+
+func mergeResourceMaps(resourceMaps ...map[string]*schema.ResourceData) map[string]*schema.ResourceData {
+	mergedMap := map[string]*schema.ResourceData{}
+	for resourceMap := range resourceMaps {
+		for k, v := range resourceMap {
+			mergedMap[k] = v
+		}
+	}
+	return mergedMap
 }

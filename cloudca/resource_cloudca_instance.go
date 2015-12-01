@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func ResourceCloudcaInstance() *schema.Resource {
+func resourceCloudcaInstance() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudcaInstanceCreate,
 		Read:   resourceCloudcaInstanceRead,
