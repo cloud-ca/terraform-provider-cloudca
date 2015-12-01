@@ -85,8 +85,9 @@ func resourceCloudcaInstance() *schema.Resource {
 
 func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	ccaClient := meta.(*gocca.CcaClient)
-	ccaResources := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string)).(cloudca.Resources)
-
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
+	
 	// Retrieve the compute_offering ID
 	computeOfferingId := "b72c010a-0cbb-49b5-9b19-84ea671d7b3f"
 
@@ -119,7 +120,8 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 
 func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error {
 	ccaClient := meta.(*gocca.CcaClient)
-	ccaResources := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string)).(cloudca.Resources)
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
 
 	// Get the virtual machine details
 	instance, err := ccaResources.Instances.Get(d.Id())
@@ -149,7 +151,8 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 
 func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) error {
 	ccaClient := meta.(*gocca.CcaClient)
-	ccaResources := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string)).(cloudca.Resources)
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
 
 	fmt.Println("[INFO] Destroying instance: %s", d.Get("name").(string))
 	if _, err := ccaResources.Instances.Destroy(d.Id(), d.Get("purge").(bool)); err != nil {

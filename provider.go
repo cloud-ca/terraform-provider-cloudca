@@ -36,9 +36,9 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	return config.NewClient()
 }
 
-func mergeResourceMaps(resourceMaps ...map[string]*schema.ResourceData) map[string]*schema.ResourceData {
-	mergedMap := map[string]*schema.ResourceData{}
-	for resourceMap := range resourceMaps {
+func mergeResourceMaps(resourceMaps ...map[string]*schema.Resource) map[string]*schema.Resource {
+	mergedMap := map[string]*schema.Resource{}
+	for _, resourceMap := range resourceMaps {
 		for k, v := range resourceMap {
 			mergedMap[k] = v
 		}
