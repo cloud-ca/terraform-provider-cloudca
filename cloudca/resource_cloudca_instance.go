@@ -82,6 +82,7 @@ func resourceCloudcaInstance() *schema.Resource {
 
 			"portsToForward": &schema.Schema{
 				Type:     schema.TypeList,
+				Elem: 	  &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 				Description: "List of port forwarding rules for this instance. Note: Might acquire a public IP if necessary",
 			},
@@ -120,9 +121,21 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		NetworkId:         networkId,
 	}
 
-	// If a ssh key is supplied, add it to the instance struct
 	if sshKeyname, ok := d.GetOk("ssk_keyname"); ok {
 		instanceToCreate.SSHKeyName = sshKeyname.(string)
+	}
+	if publicKey, ok := d.GetOk("public_key"); ok {
+		instanceToCreate.PublicKey = publicKey.(string)
+	}
+	if volumeToAttach, ok := d.GetOk("volume"); ok {
+		volumeToAttachId, _ := retrieveVolumeID(&ccaResources, volumeToAttach.(string))
+		instanceToCreate.VolumeIdToAttach = volumeToAttachId
+	}
+	if portsToForward, ok := d.GetOk("ports_to_forward"); ok {
+		instanceToCreate.PortsToForward = portsToForward.([]string)
+	}
+	if userData, ok := d.GetOk("user_data"); ok {
+		instanceToCreate.UserData = userData.(string)
 	}
 
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
@@ -132,8 +145,8 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 
 	d.SetId(newInstance.Id)
 	d.SetConnInfo(map[string]string{
-		"privateIp": newInstance.IpAddress,
-		"username":  newInstance.Username,
+		"host": newInstance.IpAddress,
+		"user":  newInstance.Username,
 		"password":  newInstance.Password,
 	})
 
@@ -236,6 +249,23 @@ func retrieveNetworkID(ccaRes *cloudca.Resources, name string) (id string, err e
 	    if (tier.Name == name) {
 	    	log.Printf("Found tier: %+v", tier)
 	    	return tier.Id, nil
+	    }
+	}
+
+	return "_", nil
+}
+
+func retrieveVolumeID(ccaRes *cloudca.Resources, name string) (id string, err error) {
+	if isID(name) {
+		return name, nil
+	}
+
+	volumes, err := ccaRes.Volumes.ListOfType(cloudca.VOLUME_TYPE_DATA)
+	for _, volume := range volumes {
+
+	    if (volume.Name == name) {
+	    	log.Printf("Found volume: %+v", volume)
+	    	return volume.Id, nil
 	    }
 	}
 
