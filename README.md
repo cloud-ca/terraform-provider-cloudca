@@ -19,12 +19,12 @@ Next step is to create a resource of that provider.
 Here, we are creating a new instance called "test-web-app" in the environment "dev" for the service "compute-east". 
 ```
 resource "cloudca_instance" "web" {
-	"service_code" = "compute-east"
-	"environment_name" = "dev"
-	"name" = "test-web-app"
-	"template" = "CoreOS Stable"
-	"compute_offering" = "1vCPU.1GB"
-	"network" = "Web-Tier"
+	service_code = "compute-east"
+	environment_name = "dev"
+	name = "test-web-app"
+	template = "CoreOS Stable"
+	compute_offering = "1vCPU.1GB"
+	network = "Web-Tier"
 }
 ```
 
@@ -32,7 +32,7 @@ Alternatively, ids can be used instead of names.
 ```
 resource "cloudca_instance" "web" {
   ...
-	"network" = "db4c1e34-e1cd-4ca3-acfd-3b00042c49b7"
+	network = "db4c1e34-e1cd-4ca3-acfd-3b00042c49b7"
 }
 ```
 
