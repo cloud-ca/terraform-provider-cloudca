@@ -20,64 +20,82 @@ func resourceCloudcaInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: "A cloudca service code",
 			},
 			"environment_name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: "Name of environment where instance should be created",
 			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: "Name of instance",
 			},
 
 			"template": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: "Name or id of the template to use for this instance",
 			},
 
 			"compute_offering": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				Description: "Name or id of the compute offering to use for this instance",
 			},
 
 			"network": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+				Description: "Name or id of the tier into which the new instance will be created",
 			},
 
 			"disk_offering": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Description: "Create and attach a volume with this disk offering (name or id) to the new instance",
 			},
 
 			"ssh_keyname": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Description: "SSH key name to attach to the new instance. Note: Cannot be used with public key.",
 			},
 
 			"public_key": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Description: "Public key to attach to the new instance. Note: Cannot be used with SSH key name.",
 			},
 
 			"volume": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Description: "Name or id of volume to attach to this instance.",
+			},
+
+			"portsToForward": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Description: "List of port forwarding rules for this instance. Note: Might acquire a public IP if necessary",
 			},
 
 			"user_data": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Description: "Additional data passed to the new instance during its initialization",
 			},
 
 			"purge": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
+				Description: "If true, then it will purge the instance on destruction",
 			},
 		},
 	}
@@ -87,7 +105,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	ccaClient := meta.(*gocca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
-	
+
 	// Retrieve the compute_offering ID
 	computeOfferingId := "b72c010a-0cbb-49b5-9b19-84ea671d7b3f"
 
