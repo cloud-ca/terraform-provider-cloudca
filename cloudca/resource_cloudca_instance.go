@@ -108,7 +108,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	ccaClient := meta.(*gocca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
-	
+
 	computeOfferingId, _ := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
 
 	templateId, _ := retrieveTemplateID(&ccaResources, d.Get("template").(string))
