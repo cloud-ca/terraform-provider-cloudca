@@ -3,6 +3,7 @@ package cloudca
 import (
 	"fmt"
 	"log"
+	"strings"
 	"github.com/cloud-ca/go-cloudca" 
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
@@ -210,15 +211,18 @@ func retrieveComputeOfferingID(ccaRes *cloudca.Resources, name string) (id strin
 	}
 
 	computeOfferings, err := ccaRes.ComputeOfferings.List()
+	if err != nil {
+		return "", err
+	}
 	for _, offering := range computeOfferings {
 
-	    if (offering.Name == name) {
+	    if strings.EqualFold(offering.Name,name) {
 	    	log.Printf("Found compute offering: %+v", offering)
 	    	return offering.Id, nil
 	    }
 	}
 
-	return "_", nil
+	return "", fmt.Errorf("Compute offering with name %s not found", name)
 }
 
 func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err error) {
@@ -227,15 +231,18 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	}
 
 	templates, err := ccaRes.Templates.List()
+	if err != nil {
+		return "", err
+	}
 	for _, template := range templates {
 
-	    if (template.Name == name) {
+	    if strings.EqualFold(template.Name,name) {
 	    	log.Printf("Found template: %+v", template)
 	    	return template.Id, nil
 	    }
 	}
 
-	return "_", nil
+	return "", fmt.Errorf("Template with name %s not found", name)
 }
 
 func retrieveNetworkID(ccaRes *cloudca.Resources, name string) (id string, err error) {
@@ -244,15 +251,18 @@ func retrieveNetworkID(ccaRes *cloudca.Resources, name string) (id string, err e
 	}
 
 	tiers, err := ccaRes.Tiers.List()
+	if err != nil {
+		return "", err
+	}
 	for _, tier := range tiers {
 
-	    if (tier.Name == name) {
+	    if strings.EqualFold(tier.Name,name) {
 	    	log.Printf("Found tier: %+v", tier)
 	    	return tier.Id, nil
 	    }
 	}
 
-	return "_", nil
+	return "", fmt.Errorf("Network with name %s not found", name)
 }
 
 func retrieveVolumeID(ccaRes *cloudca.Resources, name string) (id string, err error) {
@@ -261,14 +271,17 @@ func retrieveVolumeID(ccaRes *cloudca.Resources, name string) (id string, err er
 	}
 
 	volumes, err := ccaRes.Volumes.ListOfType(cloudca.VOLUME_TYPE_DATA)
+	if err != nil {
+		return "", err
+	}
 	for _, volume := range volumes {
 
-	    if (volume.Name == name) {
+		if strings.EqualFold(volume.Name,name) {
 	    	log.Printf("Found volume: %+v", volume)
 	    	return volume.Id, nil
 	    }
 	}
 
-	return "_", nil
+	return "", fmt.Errorf("Volume with name %s not found", name)
 }
 
