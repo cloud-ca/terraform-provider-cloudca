@@ -2,6 +2,7 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
 	"github.com/cloud-ca/go-cloudca" 
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
@@ -105,21 +106,23 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	ccaClient := meta.(*gocca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
+	
+	computeOfferingId, _ := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
 
-	// Retrieve the compute_offering ID
-	computeOfferingId := "b72c010a-0cbb-49b5-9b19-84ea671d7b3f"
+	templateId, _ := retrieveTemplateID(&ccaResources, d.Get("template").(string))
 
-	// Retrieve the template ID
-	templateId := "4cdeea05-ae6e-49e8-8385-00502d29e55c"
-
-	// Retrieve the network ID
-	networkId := "4485b91d-c772-414a-a3dd-d973aebe841b"
+	networkId, _ := retrieveNetworkID(&ccaResources, d.Get("network").(string))
 
 	//
 	instanceToCreate := cloudca.Instance{Name: d.Get("name").(string),
 		ComputeOfferingId: computeOfferingId,
 		TemplateId:        templateId,
 		NetworkId:         networkId,
+	}
+
+	// If a ssh key is supplied, add it to the instance struct
+	if sshKeyname, ok := d.GetOk("ssk_keyname"); ok {
+		instanceToCreate.SSHKeyName = sshKeyname.(string)
 	}
 
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
@@ -130,6 +133,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	d.SetId(newInstance.Id)
 	d.SetConnInfo(map[string]string{
 		"privateIp": newInstance.IpAddress,
+		"username":  newInstance.Username,
 		"password":  newInstance.Password,
 	})
 
@@ -146,7 +150,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Println("[DEBUG] Instance %s does no longer exist", d.Get("name").(string))
+				fmt.Errorf("[DEBUG] Instance %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
 				return nil
 			}
@@ -155,10 +159,10 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	}
 
 	// Update the config
-	d.Set("name", instance.Name)
-	d.Set("template", instance.TemplateName)
-	d.Set("compute_offering", instance.ComputeOfferingName)
-	d.Set("network", instance.NetworkName)
+	setValueOrID(d, "name", instance.Name, instance.Id)
+	setValueOrID(d, "template", instance.TemplateName, instance.TemplateId)
+	setValueOrID(d, "compute_offering", instance.ComputeOfferingName, instance.ComputeOfferingId)
+	setValueOrID(d, "network", instance.NetworkName, instance.NetworkId)
 
 	return nil
 }
@@ -176,7 +180,7 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	if _, err := ccaResources.Instances.Destroy(d.Id(), d.Get("purge").(bool)); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Println("[DEBUG] Instance %s does no longer exist", d.Get("name").(string))
+				fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
 				return nil
 			}
@@ -186,3 +190,55 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 
 	return nil
 }
+
+func retrieveComputeOfferingID(ccaRes *cloudca.Resources, name string) (id string, err error) {
+	if isID(name) {
+		return name, nil
+	}
+
+	computeOfferings, err := ccaRes.ComputeOfferings.List()
+	for _, offering := range computeOfferings {
+
+	    if (offering.Name == name) {
+	    	log.Printf("Found compute offering: %+v", offering)
+	    	return offering.Id, nil
+	    }
+	}
+
+	return "_", nil
+}
+
+func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err error) {
+	if isID(name) {
+		return name, nil
+	}
+
+	templates, err := ccaRes.Templates.List()
+	for _, template := range templates {
+
+	    if (template.Name == name) {
+	    	log.Printf("Found template: %+v", template)
+	    	return template.Id, nil
+	    }
+	}
+
+	return "_", nil
+}
+
+func retrieveNetworkID(ccaRes *cloudca.Resources, name string) (id string, err error) {
+	if isID(name) {
+		return name, nil
+	}
+
+	tiers, err := ccaRes.Tiers.List()
+	for _, tier := range tiers {
+
+	    if (tier.Name == name) {
+	    	log.Printf("Found tier: %+v", tier)
+	    	return tier.Id, nil
+	    }
+	}
+
+	return "_", nil
+}
+
