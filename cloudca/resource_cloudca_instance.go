@@ -42,12 +42,18 @@ func resourceCloudcaInstance() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				Description: "Name or id of the template to use for this instance",
+				StateFunc: func(val interface{}) string {
+					return strings.ToLower(val.(string))
+				},
 			},
 
 			"compute_offering": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				Description: "Name or id of the compute offering to use for this instance",
+				StateFunc: func(val interface{}) string {
+					return strings.ToLower(val.(string))
+				},
 			},
 
 			"network": &schema.Schema{
@@ -55,12 +61,9 @@ func resourceCloudcaInstance() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 				Description: "Name or id of the tier into which the new instance will be created",
-			},
-
-			"disk_offering": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: "Create and attach a volume with this disk offering (name or id) to the new instance",
+				StateFunc: func(val interface{}) string {
+					return strings.ToLower(val.(string))
+				},
 			},
 
 			"ssh_key_name": &schema.Schema{
@@ -73,19 +76,6 @@ func resourceCloudcaInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Description: "Public key to attach to the new instance. Note: Cannot be used with SSH key name.",
-			},
-
-			"volume": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Description: "Name or id of volume to attach to this instance.",
-			},
-
-			"portsToForward": &schema.Schema{
-				Type:     schema.TypeList,
-				Elem: 	  &schema.Schema{Type: schema.TypeString},
-				Optional: true,
-				Description: "List of port forwarding rules for this instance. Note: Might acquire a public IP if necessary",
 			},
 
 			"user_data": &schema.Schema{
@@ -115,7 +105,6 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 
 	networkId, _ := retrieveNetworkID(&ccaResources, d.Get("network").(string))
 
-	//
 	instanceToCreate := cloudca.Instance{Name: d.Get("name").(string),
 		ComputeOfferingId: computeOfferingId,
 		TemplateId:        templateId,
@@ -127,13 +116,6 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	}
 	if publicKey, ok := d.GetOk("public_key"); ok {
 		instanceToCreate.PublicKey = publicKey.(string)
-	}
-	if volumeToAttach, ok := d.GetOk("volume"); ok {
-		volumeToAttachId, _ := retrieveVolumeID(&ccaResources, volumeToAttach.(string))
-		instanceToCreate.VolumeIdToAttach = volumeToAttachId
-	}
-	if portsToForward, ok := d.GetOk("ports_to_forward"); ok {
-		instanceToCreate.PortsToForward = portsToForward.([]string)
 	}
 	if userData, ok := d.GetOk("user_data"); ok {
 		instanceToCreate.UserData = userData.(string)
@@ -164,7 +146,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("[DEBUG] Instance %s does no longer exist", d.Get("name").(string))
+				fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
 				return nil
 			}
@@ -174,9 +156,9 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 
 	// Update the config
 	setValueOrID(d, "name", instance.Name, instance.Id)
-	setValueOrID(d, "template", instance.TemplateName, instance.TemplateId)
-	setValueOrID(d, "compute_offering", instance.ComputeOfferingName, instance.ComputeOfferingId)
-	setValueOrID(d, "network", instance.NetworkName, instance.NetworkId)
+	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
+	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
+	setValueOrID(d, "network", strings.ToLower(instance.NetworkName), instance.NetworkId)
 
 	return nil
 }
