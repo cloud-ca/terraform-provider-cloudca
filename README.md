@@ -1,6 +1,6 @@
 # terraform-cloudca
 
-Terraform plugin for cloud.ca
+Terraform provider for cloud.ca
 
 # How to use
 
