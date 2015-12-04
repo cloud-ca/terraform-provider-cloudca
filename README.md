@@ -16,6 +16,10 @@ Compile the provider:
 ```
 $ go build -o terraform-provider-cloudca
 ```
+Copy it to the directory where terraform is located:
+```
+$ sudo cp terraform-provider-cloudca $(dirname `which terraform`)
+```
 # How to use
 
 First step is to create a terraform configuration file.
