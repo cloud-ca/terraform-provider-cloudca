@@ -7,10 +7,13 @@ import "github.com/cloud-ca/go-cloudca"
 type Config struct {
 	APIURL string
 	APIKey string
+	Insecure bool
 }
 
 // NewClient returns a new CcaClient client.
 func (c *Config) NewClient() (*gocca.CcaClient, error) {
-	cca := gocca.NewCcaClientWithURL(c.APIURL, c.APIKey)
-	return cca, nil
+	if c.Insecure {
+		return gocca.NewInsecureCcaClientWithURL(c.APIURL, c.APIKey), nil
+	}
+	return gocca.NewCcaClientWithURL(c.APIURL, c.APIKey), nil
 }

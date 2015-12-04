@@ -53,7 +53,7 @@
 		},
 		{
 			"ImportPath": "github.com/cloud-ca/go-cloudca",
-			"Rev": "dc8acca670b1941ee6dd031d1f9924beac0ac3e2"
+			"Rev": "847e69921f55534973709a75c64af51547016669"
 		},
 		{
 			"ImportPath": "github.com/go-ini/ini",

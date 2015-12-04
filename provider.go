@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/cloud-ca/terraform-cloudca/cloudca" 
+	"github.com/cloud-ca/terraform-cloudca/cloudca"
+	"os"
+	"strconv"
 )
 
 func Provider() terraform.ResourceProvider {
@@ -28,9 +30,11 @@ func Provider() terraform.ResourceProvider {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	insecure, _ := strconv.ParseBool(os.Getenv("CLOUD_CA_INSECURE_CONNECTION"))
 	config := Config{
 		APIURL: d.Get("api_url").(string),
 		APIKey: d.Get("api_key").(string),
+		Insecure: insecure,
 	}
 
 	return config.NewClient()
