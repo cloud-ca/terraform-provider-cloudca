@@ -2,6 +2,20 @@
 
 Terraform provider for cloud.ca
 
+# Installation
+Download the provider:
+```
+$ go get github.com/cloud-ca/terraform-cloudca
+```
+Download and install the dependencies of the provider:
+```
+$ cd $GOPATH/src/github.com/cloud-ca/terraform-cloudca
+$ godep restore
+```
+Compile the provider:
+```
+$ go build -o terraform-provider-cloudca
+```
 # How to use
 
 First step is to create a terraform configuration file.
