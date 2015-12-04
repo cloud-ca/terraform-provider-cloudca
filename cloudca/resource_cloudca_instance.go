@@ -99,11 +99,23 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-	computeOfferingId, _ := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
+	computeOfferingId, cerr := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
 
-	templateId, _ := retrieveTemplateID(&ccaResources, d.Get("template").(string))
+	if cerr != nil {
+		return cerr
+	}
 
-	networkId, _ := retrieveNetworkID(&ccaResources, d.Get("network").(string))
+	templateId, terr := retrieveTemplateID(&ccaResources, d.Get("template").(string))
+
+	if terr != nil {
+		return terr
+	}
+
+	networkId, nerr := retrieveNetworkID(&ccaResources, d.Get("network").(string))
+
+	if nerr != nil {
+		return nerr
+	}
 
 	instanceToCreate := cloudca.Instance{Name: d.Get("name").(string),
 		ComputeOfferingId: computeOfferingId,
