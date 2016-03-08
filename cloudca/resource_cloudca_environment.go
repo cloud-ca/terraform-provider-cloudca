@@ -21,7 +21,6 @@ func resourceCloudcaEnvironment() *schema.Resource {
          "organization_code": &schema.Schema{
             Type:     schema.TypeString,
             ForceNew: true,
-            Optional:true,
             Description: "Organization's entry point, i.e. <entry_point>.cloud.ca",
             StateFunc: func(val interface{}) string {
                return strings.ToLower(val.(string))
@@ -72,15 +71,8 @@ func resourceCloudcaEnvironment() *schema.Resource {
 
 func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) error {
    ccaClient := meta.(*gocca.CcaClient)
-   organization, ok := d.GetOk("organization_code")
-   
-   if !ok {
-      //TODO load own organization
-      //do api call to get org
-      // organization = getOwnOrganization(ccaClient)
-   }
 
-   organizationId, oerr := getOrganizationId(ccaClient, organization.(string))
+   organizationId, oerr := getOrganizationId(ccaClient, d.Get("organization_code").(string))
    if oerr != nil {
       return oerr
    }
