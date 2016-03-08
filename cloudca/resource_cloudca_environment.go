@@ -10,6 +10,12 @@ import (
    "github.com/hashicorp/terraform/helper/schema"
 )
 
+const (
+   ENVIRONMENT_ADMIN_ROLE = "Environment admin"
+   USER_ROLE = "User"
+   READ_ONLY_ROLE = "Read-only"
+)
+
 func resourceCloudcaEnvironment() *schema.Resource {
    return &schema.Resource{
       Create: resourceCloudcaEnvironmentCreate,
@@ -49,19 +55,19 @@ func resourceCloudcaEnvironment() *schema.Resource {
             Description: "Environment membership for users (options: all, many)",
          },
          "admin_role": &schema.Schema{
-            Type:     schema.TypeList,
+            Type:     schema.TypeSet,
             Elem:     &schema.Schema{Type: schema.TypeString},
             Optional:true,
             Description: "List of users that will be given Environment Admin role",
          },
          "user_role": &schema.Schema{
-            Type:     schema.TypeList,
+            Type:     schema.TypeSet,
             Elem:     &schema.Schema{Type: schema.TypeString},
             Optional:true,
             Description: "List of users that will be given User role",
          },
          "read_only_role": &schema.Schema{
-            Type:     schema.TypeList,
+            Type:     schema.TypeSet,
             Elem:     &schema.Schema{Type: schema.TypeString},
             Optional:true,
             Description: "List of users that will be given Read-only role",
@@ -112,7 +118,7 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
       environmentToCreate.Roles = []configuration.Role{}
 
       if adminRoleExists {
-         role, err := mapUsersToRole("Environment admin", d.Get("admin_role").([]interface{}), users)
+         role, err := mapUsersToRole("Environment admin", d.Get("admin_role").(*schema.Set).List(), users)
          if err != nil{
             return err
          }
@@ -120,7 +126,7 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
       }
 
       if userRoleExists {
-         role, err := mapUsersToRole("User", d.Get("user_role").([]interface{}), users)
+         role, err := mapUsersToRole("User", d.Get("user_role").(*schema.Set).List(), users)
          if err != nil{
             return err
          }
@@ -128,7 +134,7 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
       }
 
       if readOnlyRoleExists {
-         role, err := mapUsersToRole("Read-only", d.Get("read_only_role").([]interface{}), users)
+         role, err := mapUsersToRole("Read-only", d.Get("read_only_role").(*schema.Set).List(), users)
          if err != nil{
             return err
          }
@@ -153,6 +159,10 @@ func mapUsersToRole(roleName string, roleUserList []interface{}, users []configu
    }
 
    for _, userToFind := range roleUserList {
+      if isID(userToFind.(string)){
+         role.Users = append(role.Users, configuration.User{Id:userToFind.(string),})
+         continue
+      }
       found := false
       for _, user := range users{
          if strings.EqualFold(user.Username,userToFind.(string)) {
@@ -170,7 +180,7 @@ func mapUsersToRole(roleName string, roleUserList []interface{}, users []configu
 
 func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
    ccaClient := meta.(*gocca.CcaClient)
-   _, err := ccaClient.Environments.Get(d.Id())
+   environment, err := ccaClient.Environments.Get(d.Id())
    if err != nil {
       if ccaError, ok := err.(api.CcaErrorResponse); ok {
          if ccaError.StatusCode == 404 {
@@ -181,8 +191,100 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
       }
       return err
    }
+
+   log.Printf("Meta:%+v", meta)
+   log.Printf("rdata:%+v", d)
+
+   d.Set("name", environment.Name)
+   d.Set("description", environment.Description)
+
+   adminRoleUsers, userRoleUsers, readOnlyRoleUsers := getRolesUsers(environment)
+   adminRole, _ := d.GetOk("admin_role")
+   userRole, _ := d.GetOk("user_role")
+   readOnlyRole, _ := d.GetOk("read_only_role")
+
+   o, n := d.GetChange("membership")
+
+   // if strings.EqualFold(strings.ToLower(environment.Membership), "ALL_ORG_USERS"){
+   //    d.Set("membership", environment.Membership)
+   // }
+
+   d.Set("admin_role", getListOfUsersByIdOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
+   d.Set("read_only_role", getListOfUsersByIdOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
+
+   log.Printf("New config value:%s", n.(string))
+   log.Printf("New config value:%s", o.(string))
+   // if strings.EqualFold(environment.Membership, "MANY_USERS") {
+      d.Set("user_role", getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
+   // }
+
+
+   // else if userExists {
+   //    d.Set("user_role", getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
+   //    // bla :=[]interface{}{}
+   //    // for _, identifier := range  userRole.(*schema.Set).List(){
+   //    //    for _, user := range userRoleUsers{
+   //    //       if isID(identifier.(string)){
+   //    //          if strings.EqualFold(user.Id, identifier.(string)) {
+   //    //             bla = append(bla, user.Id)
+   //    //             break
+   //    //          }
+   //    //       }else if strings.EqualFold(user.Username, identifier.(string)){
+   //    //          bla = append(bla, user.Username)
+   //    //          break
+   //    //       }
+   //    //    }
+   //    // }
+   //    // d.Set("user_role", schema.NewSet(schema.HashSchema(&schema.Schema{Type: schema.TypeString}), bla) )
+   // }
+
    return nil
 }
+
+func getListOfUsersByIdOrUsername(roleUsers []configuration.User, roleUsersWithIdOrName *schema.Set) (*schema.Set) {
+   unorderedMapping :=[]interface{}{}
+   for _, user := range roleUsers{
+      found := false
+      for _, idOrUsername := range roleUsersWithIdOrName.List() {
+         if isID(idOrUsername.(string)){
+            if strings.EqualFold(user.Id, idOrUsername.(string)) {
+               found = true
+               unorderedMapping = append(unorderedMapping, user.Id)
+               break
+            }
+         }else if strings.EqualFold(user.Username, idOrUsername.(string)){
+            found = true
+            unorderedMapping = append(unorderedMapping, user.Username)
+            break
+         }
+      }
+      if !found {
+         unorderedMapping = append(unorderedMapping, user.Username)
+      }
+   }
+   return schema.NewSet(schema.HashSchema(&schema.Schema{Type: schema.TypeString}), unorderedMapping)
+}
+
+func getRolesUsers(environment *configuration.Environment)  (adminRoleUsers []configuration.User, userRoleUsers []configuration.User, readOnlyRoleUsers []configuration.User){
+   for _, envRole := range environment.Roles {
+      switch {
+         case strings.EqualFold(envRole.Name,ENVIRONMENT_ADMIN_ROLE):
+            for _, user := range envRole.Users{
+               adminRoleUsers = append(adminRoleUsers, user)
+            }
+         case strings.EqualFold(envRole.Name,USER_ROLE):
+            for _, user := range envRole.Users{
+               userRoleUsers = append(userRoleUsers, user)
+            }
+         case strings.EqualFold(envRole.Name,READ_ONLY_ROLE):
+            for _, user := range envRole.Users{
+               readOnlyRoleUsers = append(readOnlyRoleUsers, user)
+            }
+      }
+   }
+   return
+}
+
 
 // func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) error {
 //    ccaClient := meta.(*gocca.CcaClient)

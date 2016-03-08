@@ -167,7 +167,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	}
 
 	// Update the config
-	setValueOrID(d, "name", instance.Name, instance.Id)
+	d.Set("name", instance.Name)
 	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
 	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
 	setValueOrID(d, "network", strings.ToLower(instance.NetworkName), instance.NetworkId)
