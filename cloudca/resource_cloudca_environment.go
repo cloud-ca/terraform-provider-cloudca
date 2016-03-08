@@ -21,6 +21,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
          "organization_code": &schema.Schema{
             Type:     schema.TypeString,
             ForceNew: true,
+            Required: true,
             Description: "Organization's entry point, i.e. <entry_point>.cloud.ca",
             StateFunc: func(val interface{}) string {
                return strings.ToLower(val.(string))
