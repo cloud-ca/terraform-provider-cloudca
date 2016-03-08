@@ -20,6 +20,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
       Schema: map[string]*schema.Schema{
          "organization_code": &schema.Schema{
             Type:     schema.TypeString,
+            ForceNew: true,
             Optional:true,
             Description: "Organization's entry point, i.e. <entry_point>.cloud.ca",
             StateFunc: func(val interface{}) string {
@@ -29,6 +30,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
          "service_code": &schema.Schema{
             Type:     schema.TypeString,
             Required: true,
+            ForceNew: true,
             Description: "A cloudca service code",
          },
          "name": &schema.Schema{
@@ -74,6 +76,8 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
    
    if !ok {
       //TODO load own organization
+      //do api call to get org
+      // organization = getOwnOrganization(ccaClient)
    }
 
    organizationId, oerr := getOrganizationId(ccaClient, organization.(string))
@@ -81,18 +85,16 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
       return oerr
    }
 
-   // connectionId, cerr := getServiceConnectionId(&ccaClient.ServiceConnections, d.Get("service_code").(string))
+   connectionId, cerr := getServiceConnectionId(ccaClient, d.Get("service_code").(string))
 
-   // if cerr != nil {
-   //    return cerr
-   // }
+   if cerr != nil {
+      return cerr
+   }
 
    environmentToCreate := configuration.Environment{
       Name: d.Get("name").(string),
       Description: d.Get("description").(string),
-      ServiceConnection: configuration.ServiceConnection{
-         Id: "73983e63-e404-48aa-a89c-f41ca93af9cd",
-      },
+      ServiceConnection: configuration.ServiceConnection{Id: connectionId,},
    }
 
    if organizationId != "" {
@@ -117,11 +119,27 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
       environmentToCreate.Roles = []configuration.Role{}
 
       if adminRoleExists {
-         adminRole, arerr := mapUsersToRole("Environment admin", d.Get("admin_role").([]interface{}), users)
-         if arerr != nil{
-            return arerr
+         role, err := mapUsersToRole("Environment admin", d.Get("admin_role").([]interface{}), users)
+         if err != nil{
+            return err
          }
-         environmentToCreate.Roles = append(environmentToCreate.Roles, adminRole)
+         environmentToCreate.Roles = append(environmentToCreate.Roles, role)
+      }
+
+      if userRoleExists {
+         role, err := mapUsersToRole("User", d.Get("user_role").([]interface{}), users)
+         if err != nil{
+            return err
+         }
+         environmentToCreate.Roles = append(environmentToCreate.Roles, role)
+      }
+
+      if readOnlyRoleExists {
+         role, err := mapUsersToRole("Read-only", d.Get("read_only_role").([]interface{}), users)
+         if err != nil{
+            return err
+         }
+         environmentToCreate.Roles = append(environmentToCreate.Roles, role)
       }
    }
 
@@ -141,15 +159,10 @@ func mapUsersToRole(roleName string, roleUserList []interface{}, users []configu
       Users:[]configuration.User{},
    }
 
-   var roleUsers []string
-   for _, username := range  roleUserList{
-      roleUsers = append(roleUsers, username.(string))
-   }
-
-   for _, userToFind := range roleUsers {
+   for _, userToFind := range roleUserList {
       found := false
       for _, user := range users{
-         if strings.EqualFold(user.Username,userToFind) {
+         if strings.EqualFold(user.Username,userToFind.(string)) {
             found = true
             role.Users = append(role.Users, configuration.User{Id:user.Id,})
             break
@@ -175,9 +188,6 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
       }
       return err
    }
-   
-   // TODO set values to roles here
-
    return nil
 }
 
@@ -233,11 +243,28 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
    return nil
 }
 
+func getServiceConnectionId(ccaClient *gocca.CcaClient, serviceCode string) (id string, err error){
+   if isID(serviceCode){
+      return serviceCode, nil
+   }
+   connections, cerr := ccaClient.ServiceConnections.List();
+   if cerr != nil {
+      return "", cerr
+   }
+   for _, connection := range connections {
+      if strings.EqualFold(connection.ServiceCode,serviceCode) {
+         log.Printf("Found service connection : %+v", connection)
+         return connection.Id, nil
+      }
+   }
+   return "", nil
+}
+
+
 func getOrganizationId(ccaClient *gocca.CcaClient, entryPoint string) (id string, err error) {
    if isID(entryPoint){
       return entryPoint, nil
    }
-
    orgs, err := ccaClient.Organizations.List()
    if err != nil {
       return "", err
