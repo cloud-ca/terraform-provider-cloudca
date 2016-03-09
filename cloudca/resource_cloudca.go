@@ -8,6 +8,7 @@ import (
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 			"cloudca_instance": resourceCloudcaInstance(),
+			"cloudca_environment": resourceCloudcaEnvironment(),
 		}
 }
 
