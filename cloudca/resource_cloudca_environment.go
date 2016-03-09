@@ -11,9 +11,19 @@ import (
 )
 
 const (
+   //role name
    ENVIRONMENT_ADMIN_ROLE = "Environment admin"
    USER_ROLE = "User"
    READ_ONLY_ROLE = "Read-only"
+
+   //fields
+   ORGANIZATION_CODE="organization_code"
+   SERVICE_CODE="service_code"
+   NAME = "name"
+   DESCRIPTION  = "description"
+   ADMIN_ROLE_USERS = "admin_role"
+   USER_ROLE_USERS = "user_role"
+   READ_ONLY_ROLE_USERS = "read_only_role"
 )
 
 func resourceCloudcaEnvironment() *schema.Resource {
@@ -24,7 +34,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
       Delete: resourceCloudcaEnvironmentDelete,
 
       Schema: map[string]*schema.Schema{
-         "organization_code": &schema.Schema{
+         ORGANIZATION_CODE: &schema.Schema{
             Type:     schema.TypeString,
             ForceNew: true,
             Required: true,
@@ -33,35 +43,35 @@ func resourceCloudcaEnvironment() *schema.Resource {
                return strings.ToLower(val.(string))
             },
          },
-         "service_code": &schema.Schema{
+         SERVICE_CODE: &schema.Schema{
             Type:     schema.TypeString,
             Required: true,
             ForceNew: true,
             Description: "A cloudca service code",
          },
-         "name": &schema.Schema{
+         NAME: &schema.Schema{
             Type:     schema.TypeString,
             Required: true,
             Description: "Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes",
          },
-         "description": &schema.Schema{
+         DESCRIPTION: &schema.Schema{
             Type:     schema.TypeString,
             Required: true,
             Description: "Description for the environment",
          },
-         "admin_role": &schema.Schema{
+         ADMIN_ROLE_USERS: &schema.Schema{
             Type:     schema.TypeSet,
             Elem:     &schema.Schema{Type: schema.TypeString},
             Optional:true,
             Description: "List of users that will be given Environment Admin role",
          },
-         "user_role": &schema.Schema{
+         USER_ROLE_USERS: &schema.Schema{
             Type:     schema.TypeSet,
             Elem:     &schema.Schema{Type: schema.TypeString},
             Optional:true,
             Description: "List of users that will be given User role",
          },
-         "read_only_role": &schema.Schema{
+         READ_ONLY_ROLE_USERS: &schema.Schema{
             Type:     schema.TypeSet,
             Elem:     &schema.Schema{Type: schema.TypeString},
             Optional:true,
@@ -86,15 +96,15 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
    }
 
    adminRoleUsers, userRoleUsers, readOnlyRoleUsers := getUsersFromRoles(environment)
-   adminRole, _ := d.GetOk("admin_role")
-   userRole, _ := d.GetOk("user_role")
-   readOnlyRole, _ := d.GetOk("read_only_role")
+   adminRole, _ := d.GetOk(ADMIN_ROLE_USERS)
+   userRole, _ := d.GetOk(USER_ROLE_USERS)
+   readOnlyRole, _ := d.GetOk(READ_ONLY_ROLE_USERS)
 
-   d.Set("name", environment.Name)
-   d.Set("description", environment.Description)
-   d.Set("admin_role", getListOfUsersByIdOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
-   d.Set("user_role", getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
-   d.Set("read_only_role", getListOfUsersByIdOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
+   d.Set(NAME, environment.Name)
+   d.Set(DESCRIPTION, environment.Description)
+   d.Set(ADMIN_ROLE_USERS, getListOfUsersByIdOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
+   d.Set(USER_ROLE_USERS, getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
+   d.Set(READ_ONLY_ROLE_USERS, getListOfUsersByIdOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
 
    return nil
 }
@@ -120,8 +130,6 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) error {
    ccaClient := meta.(*gocca.CcaClient)
    environment, err := getEnvironmentFromConfig(ccaClient, d)
-
-   log.Printf("Environment to update")
    if err != nil{
       return fmt.Errorf("Error parsing environment %s: %s", environment.Name, err)
    }
@@ -134,11 +142,11 @@ func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 
 func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
    ccaClient := meta.(*gocca.CcaClient)
-   fmt.Println("[INFO] Destroying environment: %s", d.Get("name").(string))
+   fmt.Println("[INFO] Destroying environment: %s", d.Get(NAME).(string))
    if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
       if ccaError, ok := err.(api.CcaErrorResponse); ok {
          if ccaError.StatusCode == 404 {
-            fmt.Errorf("Environment %s does not exist", d.Get("name").(string))
+            fmt.Errorf("Environment %s does not exist", d.Get(NAME).(string))
             d.SetId("")
             return nil
          }
@@ -150,24 +158,24 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 
 func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData) (*configuration.Environment, error){
    environment := configuration.Environment{}
-   organizationId, oerr := getOrganizationId(ccaClient, d.Get("organization_code").(string))
+   organizationId, oerr := getOrganizationId(ccaClient, d.Get(ORGANIZATION_CODE).(string))
    if oerr != nil {
       return &environment, oerr
    }
 
-   connectionId, cerr := getServiceConnectionId(ccaClient, d.Get("service_code").(string))
+   connectionId, cerr := getServiceConnectionId(ccaClient, d.Get(SERVICE_CODE).(string))
    if cerr != nil {
       return &environment, cerr
    }
 
-   environment.Name = d.Get("name").(string)
-   environment.Description = d.Get("description").(string)
+   environment.Name = d.Get(NAME).(string)
+   environment.Description = d.Get(DESCRIPTION).(string)
    environment.Organization = configuration.Organization{Id:organizationId,}
    environment.ServiceConnection = configuration.ServiceConnection{Id: connectionId,}
    
-   adminRole, adminRoleExists := d.GetOk("admin_role")
-   userRole, userRoleExists := d.GetOk("user_role")
-   readOnlyRole, readOnlyRoleExists := d.GetOk("read_only_role")
+   adminRole, adminRoleExists := d.GetOk(ADMIN_ROLE_USERS)
+   userRole, userRoleExists := d.GetOk(USER_ROLE_USERS)
+   readOnlyRole, readOnlyRoleExists := d.GetOk(READ_ONLY_ROLE_USERS)
 
    if adminRoleExists || userRoleExists || readOnlyRoleExists {
       
@@ -179,7 +187,7 @@ func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData
       environment.Roles = []configuration.Role{}
 
       if adminRoleExists {
-         role, err := mapUsersToRole("Environment admin", adminRole.(*schema.Set).List(), users)
+         role, err := mapUsersToRole(ENVIRONMENT_ADMIN_ROLE, adminRole.(*schema.Set).List(), users)
          if err != nil{
             return &environment,err
          }
@@ -187,7 +195,7 @@ func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData
       }
 
       if userRoleExists {
-         role, err := mapUsersToRole("User", userRole.(*schema.Set).List(), users)
+         role, err := mapUsersToRole(USER_ROLE, userRole.(*schema.Set).List(), users)
          if err != nil{
             return &environment,err
          }
@@ -195,7 +203,7 @@ func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData
       }
 
       if readOnlyRoleExists {
-         role, err := mapUsersToRole("Read-only",readOnlyRole.(*schema.Set).List(), users)
+         role, err := mapUsersToRole(READ_ONLY_ROLE,readOnlyRole.(*schema.Set).List(), users)
          if err != nil{
             return &environment,err
          }
