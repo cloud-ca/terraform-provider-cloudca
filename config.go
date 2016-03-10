@@ -11,9 +11,9 @@ type Config struct {
 }
 
 // NewClient returns a new CcaClient client.
-func (c *Config) NewClient() (*gocca.CcaClient, error) {
+func (c *Config) NewClient() (*cca.CcaClient, error) {
 	if c.Insecure {
-		return gocca.NewInsecureCcaClientWithURL(c.APIURL, c.APIKey), nil
+		return cca.NewInsecureCcaClientWithURL(c.APIURL, c.APIKey), nil
 	}
-	return gocca.NewCcaClientWithURL(c.APIURL, c.APIKey), nil
+	return cca.NewCcaClientWithURL(c.APIURL, c.APIKey), nil
 }

@@ -95,7 +95,7 @@ func resourceCloudcaInstance() *schema.Resource {
 }
 
 func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
@@ -149,7 +149,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
@@ -176,7 +176,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
@@ -212,7 +212,7 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 

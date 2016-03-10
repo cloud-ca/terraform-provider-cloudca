@@ -61,7 +61,7 @@ func resourceCloudcaVpc() *schema.Resource {
 }
 
 func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
@@ -91,7 +91,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
@@ -130,13 +130,13 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
 	if d.HasChange("name") || d.HasChange("description") {
 		newName := d.Get("name").(string)
-		newDescription := d.Get("name").(string)
+		newDescription := d.Get("description").(string)
 		log.Printf("[DEBUG] Details have changed updating VPC.....")
 		_, err := ccaResources.Vpcs.Update(cloudca.Vpc{Id: d.Id(), Name: newName, Description: newDescription})
 		if err != nil {
@@ -148,7 +148,7 @@ func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*gocca.CcaClient)
+	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 

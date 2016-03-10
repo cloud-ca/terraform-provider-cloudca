@@ -82,7 +82,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
 }
 
 func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    environment, err := ccaClient.Environments.Get(d.Id())
    if err != nil {
       if ccaError, ok := err.(api.CcaErrorResponse); ok {
@@ -110,7 +110,7 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    
    environment, err := getEnvironmentFromConfig(ccaClient, d)
    if err != nil{
@@ -128,7 +128,7 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    environment, err := getEnvironmentFromConfig(ccaClient, d)
    if err != nil{
       return fmt.Errorf("Error parsing environment %s: %s", environment.Name, err)
@@ -141,7 +141,7 @@ func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    fmt.Println("[INFO] Destroying environment: %s", d.Get(NAME).(string))
    if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
       if ccaError, ok := err.(api.CcaErrorResponse); ok {
@@ -156,8 +156,11 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
    return nil
 }
 
-func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData) (*configuration.Environment, error){
+func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) (*configuration.Environment, error){
    environment := configuration.Environment{}
+   environment.Name = d.Get(NAME).(string)
+   environment.Description = d.Get(DESCRIPTION).(string)
+
    organizationId, oerr := getOrganizationId(ccaClient, d.Get(ORGANIZATION_CODE).(string))
    if oerr != nil {
       return &environment, oerr
@@ -168,8 +171,6 @@ func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData
       return &environment, cerr
    }
 
-   environment.Name = d.Get(NAME).(string)
-   environment.Description = d.Get(DESCRIPTION).(string)
    environment.Organization = configuration.Organization{Id:organizationId,}
    environment.ServiceConnection = configuration.ServiceConnection{Id: connectionId,}
    
@@ -283,7 +284,7 @@ func mapUsersToRole(roleName string, userList []interface{}, users []configurati
    return role, nil
 }
 
-func getServiceConnectionId(ccaClient *gocca.CcaClient, serviceCode string) (id string, err error){
+func getServiceConnectionId(ccaClient *cca.CcaClient, serviceCode string) (id string, err error){
    if isID(serviceCode){
       return serviceCode, nil
    }
@@ -300,7 +301,7 @@ func getServiceConnectionId(ccaClient *gocca.CcaClient, serviceCode string) (id 
    return "", nil
 }
 
-func getOrganizationId(ccaClient *gocca.CcaClient, entryPoint string) (id string, err error) {
+func getOrganizationId(ccaClient *cca.CcaClient, entryPoint string) (id string, err error) {
    if isID(entryPoint){
       return entryPoint, nil
    }
