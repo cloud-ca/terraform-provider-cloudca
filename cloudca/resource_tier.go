@@ -62,7 +62,7 @@ func resourceCloudcaTier() *schema.Resource {
 }
 
 func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
 
@@ -98,7 +98,7 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
 
@@ -161,7 +161,7 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
 
@@ -193,7 +193,7 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
-   ccaClient := meta.(*gocca.CcaClient)
+   ccaClient := meta.(*cca.CcaClient)
    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
    if _, err := ccaResources.Tiers.Delete(d.Id()); err != nil {
