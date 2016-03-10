@@ -158,6 +158,9 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 
 func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData) (*configuration.Environment, error){
    environment := configuration.Environment{}
+   environment.Name = d.Get(NAME).(string)
+   environment.Description = d.Get(DESCRIPTION).(string)
+   
    organizationId, oerr := getOrganizationId(ccaClient, d.Get(ORGANIZATION_CODE).(string))
    if oerr != nil {
       return &environment, oerr
@@ -168,8 +171,6 @@ func getEnvironmentFromConfig(ccaClient *gocca.CcaClient, d *schema.ResourceData
       return &environment, cerr
    }
 
-   environment.Name = d.Get(NAME).(string)
-   environment.Description = d.Get(DESCRIPTION).(string)
    environment.Organization = configuration.Organization{Id:organizationId,}
    environment.ServiceConnection = configuration.ServiceConnection{Id: connectionId,}
    
