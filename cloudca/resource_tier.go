@@ -14,8 +14,8 @@ func resourceCloudcaTier() *schema.Resource {
    return &schema.Resource{
       Create: resourceCloudcaTierCreate,
       Read:   resourceCloudcaTierRead,
-      Update: resourceCloudcaTierRead,
-      Delete: resourceCloudcaTierRead,
+      Update: resourceCloudcaTierUpdate,
+      Delete: resourceCloudcaTierDelete,
 
       Schema: map[string]*schema.Schema{
          "service_code": &schema.Schema{
@@ -45,9 +45,6 @@ func resourceCloudcaTier() *schema.Resource {
             Required: true,
             ForceNew: true,
             Description: "Name or id of the VPC",
-            StateFunc: func(val interface{}) string {
-               return strings.ToLower(val.(string))
-            },
          },
          "network_offering": &schema.Schema{
             Type:     schema.TypeString,
@@ -74,12 +71,12 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
       return nerr
    }
 
-   vpcId, verr := retrieveNetworkOfferingId(&ccaResources, d.Get("vpc").(string))
+   vpcId, verr := retrieveVpcId(&ccaResources, d.Get("vpc").(string))
    if verr != nil {
       return verr
    }
    
-   networkAclId, aerr := retrieveNetworkOfferingId(&ccaResources, d.Get("network_acl").(string))
+   networkAclId, aerr := retrieveNetworkAclId(&ccaResources, d.Get("network_acl").(string))
    if aerr != nil {
       return aerr
    }
@@ -97,7 +94,6 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
       return fmt.Errorf("Error creating the new tier %s: %s", tierToCreate.Name, err)
    }
    d.SetId(newTier.Id)
-
    return resourceCloudcaTierRead(d, meta)
 }
 
@@ -106,12 +102,11 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
 
-   // Get the vpc details
-   vpc, err := ccaResources.Tiers.Get(d.Id())
+   tier, err := ccaResources.Tiers.Get(d.Id())
    if err != nil {
       if ccaError, ok := err.(api.CcaErrorResponse); ok {
          if ccaError.StatusCode == 404 {
-            fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
+            log.Printf("Tier %s was not found", d.Get("name").(string))
             d.SetId("")
             return nil
          }
@@ -119,11 +114,11 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
       return err
    }
 
-   vpcOffering, offErr := ccaResources.VpcOfferings.Get(vpc.NetworkOfferingId)
+   offering, offErr := ccaResources.NetworkOfferings.Get(tier.NetworkOfferingId)
    if offErr != nil {
       if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
          if ccaError.StatusCode == 404 {
-            fmt.Errorf("VPC offering id=%s does no longer exist", vpc.NetworkOfferingId)
+            fmt.Errorf("Network offering %s not found", tier.NetworkOfferingId)
             d.SetId("")
             return nil
          }
@@ -131,52 +126,89 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
       return offErr
    }
 
+   vpc, vErr := ccaResources.Vpcs.Get(tier.VpcId)
+   if vErr != nil {
+      if ccaError, ok := vErr.(api.CcaErrorResponse); ok {
+         if ccaError.StatusCode == 404 {
+            fmt.Errorf("Vpc %s not found", tier.VpcId)
+            d.SetId("")
+            return nil
+         }
+      }
+      return vErr
+   }
+
+   acl, aErr := ccaResources.NetworkAcls.Get(tier.NetworkAclId)
+   if aErr != nil {
+      if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
+         if ccaError.StatusCode == 404 {
+            fmt.Errorf("ACL %s not found", tier.NetworkAclId)
+            d.SetId("")
+            return nil
+         }
+      }
+      return aErr
+   }
+
    // Update the config
-   d.Set("name", vpc.Name)
-   d.Set("description", vpc.Description)
-   setValueOrID(d, "vpc_offering", strings.ToLower(vpcOffering.Name), vpc.NetworkOfferingId)
-   d.Set("network_domain", vpc.NetworkAclId)
+   d.Set("name", tier.Name)
+   d.Set("description", tier.Description)
+   setValueOrID(d, "network_offering", offering.Name, tier.NetworkOfferingId)
+   setValueOrID(d, "vpc", vpc.Name, tier.VpcId)
+   setValueOrID(d, "network_acl", acl.Name, tier.NetworkAclId)
 
    return nil
 }
 
-// func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
-//    ccaClient := meta.(*gocca.CcaClient)
-//    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-//    ccaResources := resources.(cloudca.Resources)
+func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
+   ccaClient := meta.(*gocca.CcaClient)
+   resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+   ccaResources := resources.(cloudca.Resources)
 
-//    if d.HasChange("name") || d.HasChange("description") {
-//       newName := d.Get("name").(string)
-//       newDescription := d.Get("name").(string)
-//       log.Printf("[DEBUG] Details have changed updating VPC.....")
-//       _, err := ccaResources.Tiers.Update(d.Id(), cloudca.Tier{Id: d.Id(), Name: newName, Description: newDescription})
-//       if err != nil {
-//          return err
-//       }
-//    }
+   d.Partial(true)
 
-//    return nil
-// }
+   if d.HasChange("name") || d.HasChange("description") {
+      newName := d.Get("name").(string)
+      newDescription := d.Get("description").(string)
+      _, err := ccaResources.Tiers.Update(d.Id(), cloudca.Tier{Id: d.Id(), Name: newName, Description: newDescription})
+      if err != nil {
+         return err
+      }
+   }
 
-// func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
-//    ccaClient := meta.(*gocca.CcaClient)
-//    resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-//    ccaResources := resources.(cloudca.Resources)
+   if d.HasChange("network_acl"){
+      networkAclId, aerr := retrieveNetworkAclId(&ccaResources, d.Get("network_acl").(string))
+      if aerr != nil {
+         return aerr
+      }
+      _, aclErr := ccaResources.Tiers.ChangeAcl(d.Id(), networkAclId)
+      if aclErr != nil {
+         return aclErr
+      }
+   }
 
-//    fmt.Println("[INFO] Destroying VPC: %s", d.Get("name").(string))
-//    if _, err := ccaResources.Tiers.Destroy(d.Id()); err != nil {
-//       if ccaError, ok := err.(api.CcaErrorResponse); ok {
-//          if ccaError.StatusCode == 404 {
-//             fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
-//             d.SetId("")
-//             return nil
-//          }
-//       }
-//       return err
-//    }
+   d.Partial(false)
 
-//    return nil
-// }
+   return nil
+}
+
+func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
+   ccaClient := meta.(*gocca.CcaClient)
+   resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+   ccaResources := resources.(cloudca.Resources)
+   if _, err := ccaResources.Tiers.Delete(d.Id()); err != nil {
+      if ccaError, ok := err.(api.CcaErrorResponse); ok {
+         if ccaError.StatusCode == 404 {
+            fmt.Errorf("Tier %s not found", d.Id())
+            d.SetId("")
+            return nil
+         }
+      }
+      return err
+   }
+
+   return nil
+}
 
 func retrieveNetworkOfferingId(ccaRes *cloudca.Resources, name string) (id string, err error) {
    if isID(name) {

@@ -136,7 +136,7 @@ func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("name") || d.HasChange("description") {
 		newName := d.Get("name").(string)
-		newDescription := d.Get("name").(string)
+		newDescription := d.Get("description").(string)
 		log.Printf("[DEBUG] Details have changed updating VPC.....")
 		_, err := ccaResources.Vpcs.Update(cloudca.Vpc{Id: d.Id(), Name: newName, Description: newDescription})
 		if err != nil {
