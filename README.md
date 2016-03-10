@@ -2,6 +2,8 @@
 
 Terraform provider for cloud.ca
 
+[![GoDoc](https://godoc.org/github.com/cloud-ca/go-cloudca?status.svg)](https://godoc.org/github.com/cloud-ca/go-cloudca)
+
 # Installation
 Download the provider:
 ```
