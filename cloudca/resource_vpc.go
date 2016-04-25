@@ -2,12 +2,12 @@ package cloudca
 
 import (
 	"fmt"
-	"log"
-	"strings"
-	"github.com/cloud-ca/go-cloudca" 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+	"strings"
 )
 
 func resourceCloudcaVpc() *schema.Resource {
@@ -19,41 +19,41 @@ func resourceCloudcaVpc() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"service_code": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "A cloudca service code",
 			},
 			"environment_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "Name of environment where VPC should be created",
 			},
 			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "Name of VPC",
 			},
 			"description": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "Description of VPC",
 			},
 			"vpc_offering": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "Name or id of the VPC offering",
 				StateFunc: func(val interface{}) string {
 					return strings.ToLower(val.(string))
 				},
 			},
 			"network_domain": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
 				Description: "A custom DNS suffix at the level of a network",
 			},
 		},
@@ -72,8 +72,8 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	vpcToCreate := cloudca.Vpc{
-		Name: d.Get("name").(string),
-		Description: d.Get("description").(string),
+		Name:          d.Get("name").(string),
+		Description:   d.Get("description").(string),
 		VpcOfferingId: vpcOfferingId,
 	}
 
@@ -177,12 +177,11 @@ func retrieveVpcOfferingID(ccaRes *cloudca.Resources, name string) (id string, e
 		return "", err
 	}
 	for _, offering := range vpcOfferings {
-	    if strings.EqualFold(offering.Name,name) {
-	    	log.Printf("Found vpc offering: %+v", offering)
-	    	return offering.Id, nil
-	    }
+		if strings.EqualFold(offering.Name, name) {
+			log.Printf("Found vpc offering: %+v", offering)
+			return offering.Id, nil
+		}
 	}
 
 	return "", fmt.Errorf("VPC offering with name %s not found", name)
 }
-

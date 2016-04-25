@@ -2,12 +2,12 @@ package cloudca
 
 import (
 	"fmt"
-	"log"
-	"strings"
-	"github.com/cloud-ca/go-cloudca" 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
+	"log"
+	"strings"
 )
 
 func resourceCloudcaInstance() *schema.Resource {
@@ -19,28 +19,28 @@ func resourceCloudcaInstance() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"service_code": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "A cloudca service code",
 			},
 			"environment_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "Name of environment where instance should be created",
 			},
 			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "Name of instance",
 			},
 
 			"template": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "Name or id of the template to use for this instance",
 				StateFunc: func(val interface{}) string {
 					return strings.ToLower(val.(string))
@@ -48,8 +48,8 @@ func resourceCloudcaInstance() *schema.Resource {
 			},
 
 			"compute_offering": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "Name or id of the compute offering to use for this instance",
 				StateFunc: func(val interface{}) string {
 					return strings.ToLower(val.(string))
@@ -57,9 +57,9 @@ func resourceCloudcaInstance() *schema.Resource {
 			},
 
 			"network": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "Name or id of the tier into which the new instance will be created",
 				StateFunc: func(val interface{}) string {
 					return strings.ToLower(val.(string))
@@ -67,27 +67,27 @@ func resourceCloudcaInstance() *schema.Resource {
 			},
 
 			"ssh_key_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
 				Description: "SSH key name to attach to the new instance. Note: Cannot be used with public key.",
 			},
 
 			"public_key": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
 				Description: "Public key to attach to the new instance. Note: Cannot be used with SSH key name.",
 			},
 
 			"user_data": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
 				Description: "Additional data passed to the new instance during its initialization",
 			},
 
 			"purge": &schema.Schema{
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  false,
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
 				Description: "If true, then it will purge the instance on destruction",
 			},
 		},
@@ -140,9 +140,9 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 
 	d.SetId(newInstance.Id)
 	d.SetConnInfo(map[string]string{
-		"host": newInstance.IpAddress,
-		"user":  newInstance.Username,
-		"password":  newInstance.Password,
+		"host":     newInstance.IpAddress,
+		"user":     newInstance.Username,
+		"password": newInstance.Password,
 	})
 
 	return resourceCloudcaInstanceRead(d, meta)
@@ -242,10 +242,10 @@ func retrieveComputeOfferingID(ccaRes *cloudca.Resources, name string) (id strin
 	}
 	for _, offering := range computeOfferings {
 
-	    if strings.EqualFold(offering.Name,name) {
-	    	log.Printf("Found compute offering: %+v", offering)
-	    	return offering.Id, nil
-	    }
+		if strings.EqualFold(offering.Name, name) {
+			log.Printf("Found compute offering: %+v", offering)
+			return offering.Id, nil
+		}
 	}
 
 	return "", fmt.Errorf("Compute offering with name %s not found", name)
@@ -262,10 +262,10 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	}
 	for _, template := range templates {
 
-	    if strings.EqualFold(template.Name,name) {
-	    	log.Printf("Found template: %+v", template)
-	    	return template.Id, nil
-	    }
+		if strings.EqualFold(template.Name, name) {
+			log.Printf("Found template: %+v", template)
+			return template.Id, nil
+		}
 	}
 
 	return "", fmt.Errorf("Template with name %s not found", name)
@@ -282,10 +282,10 @@ func retrieveNetworkID(ccaRes *cloudca.Resources, name string) (id string, err e
 	}
 	for _, tier := range tiers {
 
-	    if strings.EqualFold(tier.Name,name) {
-	    	log.Printf("Found tier: %+v", tier)
-	    	return tier.Id, nil
-	    }
+		if strings.EqualFold(tier.Name, name) {
+			log.Printf("Found tier: %+v", tier)
+			return tier.Id, nil
+		}
 	}
 
 	return "", fmt.Errorf("Network with name %s not found", name)
@@ -302,12 +302,11 @@ func retrieveVolumeID(ccaRes *cloudca.Resources, name string) (id string, err er
 	}
 	for _, volume := range volumes {
 
-		if strings.EqualFold(volume.Name,name) {
-	    	log.Printf("Found volume: %+v", volume)
-	    	return volume.Id, nil
-	    }
+		if strings.EqualFold(volume.Name, name) {
+			log.Printf("Found volume: %+v", volume)
+			return volume.Id, nil
+		}
 	}
 
 	return "", fmt.Errorf("Volume with name %s not found", name)
 }
-

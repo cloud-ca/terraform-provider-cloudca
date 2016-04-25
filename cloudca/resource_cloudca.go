@@ -1,17 +1,17 @@
 package cloudca
 
 import (
-	"regexp"
 	"github.com/hashicorp/terraform/helper/schema"
+	"regexp"
 )
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-			"cloudca_instance": resourceCloudcaInstance(),
-			"cloudca_environment": resourceCloudcaEnvironment(),
-			"cloudca_vpc": resourceCloudcaVpc(),
-			"cloudca_tier": resourceCloudcaTier(),
-		}
+		"cloudca_instance":    resourceCloudcaInstance(),
+		"cloudca_environment": resourceCloudcaEnvironment(),
+		"cloudca_vpc":         resourceCloudcaVpc(),
+		"cloudca_tier":        resourceCloudcaTier(),
+	}
 }
 
 func setValueOrID(d *schema.ResourceData, key string, value string, id string) {

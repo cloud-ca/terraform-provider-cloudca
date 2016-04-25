@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/cloud-ca/terraform-cloudca/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/cloud-ca/terraform-cloudca/cloudca"
 	"os"
 	"strconv"
 )
@@ -13,7 +13,7 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"api_url": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional: true,
+				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("CLOUDCA_API_URL", "https://api.cloud.ca/v1"),
 			},
 			"api_key": &schema.Schema{
@@ -23,7 +23,7 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 		ResourcesMap: mergeResourceMaps(
-						cloudca.GetCloudCAResourceMap(),
+			cloudca.GetCloudCAResourceMap(),
 		),
 		ConfigureFunc: providerConfigure,
 	}
@@ -32,8 +32,8 @@ func Provider() terraform.ResourceProvider {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	insecure, _ := strconv.ParseBool(os.Getenv("CLOUD_CA_INSECURE_CONNECTION"))
 	config := Config{
-		APIURL: d.Get("api_url").(string),
-		APIKey: d.Get("api_key").(string),
+		APIURL:   d.Get("api_url").(string),
+		APIKey:   d.Get("api_key").(string),
 		Insecure: insecure,
 	}
 
