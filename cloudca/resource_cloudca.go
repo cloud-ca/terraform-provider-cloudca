@@ -11,6 +11,7 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_environment": resourceCloudcaEnvironment(),
 		"cloudca_vpc":         resourceCloudcaVpc(),
 		"cloudca_tier":        resourceCloudcaTier(),
+		"cloudca_publicip":	   resourceCloudcaPublicIp(),
 	}
 }
 
