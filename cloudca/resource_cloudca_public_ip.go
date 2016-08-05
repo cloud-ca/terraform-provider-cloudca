@@ -49,7 +49,7 @@ func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	publicIpToCreate := cloudca.PublicIp{
-		VpcId:             vpcId,
+		VpcId: vpcId,
 	}
 	newPublicIp, err := ccaResources.PublicIps.Acquire(publicIpToCreate)
 	if err != nil {

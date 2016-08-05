@@ -1,12 +1,12 @@
 package cloudca
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"log"
-	"strings"
 	"fmt"
+	"github.com/cloud-ca/go-cloudca/services/cloudca"
+	"github.com/hashicorp/terraform/helper/schema"
+	"log"
 	"regexp"
+	"strings"
 )
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {
@@ -15,7 +15,7 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_environment": resourceCloudcaEnvironment(),
 		"cloudca_vpc":         resourceCloudcaVpc(),
 		"cloudca_tier":        resourceCloudcaTier(),
-		"cloudca_publicip":	   resourceCloudcaPublicIp(),
+		"cloudca_publicip":    resourceCloudcaPublicIp(),
 	}
 }
 
