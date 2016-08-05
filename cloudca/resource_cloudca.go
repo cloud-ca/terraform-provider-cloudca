@@ -2,6 +2,10 @@ package cloudca
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/cloud-ca/go-cloudca/services/cloudca"
+	"log"
+	"strings"
+	"fmt"
 	"regexp"
 )
 
@@ -26,4 +30,21 @@ func setValueOrID(d *schema.ResourceData, key string, value string, id string) {
 func isID(id string) bool {
 	re := regexp.MustCompile(`^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$`)
 	return re.MatchString(id)
+}
+
+func retrieveVpcId(ccaRes *cloudca.Resources, name string) (id string, err error) {
+	if isID(name) {
+		return name, nil
+	}
+	vpcs, err := ccaRes.Vpcs.List()
+	if err != nil {
+		return "", err
+	}
+	for _, vpc := range vpcs {
+		if strings.EqualFold(vpc.Name, name) {
+			log.Printf("Found vpc: %+v", vpc)
+			return vpc.Id, nil
+		}
+	}
+	return "", fmt.Errorf("Vpc with name %s not found", name)
 }
