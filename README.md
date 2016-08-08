@@ -54,6 +54,27 @@ resource "cloudca_instance" "web" {
 }
 ```
 
+#Resources
+##cloudca_publicip
+Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
+
+###Example usage
+```
+resource "cloudca_publicip" "my_publicip" {
+	service_code = "compute-east"
+	environment_name = "dev"
+	vpc = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
+}
+```
+###Argument Reference
+The following arguments are supported:
+- service_code - (Required) Service code
+- environment_name - (Required) Name of environment
+- vpc - (Required) The ID or name of the vpc to acquire the public IP
+
+###Attribute Reference
+- id - The public IP ID.
+
 #License
 
 This project is licensed under the terms of the MIT license.
