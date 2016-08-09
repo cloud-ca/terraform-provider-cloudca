@@ -54,8 +54,8 @@ resource "cloudca_instance" "web" {
 }
 ```
 
-#Link
-[**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
+#Links
+- [**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
 
 #License
 
