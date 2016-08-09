@@ -1,11 +1,15 @@
 #Resources
+- [**cloudca_vpc**](#cloudca_vpc)
+- [**cloudca_tier**](#cloudca_tier)
+- [**cloudca_instance**](#cloudca_instance)
+- [**cloudca_publicip**](#cloudca_publicip)
 
 ##cloudca_vpc
 Create a vpc.
 
 ###Example usage
 ```
-resource "cloudca_vpc" "my_instance" {
+resource "cloudca_vpc" "my_vpc" {
 	service_code = "compute-east"
 	environment_name = "dev"
 	name = "test-vpc"
