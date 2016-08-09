@@ -4,6 +4,7 @@
 - [**cloudca_tier**](#cloudca_tier)
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_publicip**](#cloudca_publicip)
+- [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
 
 ##cloudca_environment
 Manages a cloud.ca environment
@@ -139,3 +140,38 @@ The following arguments are supported:
 ###Attribute Reference
 - id - The public IP ID.
 - ip_address - The public IP address
+
+##cloudca_port_forwarding_rule
+Manages port forwarding rules. Modifying any field will result in destruction and recreation of the rule.
+
+When adding a port forwarding rule to the default private IP of an instance, only the instance id is required. Alternatively, the private_ip_id can be used on its own (for example when targeting an instance secondary IP).
+
+###Example usage
+```go
+resource "cloudca_port_forwarding_rule" "web_pfr" {
+	service_code = "compute-east"
+	environment_name = "dev"
+
+	public_ip_id = 
+	instance_id = 
+	private_ip_id = 
+	private_port_start = 8080
+	private_port_end = 8080
+	public_port_start = 80
+	public_port_end = 80 
+}
+```
+
+###Argument reference
+- service_code - (Required)
+- environment_name - (Required)
+- instance_id - (Optional) If specified without a private_ip_id, applies the rule to the primary private IP address of this instance. **At least one of private_ip_id and instance_id must be provided**
+- private_ip_id - (Optional) The private IP which should be used to create this rule. **At least one of private_ip_id and instance_id must be provided**
+- private_port_start - (Required
+- private_port_end - (Required)
+- public_ip_id - (Required) The public IP which should be used to create this rule
+- public_port_start - (Required)
+- public_port_end - (Required)
+
+###Attribute reference
+- id - the rule ID
