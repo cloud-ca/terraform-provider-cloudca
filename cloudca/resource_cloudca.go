@@ -7,10 +7,11 @@ import (
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"cloudca_instance":    resourceCloudcaInstance(),
-		"cloudca_environment": resourceCloudcaEnvironment(),
-		"cloudca_vpc":         resourceCloudcaVpc(),
-		"cloudca_tier":        resourceCloudcaTier(),
+		"cloudca_instance":             resourceCloudcaInstance(),
+		"cloudca_environment":          resourceCloudcaEnvironment(),
+		"cloudca_vpc":                  resourceCloudcaVpc(),
+		"cloudca_tier":                 resourceCloudcaTier(),
+		"cloudca_port_forwarding_rule": resourceCloudcaPortForwardingRule(),
 	}
 }
 
