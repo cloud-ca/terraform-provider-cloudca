@@ -28,11 +28,15 @@ func resourceCloudcaPublicIp() *schema.Resource {
 				ForceNew:    true,
 				Description: "Name of environment where the public IP should be created",
 			},
-			"vpc": &schema.Schema{
+			"vpc_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name or id of the VPC",
+				Description: "Id of the VPC",
+			},
+			"ip_address": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -43,10 +47,7 @@ func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) err
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-	vpcId, verr := retrieveVpcId(&ccaResources, d.Get("vpc").(string))
-	if verr != nil {
-		return verr
-	}
+	vpcId := d.Get("vpc_id").(string)
 
 	publicIpToCreate := cloudca.PublicIp{
 		VpcId: vpcId,
@@ -75,21 +76,8 @@ func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error
 		}
 		return err
 	}
-
-	vpc, vErr := ccaResources.Vpcs.Get(publicIp.VpcId)
-	if vErr != nil {
-		if ccaError, ok := vErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Vpc %s not found", publicIp.VpcId)
-				d.SetId("")
-				return nil
-			}
-		}
-		return vErr
-	}
-
-	setValueOrID(d, "vpc", vpc.Name, publicIp.VpcId)
-
+	d.Set("vpc_id", publicIp.VpcId)
+	d.Set("ip_address", publicIp.IpAddress)
 	return nil
 }
 

@@ -70,10 +70,11 @@ resource "cloudca_publicip" "my_publicip" {
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
-- vpc - (Required) The ID or name of the vpc to acquire the public IP
+- vpc_id - (Required) The ID of the vpc to acquire the public IP
 
 ###Attribute Reference
 - id - The public IP ID.
+- ip_address - The public IP address
 
 #License
 
