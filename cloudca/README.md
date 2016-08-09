@@ -1,8 +1,37 @@
 #Resources
+- [**cloudca_environment**](#cloudca_environment)
 - [**cloudca_vpc**](#cloudca_vpc)
 - [**cloudca_tier**](#cloudca_tier)
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_publicip**](#cloudca_publicip)
+
+##cloudca_environment
+Manages a cloud.ca environment
+
+###Example usage
+```
+resource "cloudca_environment" "my_environment" {
+	service_code = "compute-east"
+	organization_code = "test"
+	name = "production"
+	description = "Environment for production workloads"
+	admin_role_users = ["pdube"]
+	read_only_role_users = ["fgarcia","bob"]
+}
+```
+###Argument Reference
+The following arguments are supported:
+- service_code - (Required) Service code
+- organization_code - (Required) Organization's entry point, i.e. <entry_point>.cloud.ca
+- name - (Required) Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes
+- description - (Required) Description for the environment
+- admin_role_users - (Optional) List of users that will be given the Environment Admin role
+- user_role_users - (Optional) List of users that will be given the User role
+- read_only_role_users - (Optional) List of users that will be given the Read-only role
+
+###Attribute Reference
+- id - ID of the environment.
+- name - Name of the environment.
 
 ##cloudca_vpc
 Create a vpc.
