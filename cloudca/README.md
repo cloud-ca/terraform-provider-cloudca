@@ -15,8 +15,8 @@ resource "cloudca_environment" "my_environment" {
 	organization_code = "test"
 	name = "production"
 	description = "Environment for production workloads"
-	admin_role_users = ["pdube"]
-	read_only_role_users = ["fgarcia","bob"]
+	admin_role_users = ["pat"]
+	read_only_role_users = ["franz","bob"]
 }
 ```
 ###Argument Reference
