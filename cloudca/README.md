@@ -147,14 +147,14 @@ Manages port forwarding rules. Modifying any field will result in destruction an
 When adding a port forwarding rule to the default private IP of an instance, only the instance id is required. Alternatively, the private_ip_id can be used on its own (for example when targeting an instance secondary IP).
 
 ###Example usage
-```go
+```
 resource "cloudca_port_forwarding_rule" "web_pfr" {
 	service_code = "compute-east"
 	environment_name = "dev"
 
-	public_ip_id = 
-	instance_id = 
-	private_ip_id = 
+	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
+	instance_id = "5ec8564e-4793-4d2a-a4f3-218071c69c7e"
+	private_ip_id = "30face92-f1cf-4064-aa7f-008ea09ef7f0"
 	private_port_start = 8080
 	private_port_end = 8080
 	public_port_start = 80
