@@ -175,3 +175,5 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 
 ###Attribute reference
 - id - the rule ID
+- public_ip - the public IP address of this rule
+- private_ip - the private IP address of this rule

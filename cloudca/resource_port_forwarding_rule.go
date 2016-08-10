@@ -12,7 +12,7 @@ import (
 func resourceCloudcaPortForwardingRule() *schema.Resource {
 	return &schema.Resource{
 		Create: createPortForwardingRule,
-		Read: readPortForwardingRule,
+		Read:   readPortForwardingRule,
 		Delete: deletePortForwardingRule,
 
 		Schema: map[string]*schema.Schema{
@@ -29,58 +29,84 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 				Description: "Name of environment where port forwarding rule should be created",
 			},
 			"public_ip_id": &schema.Schema{
-				Type: schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "The public IP to which these rules should be applied",
 			},
 			"instance_id": &schema.Schema{
-				Type: schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Computed:    true,
 				Description: "Name or ID of the instance that this rule should be applied to. If a private IP is not specified, the instance's primary private IP will be selected.",
 			},
 			"private_ip_id": &schema.Schema{
-				Type: schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Computed:    true,
 				Description: "The ID of the private IP to bind to. Does not require an instance to be specified.",
 			},
 			"protocol": &schema.Schema{
-				Type: schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 				Description: "The protocol that this rule should use (eg. TCP, UDP)",
 			},
 			"private_port_start": &schema.Schema{
-				Type: schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
 				Description: "The start of the private port range for this rule",
 			},
 			"private_port_end": &schema.Schema{
-				Type: schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
 				Description: "The end of the private port range for this rule",
 			},
 			"public_port_start": &schema.Schema{
-				Type: schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
 				Description: "The start of the public port range for this rule",
 			},
 			"public_port_end": &schema.Schema{
-				Type: schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
 				Description: "The end of the public port range for this rule",
+			},
+			"public_ip": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"private_ip": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
 }
 
+func validateOneOfPrivateIpIdAndInstanceIdAreProvided(d *schema.ResourceData) error {
+	_, instance_ok := d.GetOk("instance_id")
+	_, private_ip_ok := d.GetOk("private_ip_id")
+
+	if !instance_ok && !private_ip_ok {
+		return fmt.Errorf("At least one of instance_id and private_ip_id must be specified")
+	}
+
+	return nil
+}
+
 func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
+	err := validateOneOfPrivateIpIdAndInstanceIdAreProvided(d)
+	if err != nil {
+		return err
+	}
+
 	client := meta.(*cca.CcaClient)
 	resources, err := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
@@ -90,14 +116,14 @@ func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	pfr := cloudca.PortForwardingRule{
-		PublicIpId: d.Get("public_ip_id").(string),
-		InstanceId: d.Get("instance_id").(string),
-		Protocol: d.Get("protocol").(string),
-		PublicPortStart: strconv.Itoa(d.Get("public_port_start").(int)),
-		PublicPortEnd: strconv.Itoa(d.Get("public_port_end").(int)),
-		PrivateIpId: d.Get("private_ip_id").(string),
+		PublicIpId:       d.Get("public_ip_id").(string),
+		InstanceId:       d.Get("instance_id").(string),
+		Protocol:         d.Get("protocol").(string),
+		PublicPortStart:  strconv.Itoa(d.Get("public_port_start").(int)),
+		PublicPortEnd:    strconv.Itoa(d.Get("public_port_end").(int)),
+		PrivateIpId:      d.Get("private_ip_id").(string),
 		PrivatePortStart: strconv.Itoa(d.Get("private_port_start").(int)),
-		PrivatePortEnd: strconv.Itoa(d.Get("private_port_end").(int)),
+		PrivatePortEnd:   strconv.Itoa(d.Get("private_port_end").(int)),
 	}
 
 	newPfr, err := ccaResources.PortForwardingRules.Create(pfr)
@@ -127,6 +153,8 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 	d.Set("public_port_end", pfr.PublicPortEnd)
 	d.Set("private_port_start", pfr.PrivatePortStart)
 	d.Set("private_port_end", pfr.PrivatePortEnd)
+	d.Set("private_ip", pfr.PrivateIp)
+	d.Set("public_ip", pfr.PublicIp)
 
 	return nil
 }
