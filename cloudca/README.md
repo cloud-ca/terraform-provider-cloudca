@@ -4,6 +4,7 @@
 - [**cloudca_tier**](#cloudca_tier)
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_publicip**](#cloudca_publicip)
+- [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
 
 ##cloudca_environment
 Manages a cloud.ca environment
@@ -118,6 +119,7 @@ The following arguments are supported:
 
 ###Attribute Reference
 - id - ID of instance.
+- private_ip_id - ID of instance's private IP
 
 ##cloudca_publicip
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
@@ -139,3 +141,39 @@ The following arguments are supported:
 ###Attribute Reference
 - id - The public IP ID.
 - ip_address - The public IP address
+
+##cloudca_port_forwarding_rule
+Manages port forwarding rules. Modifying any field will result in destruction and recreation of the rule.
+
+When adding a port forwarding rule to the default private IP of an instance, only the instance id is required. Alternatively, the private_ip_id can be used on its own (for example when targeting an instance secondary IP).
+
+###Example usage
+```
+resource "cloudca_port_forwarding_rule" "web_pfr" {
+	service_code = "compute-east"
+	environment_name = "dev"
+
+	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
+	private_ip_id = "30face92-f1cf-4064-aa7f-008ea09ef7f0"
+	private_port_start = 8080
+	private_port_end = 8080
+	public_port_start = 80
+	public_port_end = 80 
+}
+```
+
+###Argument reference
+- service_code - (Required)
+- environment_name - (Required)
+- private_ip_id - (Required) The private IP which should be used to create this rule
+- private_port_start - (Required
+- private_port_end - (Optional) If not specified, defaults to the private start port
+- public_ip_id - (Required) The public IP which should be used to create this rule
+- public_port_start - (Required)
+- public_port_end - (Optional) If not specified, defaults to the public start port
+
+###Attribute reference
+- id - the rule ID
+- public_ip - the public IP address of this rule
+- private_ip - the private IP address of this rule
+- instance_id - the instance associated with the private IP address of this rule

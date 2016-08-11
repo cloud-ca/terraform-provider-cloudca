@@ -90,6 +90,10 @@ func resourceCloudcaInstance() *schema.Resource {
 				Default:     false,
 				Description: "If true, then it will purge the instance on destruction",
 			},
+			"private_ip_id": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -171,6 +175,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
 	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
 	setValueOrID(d, "network", strings.ToLower(instance.NetworkName), instance.NetworkId)
+	d.Set("private_ip_id", instance.IpAddressId)
 
 	return nil
 }
