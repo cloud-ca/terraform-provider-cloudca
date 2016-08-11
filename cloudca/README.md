@@ -119,6 +119,7 @@ The following arguments are supported:
 
 ###Attribute Reference
 - id - ID of instance.
+- private_ip_id - ID of instance's private IP
 
 ##cloudca_publicip
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
