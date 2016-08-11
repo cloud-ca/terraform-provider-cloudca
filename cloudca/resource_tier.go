@@ -32,7 +32,7 @@ func resourceCloudcaTier() *schema.Resource {
 			},
 			"organization_code": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				ForceNew:    true,
 				Description: "Entry point of organization",
 			},
