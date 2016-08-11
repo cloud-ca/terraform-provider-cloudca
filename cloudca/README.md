@@ -153,7 +153,6 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 	environment_name = "dev"
 
 	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
-	instance_id = "5ec8564e-4793-4d2a-a4f3-218071c69c7e"
 	private_ip_id = "30face92-f1cf-4064-aa7f-008ea09ef7f0"
 	private_port_start = 8080
 	private_port_end = 8080
@@ -165,15 +164,15 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 ###Argument reference
 - service_code - (Required)
 - environment_name - (Required)
-- instance_id - (Optional) If specified without a private_ip_id, applies the rule to the primary private IP address of this instance. **At least one of private_ip_id and instance_id must be provided**
-- private_ip_id - (Optional) The private IP which should be used to create this rule. **At least one of private_ip_id and instance_id must be provided**
+- private_ip_id - (Required) The private IP which should be used to create this rule
 - private_port_start - (Required
-- private_port_end - (Required)
+- private_port_end - (Optional) If not specified, defaults to the private start port
 - public_ip_id - (Required) The public IP which should be used to create this rule
 - public_port_start - (Required)
-- public_port_end - (Required)
+- public_port_end - (Optional) If not specified, defaults to the public start port
 
 ###Attribute reference
 - id - the rule ID
 - public_ip - the public IP address of this rule
 - private_ip - the private IP address of this rule
+- instance_id - the instance associated with the private IP address of this rule
