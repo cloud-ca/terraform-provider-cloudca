@@ -16,8 +16,8 @@ resource "cloudca_environment" "my_environment" {
 	organization_code = "test"
 	name = "production"
 	description = "Environment for production workloads"
-	admin_role_users = ["pat"]
-	read_only_role_users = ["franz","bob"]
+	admin_role = ["pat"]
+	read_only_role = ["franz","bob"]
 }
 ```
 ###Argument Reference
@@ -26,9 +26,9 @@ The following arguments are supported:
 - organization_code - (Required) Organization's entry point, i.e. \<entry_point\>.cloud.ca
 - name - (Required) Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes
 - description - (Required) Description for the environment
-- admin_role_users - (Optional) List of users that will be given the Environment Admin role
-- user_role_users - (Optional) List of users that will be given the User role
-- read_only_role_users - (Optional) List of users that will be given the Read-only role
+- admin_role - (Optional) List of users that will be given the Environment Admin role
+- user_role - (Optional) List of users that will be given the User role
+- read_only_role - (Optional) List of users that will be given the Read-only role
 
 ###Attribute Reference
 - id - ID of the environment.
