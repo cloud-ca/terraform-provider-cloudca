@@ -64,7 +64,7 @@ Create a tier.
 
 ###Example usage
 ```
-resource "cloudca_tier" "my_instance" {
+resource "cloudca_tier" "my_tier" {
 	service_code = "compute-east"
 	environment_name = "dev"
 	name = "test-tier"
