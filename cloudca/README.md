@@ -44,9 +44,7 @@ resource "cloudca_vpc" "my_vpc" {
 	environment_name = "dev"
 	name = "test-vpc"
 	description = "This is a test vpc"
-	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
-	network_offering = "Standard Tier"
-	network_acl = "default_allow"
+	vpc_offering = "Default VPC offering"
 }
 ```
 ###Argument Reference
