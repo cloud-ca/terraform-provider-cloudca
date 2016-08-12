@@ -152,11 +152,10 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 	environment_name = "dev"
 
 	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
+	public_port_start = 80
 	private_ip_id = "30face92-f1cf-4064-aa7f-008ea09ef7f0"
 	private_port_start = 8080
-	private_port_end = 8080
-	public_port_start = 80
-	public_port_end = 80 
+	protocol = "TCP"
 }
 ```
 
@@ -164,11 +163,12 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - service_code - (Required)
 - environment_name - (Required)
 - private_ip_id - (Required) The private IP which should be used to create this rule
-- private_port_start - (Required
+- private_port_start - (Required)
 - private_port_end - (Optional) If not specified, defaults to the private start port
 - public_ip_id - (Required) The public IP which should be used to create this rule
 - public_port_start - (Required)
 - public_port_end - (Optional) If not specified, defaults to the public start port
+- protocol - (Required) The protocol to be used for this rule - must be TCP or UDP
 
 ###Attribute reference
 - id - the rule ID
