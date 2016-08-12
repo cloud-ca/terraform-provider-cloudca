@@ -23,7 +23,7 @@ resource "cloudca_environment" "my_environment" {
 ###Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
-- organization_code - (Required) Organization's entry point, i.e. <entry_point>.cloud.ca
+- organization_code - (Required) Organization's entry point, i.e. \<entry_point\>.cloud.ca
 - name - (Required) Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes
 - description - (Required) Description for the environment
 - admin_role_users - (Optional) List of users that will be given the Environment Admin role
