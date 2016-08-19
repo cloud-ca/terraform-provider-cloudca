@@ -8,6 +8,7 @@ import(
   "github.com/hashicorp/terraform/helper/schema"
   "log"
   "strings"
+  "github.com/davecgh/go-spew/spew"
 )
 
 func resourceCloudcaVolume() *schema.Resource {
@@ -65,8 +66,8 @@ func resourceCloudcaVolume() *schema.Resource {
 
 func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error {
   ccaClient := meta.(*cca.CcaClient)
-  resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-  ccaResources := resources.(cloudca.Resources)
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
 
   storageTier := d.Get("storage_tier").(string)
   size := d.Get("size").(string)
@@ -83,7 +84,11 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
     volumeToCreate.InstanceId = instanceId.(string)
   }
   if zoneName, ok := d.GetOk("zone_name"); ok {
-    volumeToCreate.ZoneName = zoneName.(string)
+    if zoneId, err := retrieveZoneId(&ccaResources, zoneName.(string)); err == nil {
+      volumeToCreate.ZoneId = zoneId
+    } else {
+      return err
+    }
   }
 
   newVolume, err := ccaResources.Volumes.Create(volumeToCreate)
@@ -159,6 +164,7 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
 }
 
 func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size string) (id string, err error) {
+  spew.Dump(ccaResources)
   diskOfferings, err := ccaResources.DiskOfferings.List()
   if(err != nil) {
     return "", err
@@ -169,6 +175,10 @@ func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string,
     }
   }
   return "", fmt.Errorf("No valid disk offering's were found with storage tier: %s and size: %s", storageTier, size)
+}
+
+func retrieveZoneId(ccaResources *cloudca.Resources, zoneName string) (zoneId string, nerr error) {
+  //TODO
 }
 
 func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
