@@ -49,7 +49,7 @@ func resourceCloudcaVolume() *schema.Resource {
         Description: "The storage tier name",
       },
       "size" : &schema.Schema {
-        Type:        schema.TypeInt,
+        Type:        schema.TypeString,
         Required:    true,
         ForceNew:    true,
         Description: "The size of the disk volume in gigabytes",
@@ -69,7 +69,7 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
   ccaResources := resources.(cloudca.Resources)
 
   storageTier := d.Get("storage_tier").(string)
-  size := d.Get("size").(int)
+  size := d.Get("size").(string)
   diskOfferingId, err := retrieveDiskOfferingId(&ccaResources,storageTier,size)
   if(err != nil) {
     return err
@@ -153,26 +153,20 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
 
   fmt.Println("[INFO] Deleting volume: %s", d.Get("name").(string))
   if derr := ccaResources.Volumes.Delete(d.Id()); derr != nil {
-    if ccaError, ok := derr.(api.CcaErrorResponse); ok {
-      handleVolumeNotFoundError(ccaError, d)
-    }
+    return handleVolumeNotFoundError(derr, d)
   }
   return nil
 }
 
 
-func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size int) (id string, err error) {
+func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size string) (id string, err error) {
   diskOfferings, err := ccaResources.DiskOfferings.List()
   if(err != nil) {
     return "", err
   }
   for _,diskOffering := range diskOfferings {
-    if(strings.EqualFold(diskOffering.StorageTier, storageTier)) {
-      if(diskOffering.GbSize == size) {
-        return diskOffering.Id, nil
-      } else {
-        //is custom?
-      }
+    if(strings.EqualFold(diskOffering.StorageTier, storageTier) && strings.EqualFold(diskOffering.Name,size)) {
+      return diskOffering.Id, nil
     }
   }
   return "", fmt.Errorf("No valid disk offering's were found with storage tier: %s and size: %s", storageTier, size)
