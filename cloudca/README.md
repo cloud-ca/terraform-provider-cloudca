@@ -2,8 +2,9 @@
 - [**cloudca_environment**](#cloudca_environment)
 - [**cloudca_vpc**](#cloudca_vpc)
 - [**cloudca_tier**](#cloudca_tier)
+- [**cloudca_network_acl**](#cloudca_network_acl)
 - [**cloudca_instance**](#cloudca_instance)
-- [**cloudca_publicip**](#cloudca_publicip)
+- [**cloudca_public_ip**](#cloudca_public_ip)
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
 
 ##cloudca_environment
@@ -87,6 +88,31 @@ The following arguments are supported:
 ###Attribute Reference
 - id - ID of tier.
 
+##cloudca_network_acl
+Create a network ACL.
+
+###Example usage
+```
+resource "cloudca_network_acl" "my_acl" {
+	service_code = "compute-east"
+	environment_name = "dev"
+	name = "test-acl"
+	description = "This is a test acl"
+	vpc = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
+}
+```
+###Argument Reference
+The following arguments are supported:
+- service_code - (Required) Service code
+- environment_name - (Required) Name of environment
+- name - (Required) Name of the network ACL
+- description - (Required) Description of the network ACL
+- vpc - (Required) The name or ID of the vpc where the network ACL should be created
+
+###Attribute Reference
+- id - ID of network ACL.
+- name - Name of network ACL.
+
 ##cloudca_instance
 Create and starts an instance.
 
@@ -119,12 +145,12 @@ The following arguments are supported:
 - id - ID of instance.
 - private_ip_id - ID of instance's private IP
 
-##cloudca_publicip
+##cloudca_public_ip
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
 
 ###Example usage
 ```
-resource "cloudca_publicip" "my_publicip" {
+resource "cloudca_public_ip" "my_publicip" {
 	service_code = "compute-east"
 	environment_name = "dev"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
