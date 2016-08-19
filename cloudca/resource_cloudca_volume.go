@@ -158,7 +158,6 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
   return nil
 }
 
-
 func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size string) (id string, err error) {
   diskOfferings, err := ccaResources.DiskOfferings.List()
   if(err != nil) {
