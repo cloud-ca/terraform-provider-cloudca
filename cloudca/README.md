@@ -175,3 +175,36 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - public_ip - the public IP address of this rule
 - private_ip - the private IP address of this rule
 - instance_id - the instance associated with the private IP address of this rule
+
+##cloudca_volumes
+Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation
+of the rule.
+
+If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the
+volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
+
+###Example usage
+```
+resource "cloudca_volume" "data_volume" {
+	service_code = "compute-east"
+	environment_name = "dev"
+
+	name = "Date Volume"
+	size = 20
+	storage_tier = "performance"
+	zone_name = "zone1"
+	instance_id = "f932c530-5753-44ce-8aae-263672e1ae3f"
+}
+```
+
+###Argument reference
+- service_code - (Required)
+- environment_name - (Required)
+- name - (Required)
+- storage_tier - (Required) Either performance, intermediate or standard
+- size - (Required) Should be a valid size consistent with the storage_tier selected
+- zone_name - (Optional) Should specify zone_name when more than one zone exists
+- instance_id - (Optional) If not specified, volume will be created but not attached.
+
+###Attribute reference
+- id - the disk volume ID
