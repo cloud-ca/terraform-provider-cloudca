@@ -3,8 +3,10 @@ package cloudca
 import(
   "fmt"
   "github.com/cloud-ca/go-cloudca"
+  "github.com/cloud-ca/go-cloudca/api"
   "github.com/cloud-ca/go-cloudca/services/cloudca"
   "github.com/hashicorp/terraform/helper/schema"
+  "log"
   "strings"
 )
 
@@ -12,6 +14,8 @@ func resourceCloudcaVolume() *schema.Resource {
   return &schema.Resource {
     Create : resourceCloudcaVolumeCreate,
     Read : resourceCloudcaVolumeRead,
+    Update : resourceCloudcaVolumeUpdate,
+    Delete : resourceCloudcaVolumeDelete,
 
     Schema: map[string]*schema.Schema {
       "service_code": &schema.Schema {
@@ -34,7 +38,7 @@ func resourceCloudcaVolume() *schema.Resource {
       },
       "zone_name": &schema.Schema {
         Type:        schema.TypeString,
-        Optional:    true;
+        Optional:    true,
         ForceNew:    true,
         Description: "The zone into which the volume will be create",
       },
@@ -64,24 +68,26 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
   resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
   ccaResources := resources.(cloudca.Resources)
 
-  zoneId, err := retrieveZoneId(&ccaResources ,d.Get("zone_name").(string))
-  if (err != nil) {
-    return "", err
-  }
-
-  size := d.Get("size").(string)
   storageTier := d.Get("storage_tier").(string)
-  diskOfferingId := retrieveDiskOfferingId(&ccaResources,storageTier,size)
-
-  volumeToCreate := cloudca.Voldumes {
+  size := d.Get("size").(int)
+  diskOfferingId, err := retrieveDiskOfferingId(&ccaResources,storageTier,size)
+  if(err != nil) {
+    return err
+  }
+  volumeToCreate := cloudca.Volume{
     Name: d.Get("name").(string),
-    ZoneId : zoneId,
     DiskOfferingId : diskOfferingId,
-    InstanceId : d.Get("instance_id").(string)
   }
 
-  newVolume, err := ccaResources.Volumes.CreateVolume(volumeToCreate)
-  if(err != null) {
+  if instanceId, ok := d.GetOk("instance_id"); ok {
+    volumeToCreate.InstanceId = instanceId.(string)
+  }
+  if zoneName, ok := d.GetOk("zone_name"); ok {
+    volumeToCreate.ZoneName = zoneName.(string)
+  }
+
+  newVolume, err := ccaResources.Volumes.Create(volumeToCreate)
+  if(err != nil) {
     return fmt.Errorf("Error creating the new volume %s", err)
   }
   d.SetId(newVolume.Id)
@@ -95,39 +101,90 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 
   volume, err := ccaResources.Volumes.Get(d.Id())
   if(err != nil) {
-    return handleNotFoundError(err, d)
+    return handleVolumeNotFoundError(err, d)
   }
   d.Set("name", volume.Name)
   d.Set("zone_name", volume.ZoneName)
   d.Set("storage_tier", volume.StorageTier)
   d.Set("size", volume.Size)
   d.Set("instance_id", volume.InstanceId)
+  return nil
 }
 
-func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, diskSize int) (id string, err error) {
-  return "", nil
+func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
+  ccaClient := meta.(*cca.CcaClient)
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
+
+  d.Partial(true)
+
+  if d.HasChange("instanceId") {
+    oldInstanceId,newInstanceId := d.GetChange("instance_id")
+    if volume, err := ccaResources.Volumes.Get(d.Id()); err != nil {
+      if nerr := handleVolumeNotFoundError(err, d); nerr != nil {
+        return nerr
+      }
+      if (oldInstanceId == nil) {
+        log.Printf("[DEBUG] Instance Id %s detected. Attaching volume to instance.", newInstanceId)
+        if aerr := ccaResources.Volumes.AttachToInstance(volume, newInstanceId.(string)); aerr != nil {
+          return aerr
+        }
+
+      } else {
+        log.Printf("[DEBUG] Instance Id has changed from %s, to %s. Attempting attach volume to new instance", oldInstanceId, newInstanceId)
+        if derr := ccaResources.Volumes.DetachFromInstance(volume); derr != nil {
+          return derr
+        }
+        if aerr := ccaResources.Volumes.AttachToInstance(volume, newInstanceId.(string)); aerr != nil {
+          return aerr
+        }
+      }
+      d.SetPartial("instance_id")
+    }
+  }
+  d.Partial(false)
+  return nil
 }
 
-func retrieveZoneId(ccaResources *cloudca.Resources, name string) (id string, err error) {
-  //worth checking if isId first?
-  tiers, err := ccaResources.Tiers.List()
+func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error {
+  ccaClient := meta.(*cca.CcaClient)
+	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	ccaResources := resources.(cloudca.Resources)
+
+  fmt.Println("[INFO] Deleting volume: %s", d.Get("name").(string))
+  if derr := ccaResources.Volumes.Delete(d.Id()); derr != nil {
+    if ccaError, ok := derr.(api.CcaErrorResponse); ok {
+      handleVolumeNotFoundError(ccaError, d)
+    }
+  }
+  return nil
+}
+
+
+func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size int) (id string, err error) {
+  diskOfferings, err := ccaResources.DiskOfferings.List()
   if(err != nil) {
     return "", err
   }
-  for _, tier := range tiers {
-    if strings.EqualFold(tier.Name, name) {
-      return tier.Id, nil
+  for _,diskOffering := range diskOfferings {
+    if(strings.EqualFold(diskOffering.StorageTier, storageTier)) {
+      if(diskOffering.GbSize == size) {
+        return diskOffering.Id, nil
+      } else {
+        //is custom?
+      }
     }
   }
-  return "", fmt.Errorf("Tier with name %s not found", name)
+  return "", fmt.Errorf("No valid disk offering's were found with storage tier: %s and size: %s", storageTier, size)
 }
 
-func handleNotFoundError(err error, d *schema.ResourceData) error {
+func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
   if ccaError, ok := err.(api.CcaErrorResponse); ok {
     if ccaError.StatusCode == 404 {
-      log.Printf("Volume with id='%s' was not found", d.Id())
-      d.setId("")
+      fmt.Errorf("Volume with id='%s' was not found", d.Id())
+      d.SetId("")
       return nil
     }
   }
+  return err
 }
