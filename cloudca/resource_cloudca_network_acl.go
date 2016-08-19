@@ -6,8 +6,6 @@ import (
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
-	"strings"
 )
 
 func resourceCloudcaNetworkAcl() *schema.Resource {
@@ -62,15 +60,11 @@ func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	aclToCreate := cloudca.NetworkAcl{
-		Name:              d.Get("name").(string),
-		Description:       d.Get("description").(string),
-		VpcId:             vpcId,
+		Name:        d.Get("name").(string),
+		Description: d.Get("description").(string),
+		VpcId:       vpcId,
 	}
-	options := map[string]string{}
-	if orgId, ok := d.GetOk("organization_code"); ok {
-		options["org_id"] = orgId.(string)
-	}
-	newAcl, err := ccaResources.NetworkAcls.Create(aclToCreate, options)
+	newAcl, err := ccaResources.NetworkAcls.Create(aclToCreate)
 	if err != nil {
 		return fmt.Errorf("Error creating the new network ACL %s: %s", aclToCreate.Name, err)
 	}
@@ -83,7 +77,7 @@ func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) err
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-	acl, aErr := ccaResources.NetworkAcls.Get(acl.Id)
+	acl, aErr := ccaResources.NetworkAcls.Get(d.Id())
 	if aErr != nil {
 		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
@@ -131,4 +125,3 @@ func resourceCloudcaNetworkAclDelete(d *schema.ResourceData, meta interface{}) e
 	}
 	return nil
 }
-
