@@ -5,6 +5,7 @@
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_publicip**](#cloudca_publicip)
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
+- [**cloudca_volume**](#cloudca_volume)
 
 ##cloudca_environment
 Manages a cloud.ca environment
@@ -189,10 +190,9 @@ resource "cloudca_volume" "data_volume" {
 	service_code = "compute-east"
 	environment_name = "dev"
 
-	name = "Date Volume"
-	size = 20
+	name = "Data Volume"
+	size = "20 GB"
 	storage_tier = "performance"
-	zone_name = "zone1"
 	instance_id = "f932c530-5753-44ce-8aae-263672e1ae3f"
 }
 ```
@@ -200,11 +200,11 @@ resource "cloudca_volume" "data_volume" {
 ###Argument reference
 - service_code - (Required)
 - environment_name - (Required)
-- name - (Required)
+- name - (Required) The name of the volume to be created
 - storage_tier - (Required) Either performance, intermediate or standard
-- size - (Required) Should be a valid size consistent with the storage_tier selected
-- zone_name - (Optional) Should specify zone_name when more than one zone exists
-- instance_id - (Optional) If not specified, volume will be created but not attached.
+- size - (Required) The size of the volume. Must be a valid size for the chosen storage tier
+- zone_name - (Optional) Only required if there is more than one zone in the service specified by the `service_code`
+- instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
 
 ###Attribute reference
-- id - the disk volume ID
+- id - the volume ID
