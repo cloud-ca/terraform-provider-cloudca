@@ -39,11 +39,11 @@ func resourceCloudcaNetworkAcl() *schema.Resource {
 				ForceNew:    true,
 				Description: "Description of network ACL",
 			},
-			"vpc": &schema.Schema{
+			"vpc_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name or id of the VPC",
+				Description: "Id of the VPC",
 			},
 		},
 	}
@@ -54,15 +54,10 @@ func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) e
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-	vpcId, verr := retrieveVpcId(&ccaResources, d.Get("vpc").(string))
-	if verr != nil {
-		return verr
-	}
-
 	aclToCreate := cloudca.NetworkAcl{
 		Name:        d.Get("name").(string),
 		Description: d.Get("description").(string),
-		VpcId:       vpcId,
+		VpcId:       d.Get("vpc_id").(string),
 	}
 	newAcl, err := ccaResources.NetworkAcls.Create(aclToCreate)
 	if err != nil {
@@ -89,22 +84,10 @@ func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) err
 		return aErr
 	}
 
-	vpc, vErr := ccaResources.Vpcs.Get(acl.VpcId)
-	if vErr != nil {
-		if ccaError, ok := vErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Vpc %s not found", acl.VpcId)
-				d.SetId("")
-				return nil
-			}
-		}
-		return vErr
-	}
-
 	// Update the config
 	d.Set("name", acl.Name)
 	d.Set("description", acl.Description)
-	setValueOrID(d, "vpc", vpc.Name, acl.VpcId)
+	d.Set("vpc_id", acl.VpcId)
 
 	return nil
 }

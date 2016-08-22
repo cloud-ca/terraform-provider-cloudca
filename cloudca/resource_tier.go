@@ -46,11 +46,11 @@ func resourceCloudcaTier() *schema.Resource {
 				Required:    true,
 				Description: "Description of tier",
 			},
-			"vpc": &schema.Schema{
+			"vpc_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name or id of the VPC",
+				Description: "Id of the VPC",
 			},
 			"network_offering": &schema.Schema{
 				Type:        schema.TypeString,
@@ -58,10 +58,10 @@ func resourceCloudcaTier() *schema.Resource {
 				ForceNew:    true,
 				Description: `The network offering name or id (e.g. "Standard Tier" or "Load Balanced Tier")`,
 			},
-			"network_acl": &schema.Schema{
+			"network_acl_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The network ACL name or id",
+				Description: "Id of the network ACL name",
 			},
 		},
 	}
@@ -77,22 +77,12 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 		return nerr
 	}
 
-	vpcId, verr := retrieveVpcId(&ccaResources, d.Get("vpc").(string))
-	if verr != nil {
-		return verr
-	}
-
-	networkAclId, aerr := retrieveNetworkAclId(&ccaResources, d.Get("network_acl").(string))
-	if aerr != nil {
-		return aerr
-	}
-
 	tierToCreate := cloudca.Tier{
 		Name:              d.Get("name").(string),
 		Description:       d.Get("description").(string),
-		VpcId:             vpcId,
+		VpcId:             d.Get("vpc_id").(string),
 		NetworkOfferingId: networkOfferingId,
-		NetworkAclId:      networkAclId,
+		NetworkAclId:      d.Get("network_acl_id").(string),
 	}
 	options := map[string]string{}
 	if orgId, ok := d.GetOk("organization_code"); ok {
@@ -135,37 +125,12 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 		return offErr
 	}
 
-	vpc, vErr := ccaResources.Vpcs.Get(tier.VpcId)
-	if vErr != nil {
-		if ccaError, ok := vErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Vpc %s not found", tier.VpcId)
-				d.SetId("")
-				return nil
-			}
-		}
-		return vErr
-	}
-
-	acl, aErr := ccaResources.NetworkAcls.Get(tier.NetworkAclId)
-	if aErr != nil {
-		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("ACL %s not found", tier.NetworkAclId)
-				d.SetId("")
-				return nil
-			}
-		}
-		return aErr
-	}
-
 	// Update the config
 	d.Set("name", tier.Name)
 	d.Set("description", tier.Description)
 	setValueOrID(d, "network_offering", offering.Name, tier.NetworkOfferingId)
-	setValueOrID(d, "vpc", vpc.Name, tier.VpcId)
-	setValueOrID(d, "network_acl", acl.Name, tier.NetworkAclId)
-
+	d.Set("vpc_id", tier.VpcId)
+	d.Set("network_acl_id", tier.NetworkAclId)
 	return nil
 }
 
@@ -185,12 +150,8 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	if d.HasChange("network_acl") {
-		networkAclId, aerr := retrieveNetworkAclId(&ccaResources, d.Get("network_acl").(string))
-		if aerr != nil {
-			return aerr
-		}
-		_, aclErr := ccaResources.Tiers.ChangeAcl(d.Id(), networkAclId)
+	if d.HasChange("network_acl_id") {
+		_, aclErr := ccaResources.Tiers.ChangeAcl(d.Id(), d.Get("network_acl_id").(string))
 		if aclErr != nil {
 			return aclErr
 		}
@@ -234,21 +195,4 @@ func retrieveNetworkOfferingId(ccaRes *cloudca.Resources, name string) (id strin
 		}
 	}
 	return "", fmt.Errorf("Network offering with name %s not found", name)
-}
-
-func retrieveNetworkAclId(ccaRes *cloudca.Resources, name string) (id string, err error) {
-	if isID(name) {
-		return name, nil
-	}
-	acls, err := ccaRes.NetworkAcls.List()
-	if err != nil {
-		return "", err
-	}
-	for _, acl := range acls {
-		if strings.EqualFold(acl.Name, name) {
-			log.Printf("Found network acl: %+v", acl)
-			return acl.Id, nil
-		}
-	}
-	return "", fmt.Errorf("Network ACL with name %s not found", name)
 }

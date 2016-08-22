@@ -56,14 +56,11 @@ func resourceCloudcaInstance() *schema.Resource {
 				},
 			},
 
-			"network": &schema.Schema{
+			"network_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name or id of the tier into which the new instance will be created",
-				StateFunc: func(val interface{}) string {
-					return strings.ToLower(val.(string))
-				},
+				Description: "Id of the tier into which the new instance will be created",
 			},
 
 			"ssh_key_name": &schema.Schema{
@@ -115,16 +112,10 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		return terr
 	}
 
-	networkId, nerr := retrieveNetworkID(&ccaResources, d.Get("network").(string))
-
-	if nerr != nil {
-		return nerr
-	}
-
 	instanceToCreate := cloudca.Instance{Name: d.Get("name").(string),
 		ComputeOfferingId: computeOfferingId,
 		TemplateId:        templateId,
-		NetworkId:         networkId,
+		NetworkId:         d.Get("network_id").(string),
 	}
 
 	if sshKeyname, ok := d.GetOk("ssh_key_name"); ok {
@@ -174,7 +165,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("name", instance.Name)
 	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
 	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
-	setValueOrID(d, "network", strings.ToLower(instance.NetworkName), instance.NetworkId)
+	d.Set("network_id", instance.NetworkId)
 	d.Set("private_ip_id", instance.IpAddressId)
 
 	return nil
@@ -274,44 +265,4 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	}
 
 	return "", fmt.Errorf("Template with name %s not found", name)
-}
-
-func retrieveNetworkID(ccaRes *cloudca.Resources, name string) (id string, err error) {
-	if isID(name) {
-		return name, nil
-	}
-
-	tiers, err := ccaRes.Tiers.List()
-	if err != nil {
-		return "", err
-	}
-	for _, tier := range tiers {
-
-		if strings.EqualFold(tier.Name, name) {
-			log.Printf("Found tier: %+v", tier)
-			return tier.Id, nil
-		}
-	}
-
-	return "", fmt.Errorf("Network with name %s not found", name)
-}
-
-func retrieveVolumeID(ccaRes *cloudca.Resources, name string) (id string, err error) {
-	if isID(name) {
-		return name, nil
-	}
-
-	volumes, err := ccaRes.Volumes.ListOfType(cloudca.VOLUME_TYPE_DATA)
-	if err != nil {
-		return "", err
-	}
-	for _, volume := range volumes {
-
-		if strings.EqualFold(volume.Name, name) {
-			log.Printf("Found volume: %+v", volume)
-			return volume.Id, nil
-		}
-	}
-
-	return "", fmt.Errorf("Volume with name %s not found", name)
 }
