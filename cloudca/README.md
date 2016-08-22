@@ -177,7 +177,7 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - private_ip - the private IP address of this rule
 - instance_id - the instance associated with the private IP address of this rule
 
-##cloudca_volumes
+##cloudca_volume
 Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation
 of the rule.
 
