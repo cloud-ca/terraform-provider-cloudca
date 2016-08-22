@@ -16,7 +16,8 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_vpc":                  resourceCloudcaVpc(),
 		"cloudca_tier":                 resourceCloudcaTier(),
 		"cloudca_port_forwarding_rule": resourceCloudcaPortForwardingRule(),
-		"cloudca_publicip":             resourceCloudcaPublicIp(),
+		"cloudca_public_ip":            resourceCloudcaPublicIp(),
+		"cloudca_network_acl":          resourceCloudcaNetworkAcl(),
 	}
 }
 
