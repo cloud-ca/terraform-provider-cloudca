@@ -61,7 +61,7 @@ func resourceCloudcaTier() *schema.Resource {
 			"network_acl_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Id of the network ACL name",
+				Description: "Id of the network ACL",
 			},
 		},
 	}
