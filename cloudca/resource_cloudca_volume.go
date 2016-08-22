@@ -5,9 +5,7 @@ import (
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
 	"strings"
 )
 
@@ -80,23 +78,26 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 		DiskOfferingId: diskOfferingId,
 	}
 
-	if instanceId, ok := d.GetOk("instance_id"); ok {
-		volumeToCreate.InstanceId = instanceId.(string)
-	}
 	if zoneName, ok := d.GetOk("zone_name"); ok {
-		if zoneId, err := retrieveZoneId(&ccaResources, zoneName.(string)); err == nil {
-			volumeToCreate.ZoneId = zoneId
-		} else {
+		if zoneId, err := retrieveZoneId(&ccaResources, zoneName.(string)); err != nil {
 			return err
+		} else {
+			volumeToCreate.ZoneId = zoneId
 		}
 	}
 
 	newVolume, err := ccaResources.Volumes.Create(volumeToCreate)
 	if err != nil {
-		return fmt.Errorf("Error creating the new volume %s", err)
+		return err
+	}
+	if instanceId, ok := d.GetOk("instance_id"); ok {
+		err = ccaResources.Volumes.AttachToInstance(newVolume, instanceId.(string))
+		if err != nil {
+			return err
+		}
 	}
 	d.SetId(newVolume.Id)
-	return resourceCloudcaPublicIpRead(d, meta)
+	return resourceCloudcaVolumeRead(d, meta)
 }
 
 func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
@@ -122,49 +123,50 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 	ccaResources := resources.(cloudca.Resources)
 
 	d.Partial(true)
-
-	if d.HasChange("instanceId") {
+	if d.HasChange("instance_id") {
 		oldInstanceId, newInstanceId := d.GetChange("instance_id")
-		if volume, err := ccaResources.Volumes.Get(d.Id()); err != nil {
-			if nerr := handleVolumeNotFoundError(err, d); nerr != nil {
-				return nerr
-			}
-			if oldInstanceId == nil {
-				log.Printf("[DEBUG] Instance Id %s detected. Attaching volume to instance.", newInstanceId)
-				if aerr := ccaResources.Volumes.AttachToInstance(volume, newInstanceId.(string)); aerr != nil {
-					return aerr
-				}
-
-			} else {
-				log.Printf("[DEBUG] Instance Id has changed from %s, to %s. Attempting attach volume to new instance", oldInstanceId, newInstanceId)
-				if derr := ccaResources.Volumes.DetachFromInstance(volume); derr != nil {
-					return derr
-				}
-				if aerr := ccaResources.Volumes.AttachToInstance(volume, newInstanceId.(string)); aerr != nil {
-					return aerr
-				}
-			}
-			d.SetPartial("instance_id")
+		fmt.Printf("%s %s\n", oldInstanceId, newInstanceId)
+		volume := &cloudca.Volume{
+			Id: d.Id(),
 		}
+		if oldInstanceId != "" {
+			err := ccaResources.Volumes.DetachFromInstance(volume)
+			if err != nil {
+				return fmt.Errorf("%s %s", oldInstanceId, newInstanceId)
+			}
+		}
+		if newInstanceId != "" {
+			err := ccaResources.Volumes.AttachToInstance(volume, newInstanceId.(string))
+			if err != nil {
+				return err
+			}
+		}
+		d.SetPartial("instance_id")
 	}
 	d.Partial(false)
-	return nil
+	return resourceCloudcaVolumeRead(d, meta)
 }
 
 func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error {
 	ccaClient := meta.(*cca.CcaClient)
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
-
-	fmt.Println("[INFO] Deleting volume: %s", d.Get("name").(string))
-	if derr := ccaResources.Volumes.Delete(d.Id()); derr != nil {
-		return handleVolumeNotFoundError(derr, d)
+	if instanceId, ok := d.GetOk("instance_id"); ok && instanceId != "" {
+		volume := &cloudca.Volume{
+			Id: d.Id(),
+		}
+		err := ccaResources.Volumes.DetachFromInstance(volume)
+		if err != nil {
+			return err
+		}
+	}
+	if err := ccaResources.Volumes.Delete(d.Id()); err != nil {
+		return handleVolumeNotFoundError(err, d)
 	}
 	return nil
 }
 
 func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size string) (id string, err error) {
-	spew.Dump(ccaResources)
 	diskOfferings, err := ccaResources.DiskOfferings.List()
 	if err != nil {
 		return "", err
@@ -178,7 +180,16 @@ func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string,
 }
 
 func retrieveZoneId(ccaResources *cloudca.Resources, zoneName string) (zoneId string, nerr error) {
-	//TODO
+	zones, err := ccaResources.Zones.List()
+	if err != nil {
+		return "", err
+	}
+	for _, zone := range zones {
+		if strings.EqualFold(zone.Name, zoneName) {
+			return zone.Id, nil
+		}
+	}
+	return "", fmt.Errorf("Zone with name %s could not be found", zoneName)
 }
 
 func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
