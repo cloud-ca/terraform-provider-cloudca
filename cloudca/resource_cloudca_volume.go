@@ -47,8 +47,8 @@ func resourceCloudcaVolume() *schema.Resource {
 				ForceNew:    true,
 				Description: "The storage tier name",
 			},
-			"size": &schema.Schema{
-				Type:        schema.TypeString,
+			"size_in_gb": &schema.Schema{
+				Type:        schema.TypeInt,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The size of the disk volume in gigabytes",
@@ -68,7 +68,7 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 	ccaResources := resources.(cloudca.Resources)
 
 	storageTier := d.Get("storage_tier").(string)
-	size := d.Get("size").(string)
+	size := d.Get("size_in_gb").(int)
 	diskOfferingId, err := retrieveDiskOfferingId(&ccaResources, storageTier, size)
 	if err != nil {
 		return err
@@ -125,7 +125,6 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 	d.Partial(true)
 	if d.HasChange("instance_id") {
 		oldInstanceId, newInstanceId := d.GetChange("instance_id")
-		fmt.Printf("%s %s\n", oldInstanceId, newInstanceId)
 		volume := &cloudca.Volume{
 			Id: d.Id(),
 		}
@@ -166,13 +165,13 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size string) (id string, err error) {
+func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size int) (id string, err error) {
 	diskOfferings, err := ccaResources.DiskOfferings.List()
 	if err != nil {
 		return "", err
 	}
 	for _, diskOffering := range diskOfferings {
-		if strings.EqualFold(diskOffering.StorageTier, storageTier) && strings.EqualFold(diskOffering.Name, size) {
+		if strings.EqualFold(diskOffering.StorageTier, storageTier) && diskOffering.GbSize == size {
 			return diskOffering.Id, nil
 		}
 	}

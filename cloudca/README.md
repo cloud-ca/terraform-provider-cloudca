@@ -217,8 +217,8 @@ resource "cloudca_volume" "data_volume" {
 	environment_name = "dev"
 
 	name = "Data Volume"
-	size = "20 GB"
 	storage_tier = "performance"
+	size_in_gb = 20
 	instance_id = "f932c530-5753-44ce-8aae-263672e1ae3f"
 }
 ```
@@ -228,7 +228,7 @@ resource "cloudca_volume" "data_volume" {
 - environment_name - (Required)
 - name - (Required) The name of the volume to be created
 - storage_tier - (Required) Either performance, intermediate or standard
-- size - (Required) The size of the volume. Must be a valid size for the chosen storage tier
+- size_in_gb - (Required) The size of the volume. Must be a valid size for the chosen storage tier
 - zone_name - (Optional) Only required if there is more than one zone in the service specified by the `service_code`
 - instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
 
