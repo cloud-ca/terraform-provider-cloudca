@@ -204,11 +204,9 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - instance_id - the instance associated with the private IP address of this rule
 
 ##cloudca_volume
-Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation
-of the rule.
+Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation of the volume.
 
-If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the
-volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
+If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
 
 ###Example usage
 ```

@@ -27,7 +27,7 @@ func resourceCloudcaVolume() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name of environment where port forwarding rule should be created",
+				Description: "Name of environment where the volume should be created",
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
