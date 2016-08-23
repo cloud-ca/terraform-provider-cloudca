@@ -6,12 +6,14 @@ import (
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
+	"strconv"
+	"strings"
 )
 
 func resourceCloudcaNetworkAclRule() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceCloudcaNetworkAclRuleCreate,
-		Update: resoruceCloudcaNetworkAclRuleUpdate,
+		Update: resourceCloudcaNetworkAclRuleUpdate,
 		Read:   resourceCloudcaNetworkAclRuleRead,
 		Delete: resourceCloudcaNetworkAclRuleDelete,
 
@@ -29,9 +31,14 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 				Description: "Name of environment where the network ACL rule should be created",
 			},
 			"rule_number": &schema.Schema{
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "The rule number of network ACL",
+			},
+			"cidr": &schema.Schema{
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The network ACL rule cidr",
 			},
 			"action": &schema.Schema{
 				Type:        schema.TypeString,
@@ -59,14 +66,24 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 				},
 			},
 			"icmp_type": &schema.Schema{
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "The ICMP type. Can only be used with ICMP protocol.",
 			},
 			"icmp_code": &schema.Schema{
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "The ICMP code. Can only be used with ICMP protocol.",
+			},
+			"start_port": &schema.Schema{
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "The start port. Can only be used with TCP/UDP protocol.",
+			},
+			"end_port": &schema.Schema{
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "The end port. Can only be used with TCP/UDP protocol.",
 			},
 			"network_acl_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -83,13 +100,33 @@ func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
+	var icmpType string
+	if v, ok := d.GetOk("icmp_type"); ok {
+		icmpType = strconv.Itoa(v.(int))
+	}
+	var icmpCode string
+	if v, ok := d.GetOk("icmp_code"); ok {
+		icmpCode = strconv.Itoa(v.(int))
+	}
+	var startPort string
+	if v, ok := d.GetOk("start_port"); ok {
+		startPort = strconv.Itoa(v.(int))
+	}
+	var endPort string
+	if v, ok := d.GetOk("end_port"); ok {
+		endPort = strconv.Itoa(v.(int))
+	}
+
 	aclRuleToCreate := cloudca.NetworkAclRule{
-		RuleNumber:   d.Get("rule_number").(string),
+		RuleNumber:   strconv.Itoa(d.Get("rule_number").(int)),
+		Cidr:         d.Get("cidr").(string),
 		Action:       d.Get("action").(string),
 		Protocol:     d.Get("protocol").(string),
 		TrafficType:  d.Get("traffic_type").(string),
-		IcmpType:     d.Get("icmp_type").(string),
-		IcmpCode:     d.Get("icmp_code").(string),
+		IcmpType:     icmpType,
+		IcmpCode:     icmpCode,
+		StartPort:    startPort,
+		EndPort:      endPort,
 		NetworkAclId: d.Get("network_acl_id").(string),
 	}
 	newAclRule, err := ccaResources.NetworkAclRules.Create(aclRuleToCreate)
@@ -97,7 +134,7 @@ func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Error creating the new network ACL rule %s: %s", aclRuleToCreate.RuleNumber, err)
 	}
 	d.SetId(newAclRule.Id)
-	return resourceCloudcaNetworkAclRead(d, meta)
+	return resourceCloudcaNetworkAclRuleRead(d, meta)
 }
 
 func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -105,21 +142,37 @@ func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-	if d.HasChange("rule_number") || d.HasChange("action") ||
-		d.HasChange("traffic_type") || d.HasChange("icmp_type") ||
-		d.HasChange("icmp_code") {
-		aclRuleToUpdate := cloudca.NetworkAclRule{
-			Id:          d.Id(),
-			RuleNumber:  d.Get("rule_number").(string),
-			Action:      d.Get("action").(string),
-			TrafficType: d.Get("traffic_type").(string),
-			IcmpType:    d.Get("icmp_type").(string),
-			IcmpCode:    d.Get("icmp_code").(string),
-		}
-		_, err := ccaResources.NetworkAclRules.Update(d.Id(), aclRuleToUpdate)
-		if err != nil {
-			return err
-		}
+	var icmpType string
+	if v, ok := d.GetOk("icmp_type"); ok {
+		icmpType = strconv.Itoa(v.(int))
+	}
+	var icmpCode string
+	if v, ok := d.GetOk("icmp_code"); ok {
+		icmpCode = strconv.Itoa(v.(int))
+	}
+	var startPort string
+	if v, ok := d.GetOk("start_port"); ok {
+		startPort = strconv.Itoa(v.(int))
+	}
+	var endPort string
+	if v, ok := d.GetOk("end_port"); ok {
+		endPort = strconv.Itoa(v.(int))
+	}
+
+	aclRuleToUpdate := cloudca.NetworkAclRule{
+		Id:          d.Id(),
+		RuleNumber:  strconv.Itoa(d.Get("rule_number").(int)),
+		Cidr:        d.Get("cidr").(string),
+		Action:      d.Get("action").(string),
+		TrafficType: d.Get("traffic_type").(string),
+		IcmpType:    icmpType,
+		IcmpCode:    icmpCode,
+		StartPort:   startPort,
+		EndPort:     endPort,
+	}
+	_, err := ccaResources.NetworkAclRules.Update(d.Id(), aclRuleToUpdate)
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -141,10 +194,31 @@ func resourceCloudcaNetworkAclRuleRead(d *schema.ResourceData, meta interface{})
 		return aErr
 	}
 
+	var icmpType int
+	if aclRule.IcmpType != "" {
+		icmpType, _ = strconv.Atoi(aclRule.IcmpType)
+	}
+	var icmpCode int
+	if aclRule.IcmpCode != "" {
+		icmpCode, _ = strconv.Atoi(aclRule.IcmpCode)
+	}
+	var startPort int
+	if aclRule.StartPort != "" {
+		startPort, _ = strconv.Atoi(aclRule.StartPort)
+	}
+	var endPort int
+	if aclRule.EndPort != "" {
+		endPort, _ = strconv.Atoi(aclRule.EndPort)
+	}
+
 	d.Set("rule_number", aclRule.RuleNumber)
-	d.Set("action", aclRule.Action)
-	d.Set("protocol", aclRule.Protocol)
-	d.Set("traffic_type", aclRule.TrafficType)
+	d.Set("action", strings.ToLower(aclRule.Action))
+	d.Set("protocol", strings.ToLower(aclRule.Protocol))
+	d.Set("traffic_type", strings.ToLower(aclRule.TrafficType))
+	d.Set("icmp_type", icmpType)
+	d.Set("icmp_code", icmpCode)
+	d.Set("start_port", startPort)
+	d.Set("end_port", endPort)
 	d.Set("network_acl_id", aclRule.NetworkAclId)
 
 	return nil

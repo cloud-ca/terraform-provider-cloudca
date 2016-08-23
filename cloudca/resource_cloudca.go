@@ -14,6 +14,7 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_port_forwarding_rule": resourceCloudcaPortForwardingRule(),
 		"cloudca_public_ip":            resourceCloudcaPublicIp(),
 		"cloudca_network_acl":          resourceCloudcaNetworkAcl(),
+		"cloudca_network_acl_rule":     resourceCloudcaNetworkAclRule(),
 	}
 }
 

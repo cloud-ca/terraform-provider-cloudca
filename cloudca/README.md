@@ -3,6 +3,7 @@
 - [**cloudca_vpc**](#cloudca_vpc)
 - [**cloudca_tier**](#cloudca_tier)
 - [**cloudca_network_acl**](#cloudca_network_acl)
+- [**cloudca_network_acl_rule**](#cloudca_network_acl_rule)
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_public_ip**](#cloudca_public_ip)
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
@@ -108,6 +109,42 @@ The following arguments are supported:
 - name - (Required) Name of the network ACL
 - description - (Required) Description of the network ACL
 - vpc_id - (Required) ID of the vpc where the network ACL should be created
+
+###Attribute Reference
+- id - ID of network ACL.
+- name - Name of network ACL.
+
+##cloudca_network_acl_rule
+Create a network ACL rule.
+
+###Example usage
+```
+resource "cloudca_network_acl_rule" "my_acl" {
+	service_code = "compute-east"
+	environment_name = "dev"
+	rule_number = 55
+	action = "Allow"
+	protocol = "TCP"
+	start_port = 80
+	end_port = 80
+	traffic_type = "Ingress"
+	network_acl_id = "c0731f8b-92f0-4fac-9cbd-245468955fdf"
+}
+```
+###Argument Reference
+The following arguments are supported:
+- service_code - (Required) Service code
+- environment_name - (Required) Name of environment
+- rule_number - (Required) Rule number of the network ACL rule
+- cidr - (Required) Cidr of the network ACL rule
+- action - (Required) Action of the network ACL rule (i.e. Allow or Deny)
+- protocol - (Required) Protocol of the network ACL rule (i.e. TCP, UDP, ICMP or All)
+- traffic_type - (Required) TrafficType of the network ACL rule (i.e. Ingress or Egress)
+- icmp_type - (Optional) The ICMP type. Can only be used with ICMP protocol
+- icmp_code - (Optional) The ICMP code. Can only be used with ICMP protocol
+- start_port - (Optional) The start port. Can only be used with TCP/UDP protocol
+- end_port - (Optional) The end port. Can only be used with TCP/UDP protocol
+- network_acl_id - (Required) ID of the network ACL where the rule should be created
 
 ###Attribute Reference
 - id - ID of network ACL.
