@@ -112,7 +112,7 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", volume.Name)
 	d.Set("zone_name", volume.ZoneName)
 	d.Set("storage_tier", volume.StorageTier)
-	d.Set("size_in_gb", volume.Size)
+	d.Set("size_in_gb", volume.GbSize)
 	d.Set("instance_id", volume.InstanceId)
 	return nil
 }
