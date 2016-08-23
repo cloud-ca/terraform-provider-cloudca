@@ -112,7 +112,7 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("name", volume.Name)
 	d.Set("zone_name", volume.ZoneName)
 	d.Set("storage_tier", volume.StorageTier)
-	d.Set("size", volume.Size)
+	d.Set("size_in_gb", volume.Size)
 	d.Set("instance_id", volume.InstanceId)
 	return nil
 }
@@ -175,7 +175,7 @@ func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string,
 			return diskOffering.Id, nil
 		}
 	}
-	return "", fmt.Errorf("No valid disk offering's were found with storage tier: %s and size: %s", storageTier, size)
+	return "", fmt.Errorf("No valid disk offering's were found with storage tier: %s and size: %d", storageTier, size)
 }
 
 func retrieveZoneId(ccaResources *cloudca.Resources, zoneName string) (zoneId string, nerr error) {
