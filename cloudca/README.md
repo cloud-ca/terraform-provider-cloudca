@@ -72,7 +72,7 @@ resource "cloudca_tier" "my_tier" {
 	description = "This is a test tier"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 	network_offering = "Standard Tier"
-	network_acl = "default_allow"
+	network_acl_id = "7d428416-263d-47cd-9270-2cdbdf222f57"
 }
 ```
 ###Argument Reference
@@ -98,7 +98,7 @@ resource "cloudca_network_acl" "my_acl" {
 	environment_name = "dev"
 	name = "test-acl"
 	description = "This is a test acl"
-	vpc = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
+	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
 ###Argument Reference
@@ -107,7 +107,7 @@ The following arguments are supported:
 - environment_name - (Required) Name of environment
 - name - (Required) Name of the network ACL
 - description - (Required) Description of the network ACL
-- vpc - (Required) The name or ID of the vpc where the network ACL should be created
+- vpc_id - (Required) ID of the vpc where the network ACL should be created
 
 ###Attribute Reference
 - id - ID of network ACL.
