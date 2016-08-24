@@ -58,7 +58,7 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "The network ACL rule protocol (i.e. TCP, UDP, ICMP or ALL)",
+				Description: "The network ACL rule protocol (i.e. TCP, UDP, ICMP or All)",
 				StateFunc: func(val interface{}) string {
 					return strings.ToLower(val.(string))
 				},
