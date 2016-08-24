@@ -35,11 +35,11 @@ func resourceCloudcaVolume() *schema.Resource {
 				ForceNew:    true,
 				Description: "The name of the volume to be created",
 			},
-			"zone_name": &schema.Schema{
+			"zone": &schema.Schema{
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "The zone into which the volume will be create",
+				Description: "The ID or name of the zone into which the volume will be create",
 			},
 			"storage_tier": &schema.Schema{
 				Type:        schema.TypeString,
@@ -78,11 +78,14 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 		DiskOfferingId: diskOfferingId,
 	}
 
-	if zoneName, ok := d.GetOk("zone_name"); ok {
-		if zoneId, err := retrieveZoneId(&ccaResources, zoneName.(string)); err != nil {
-			return err
+	if zone, ok := d.GetOk("zone"); ok {
+		if isID(zone.(string)) {
+			volumeToCreate.ZoneId = zone.(string)
 		} else {
-			volumeToCreate.ZoneId = zoneId
+			volumeToCreate.ZoneId, err = retrieveZoneId(&ccaResources, zone.(string))
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -110,7 +113,7 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 		return handleVolumeNotFoundError(err, d)
 	}
 	d.Set("name", volume.Name)
-	d.Set("zone_name", volume.ZoneName)
+	setValueOrID(d, "zone", volume.ZoneName, volume.ZoneId)
 	d.Set("storage_tier", volume.StorageTier)
 	d.Set("size_in_gb", volume.GbSize)
 	d.Set("instance_id", volume.InstanceId)
@@ -131,7 +134,7 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 		if oldInstanceId != "" {
 			err := ccaResources.Volumes.DetachFromInstance(volume)
 			if err != nil {
-				return fmt.Errorf("%s %s", oldInstanceId, newInstanceId)
+				return err
 			}
 		}
 		if newInstanceId != "" {

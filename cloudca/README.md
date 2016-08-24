@@ -227,7 +227,7 @@ resource "cloudca_volume" "data_volume" {
 - name - (Required) The name of the volume to be created
 - storage_tier - (Required) Either performance, intermediate or standard
 - size_in_gb - (Required) The size of the volume. Must be a valid size for the chosen storage tier
-- zone_name - (Optional) Only required if there is more than one zone in the service specified by the `service_code`
+- zone - (Optional) Only required if there is more than one zone in the service specified by the `service_code`. Can be a name of an ID of a zone.
 - instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
 
 ###Attribute reference
