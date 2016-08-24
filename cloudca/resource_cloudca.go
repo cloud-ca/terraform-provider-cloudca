@@ -3,6 +3,7 @@ package cloudca
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"regexp"
+	"strconv"
 )
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {
@@ -29,4 +30,12 @@ func setValueOrID(d *schema.ResourceData, key string, value string, id string) {
 func isID(id string) bool {
 	re := regexp.MustCompile(`^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$`)
 	return re.MatchString(id)
+}
+
+func readIntFromString(valStr string) int {
+	var valInt int
+	if valStr != "" {
+		valInt, _ = strconv.Atoi(valStr)
+	}
+	return valInt
 }
