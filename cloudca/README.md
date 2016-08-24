@@ -6,6 +6,7 @@
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_public_ip**](#cloudca_public_ip)
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
+- [**cloudca_volume**](#cloudca_volume)
 
 ##cloudca_environment
 Manages a cloud.ca environment
@@ -201,3 +202,33 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - public_ip - the public IP address of this rule
 - private_ip - the private IP address of this rule
 - instance_id - the instance associated with the private IP address of this rule
+
+##cloudca_volume
+Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation of the volume.
+
+If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
+
+###Example usage
+```
+resource "cloudca_volume" "data_volume" {
+	service_code = "compute-east"
+	environment_name = "dev"
+
+	name = "Data Volume"
+	storage_tier = "performance"
+	size_in_gb = 20
+	instance_id = "f932c530-5753-44ce-8aae-263672e1ae3f"
+}
+```
+
+###Argument reference
+- service_code - (Required)
+- environment_name - (Required)
+- name - (Required) The name of the volume to be created
+- storage_tier - (Required) Either performance, intermediate or standard
+- size_in_gb - (Required) The size of the volume. Must be a valid size for the chosen storage tier
+- zone - (Optional) Only required if there is more than one zone in the service specified by the `service_code`. Can be a name of an ID of a zone.
+- instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
+
+###Attribute reference
+- id - the volume ID
