@@ -135,6 +135,7 @@ resource "cloudca_network_acl_rule" "my_acl" {
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
+- network_acl_id - (Required) ID of the network ACL where the rule should be created
 - rule_number - (Required) Rule number of the network ACL rule
 - cidr - (Required) Cidr of the network ACL rule
 - action - (Required) Action of the network ACL rule (i.e. Allow or Deny)
@@ -144,7 +145,6 @@ The following arguments are supported:
 - icmp_code - (Optional) The ICMP code. Can only be used with ICMP protocol
 - start_port - (Optional) The start port. Can only be used with TCP/UDP protocol
 - end_port - (Optional) The end port. Can only be used with TCP/UDP protocol
-- network_acl_id - (Required) ID of the network ACL where the rule should be created
 
 ###Attribute Reference
 - id - ID of network ACL.
