@@ -31,9 +31,9 @@ provider "cloudca" {
 }
 ```
 
-#Links
+# Links
 - [**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
 
-#License
+# License
 
 This project is licensed under the terms of the MIT license.

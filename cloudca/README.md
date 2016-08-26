@@ -1,4 +1,4 @@
-#Resources
+# Resources
 - [**cloudca_environment**](#cloudca_environment)
 - [**cloudca_vpc**](#cloudca_vpc)
 - [**cloudca_tier**](#cloudca_tier)
@@ -9,10 +9,10 @@
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
 - [**cloudca_volume**](#cloudca_volume)
 
-##cloudca_environment
+## cloudca_environment
 Manages a cloud.ca environment
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_environment" "my_environment" {
 	service_code = "compute-east"
@@ -23,24 +23,24 @@ resource "cloudca_environment" "my_environment" {
 	read_only_role = ["franz","bob"]
 }
 ```
-###Argument Reference
+### Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
 - organization_code - (Required) Organization's entry point, i.e. \<entry_point\>.cloud.ca
-- name - (Required) Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes
+- name - (Required) Name of environment to be created. Must be lower case, contain alphanumeric characters, underscores or dashes
 - description - (Required) Description for the environment
 - admin_role - (Optional) List of users that will be given the Environment Admin role
 - user_role - (Optional) List of users that will be given the User role
 - read_only_role - (Optional) List of users that will be given the Read-only role
 
-###Attribute Reference
+### Attribute Reference
 - id - ID of the environment.
 - name - Name of the environment.
 
-##cloudca_vpc
+## cloudca_vpc
 Create a vpc.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_vpc" "my_vpc" {
 	service_code = "compute-east"
@@ -50,7 +50,7 @@ resource "cloudca_vpc" "my_vpc" {
 	vpc_offering = "Default VPC offering"
 }
 ```
-###Argument Reference
+### Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
@@ -59,13 +59,13 @@ The following arguments are supported:
 - vpc_offering - (Required) The name of the VPC offering to use for the vpc
 - network_domain - (Optional) A custom DNS suffix at the level of a network
 
-###Attribute Reference
+### Attribute Reference
 - id - ID of VPC.
 
-##cloudca_tier
+## cloudca_tier
 Create a tier.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_tier" "my_tier" {
 	service_code = "compute-east"
@@ -77,7 +77,7 @@ resource "cloudca_tier" "my_tier" {
 	network_acl_id = "7d428416-263d-47cd-9270-2cdbdf222f57"
 }
 ```
-###Argument Reference
+### Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
@@ -87,13 +87,13 @@ The following arguments are supported:
 - network_offering - (Required) The name of the network offering to use for the tier
 - network_acl - (Required) The name of the network ACL to use for the tier
 
-###Attribute Reference
+### Attribute Reference
 - id - ID of tier.
 
-##cloudca_network_acl
+## cloudca_network_acl
 Create a network ACL.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_network_acl" "my_acl" {
 	service_code = "compute-east"
@@ -109,16 +109,16 @@ The following arguments are supported:
 - environment_name - (Required) Name of environment
 - name - (Required) Name of the network ACL
 - description - (Required) Description of the network ACL
-- vpc_id - (Required) ID of the vpc where the network ACL should be created
+- vpc_id - (Required) ID of the VPC where the network ACL should be created
 
-###Attribute Reference
+### Attribute Reference
 - id - ID of network ACL.
 - name - Name of network ACL.
 
-##cloudca_network_acl_rule
+## cloudca_network_acl_rule
 Create a network ACL rule.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_network_acl_rule" "my_acl" {
 	service_code = "compute-east"
@@ -132,13 +132,13 @@ resource "cloudca_network_acl_rule" "my_acl" {
 	network_acl_id = "c0731f8b-92f0-4fac-9cbd-245468955fdf"
 }
 ```
-###Argument Reference
+### Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
 - network_acl_id - (Required) ID of the network ACL where the rule should be created
 - rule_number - (Required) Rule number of the network ACL rule
-- cidr - (Required) Cidr of the network ACL rule
+- cidr - (Required) CIDR of the network ACL rule
 - action - (Required) Action of the network ACL rule (i.e. Allow or Deny)
 - protocol - (Required) Protocol of the network ACL rule (i.e. TCP, UDP, ICMP or All)
 - traffic_type - (Required) TrafficType of the network ACL rule (i.e. Ingress or Egress)
@@ -147,14 +147,14 @@ The following arguments are supported:
 - start_port - (Optional) The start port. Can only be used with TCP/UDP protocol
 - end_port - (Optional) The end port. Can only be used with TCP/UDP protocol
 
-###Attribute Reference
+### Attribute Reference
 - id - ID of network ACL.
 - name - Name of network ACL.
 
-##cloudca_instance
+## cloudca_instance
 Create and starts an instance.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_instance" "my_instance" {
 	service_code = "compute-east"
@@ -166,7 +166,7 @@ resource "cloudca_instance" "my_instance" {
 	ssh_key_name = "my_ssh_key"
 }
 ```
-###Argument Reference
+### Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
@@ -179,14 +179,14 @@ The following arguments are supported:
 - public_key - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
 - purge - (Optional) If true, then it will purge the instance on destruction
 
-###Attribute Reference
+### Attribute Reference
 - id - ID of instance.
 - private_ip_id - ID of instance's private IP
 
-##cloudca_public_ip
+## cloudca_public_ip
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_public_ip" "my_publicip" {
 	service_code = "compute-east"
@@ -194,22 +194,22 @@ resource "cloudca_public_ip" "my_publicip" {
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
-###Argument Reference
+### Argument Reference
 The following arguments are supported:
 - service_code - (Required) Service code
 - environment_name - (Required) Name of environment
-- vpc_id - (Required) The ID of the vpc to acquire the public IP
+- vpc_id - (Required) The ID of the VPC to acquire the public IP
 
-###Attribute Reference
+### Attribute Reference
 - id - The public IP ID.
 - ip_address - The public IP address
 
-##cloudca_port_forwarding_rule
+## cloudca_port_forwarding_rule
 Manages port forwarding rules. Modifying any field will result in destruction and recreation of the rule.
 
 When adding a port forwarding rule to the default private IP of an instance, only the instance id is required. Alternatively, the private_ip_id can be used on its own (for example when targeting an instance secondary IP).
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_port_forwarding_rule" "web_pfr" {
 	service_code = "compute-east"
@@ -223,7 +223,7 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 }
 ```
 
-###Argument reference
+### Argument reference
 - service_code - (Required)
 - environment_name - (Required)
 - private_ip_id - (Required) The private IP which should be used to create this rule
@@ -234,18 +234,18 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - public_port_end - (Optional) If not specified, defaults to the public start port
 - protocol - (Required) The protocol to be used for this rule - must be TCP or UDP
 
-###Attribute reference
+### Attribute reference
 - id - the rule ID
 - public_ip - the public IP address of this rule
 - private_ip - the private IP address of this rule
 - instance_id - the instance associated with the private IP address of this rule
 
-##cloudca_volume
+## cloudca_volume
 Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation of the volume.
 
 If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
 
-###Example usage
+### Example usage
 ```
 resource "cloudca_volume" "data_volume" {
 	service_code = "compute-east"
@@ -258,7 +258,7 @@ resource "cloudca_volume" "data_volume" {
 }
 ```
 
-###Argument reference
+### Argument reference
 - service_code - (Required)
 - environment_name - (Required)
 - name - (Required) The name of the volume to be created
@@ -267,5 +267,5 @@ resource "cloudca_volume" "data_volume" {
 - zone - (Optional) Only required if there is more than one zone in the service specified by the `service_code`. Can be a name of an ID of a zone.
 - instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
 
-###Attribute reference
+### Attribute reference
 - id - the volume ID
