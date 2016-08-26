@@ -76,7 +76,7 @@ func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) err
 	if aErr != nil {
 		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("ACL %s not found", acl.Id)
+				fmt.Errorf("ACL %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}
