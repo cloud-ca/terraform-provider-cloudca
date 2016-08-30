@@ -13,7 +13,7 @@
 Manages a cloud.ca environment
 
 ### Example usage
-```
+```hcl
 resource "cloudca_environment" "my_environment" {
 	service_code = "compute-east"
 	organization_code = "test"
@@ -41,7 +41,7 @@ The following arguments are supported:
 Create a vpc.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_vpc" "my_vpc" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -66,7 +66,7 @@ The following arguments are supported:
 Create a tier.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_tier" "my_tier" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -94,7 +94,7 @@ The following arguments are supported:
 Create a network ACL.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_network_acl" "my_acl" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -119,7 +119,7 @@ The following arguments are supported:
 Create a network ACL rule.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_network_acl_rule" "my_acl" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -155,7 +155,7 @@ The following arguments are supported:
 Create and starts an instance.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_instance" "my_instance" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -187,7 +187,7 @@ The following arguments are supported:
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_public_ip" "my_publicip" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -210,7 +210,7 @@ Manages port forwarding rules. Modifying any field will result in destruction an
 When adding a port forwarding rule to the default private IP of an instance, only the instance id is required. Alternatively, the private_ip_id can be used on its own (for example when targeting an instance secondary IP).
 
 ### Example usage
-```
+```hcl
 resource "cloudca_port_forwarding_rule" "web_pfr" {
 	service_code = "compute-east"
 	environment_name = "dev"
@@ -246,7 +246,7 @@ Manages volumes. Modifying all fields with the exception of instance_id will res
 If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
 
 ### Example usage
-```
+```hcl
 resource "cloudca_volume" "data_volume" {
 	service_code = "compute-east"
 	environment_name = "dev"
