@@ -265,7 +265,7 @@ resource "cloudca_volume" "data_volume" {
 - environment_name - (Required)
 - name - (Required) The name of the volume to be created
 - disk_offering - (Required) The name or id of the disk offering to use for the volume
-- size_in_gb - (Optional) The size of the volume. Only for disk offerings with custom size.
+- size_in_gb - (Optional) The size in GB of the volume. Only for disk offerings with custom size.
 - iops - (Optional) The number of IOPS of the volume. Only for disk offerings with custom iops.
 - zone - (Optional) Only required if there is more than one zone in the service specified by the `service_code`. Can be a name of an ID of a zone.
 - instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
