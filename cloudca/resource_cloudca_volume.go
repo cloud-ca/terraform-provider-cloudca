@@ -2,11 +2,13 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strings"
 )
 
 func resourceCloudcaVolume() *schema.Resource {
@@ -41,17 +43,28 @@ func resourceCloudcaVolume() *schema.Resource {
 				ForceNew:    true,
 				Description: "The ID or name of the zone into which the volume will be create",
 			},
-			"storage_tier": &schema.Schema{
+			"disk_offering": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "The storage tier name",
+				Description: "The ID or name of the disk offering of the new volume",
+				StateFunc: func(val interface{}) string {
+					return strings.ToLower(val.(string))
+				},
 			},
 			"size_in_gb": &schema.Schema{
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				ForceNew:    true,
-				Description: "The size of the disk volume in gigabytes",
+				Computed:    true,
+				Description: "The size of the volume in gigabytes",
+			},
+			"iops": &schema.Schema{
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Computed:    true,
+				Description: "The number of iops of the volume",
 			},
 			"instance_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -67,15 +80,27 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-	storageTier := d.Get("storage_tier").(string)
-	size := d.Get("size_in_gb").(int)
-	diskOfferingId, err := retrieveDiskOfferingId(&ccaResources, storageTier, size)
+	diskOffering, err := retrieveDiskOffering(&ccaResources, d.Get("disk_offering").(string))
 	if err != nil {
 		return err
 	}
 	volumeToCreate := cloudca.Volume{
 		Name:           d.Get("name").(string),
-		DiskOfferingId: diskOfferingId,
+		DiskOfferingId: diskOffering.Id,
+	}
+
+	if val, ok := d.GetOk("size_in_gb"); ok {
+		if !diskOffering.CustomSize {
+			return fmt.Errorf("Disk offering %s doesn't allow custom size", diskOffering.Id)
+		}
+		volumeToCreate.GbSize = val.(int)
+	}
+
+	if val, ok := d.GetOk("iops"); ok {
+		if !diskOffering.CustomIops {
+			return fmt.Errorf("Disk offering %s doesn't allow custom IOPS", diskOffering.Id)
+		}
+		volumeToCreate.Iops = val.(int)
 	}
 
 	if zone, ok := d.GetOk("zone"); ok {
@@ -114,8 +139,9 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("name", volume.Name)
 	setValueOrID(d, "zone", volume.ZoneName, volume.ZoneId)
-	d.Set("storage_tier", volume.StorageTier)
+	setValueOrID(d, "disk_offering", strings.ToLower(volume.DiskOfferingName), volume.DiskOfferingId)
 	d.Set("size_in_gb", volume.GbSize)
+	d.Set("iops", volume.Iops)
 	d.Set("instance_id", volume.InstanceId)
 	return nil
 }
@@ -168,19 +194,6 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-func retrieveDiskOfferingId(ccaResources *cloudca.Resources, storageTier string, size int) (id string, err error) {
-	diskOfferings, err := ccaResources.DiskOfferings.List()
-	if err != nil {
-		return "", err
-	}
-	for _, diskOffering := range diskOfferings {
-		if strings.EqualFold(diskOffering.StorageTier, storageTier) && diskOffering.GbSize == size {
-			return diskOffering.Id, nil
-		}
-	}
-	return "", fmt.Errorf("No valid disk offering's were found with storage tier: %s and size: %d", storageTier, size)
-}
-
 func retrieveZoneId(ccaResources *cloudca.Resources, zoneName string) (zoneId string, nerr error) {
 	zones, err := ccaResources.Zones.List()
 	if err != nil {
@@ -192,6 +205,23 @@ func retrieveZoneId(ccaResources *cloudca.Resources, zoneName string) (zoneId st
 		}
 	}
 	return "", fmt.Errorf("Zone with name %s could not be found", zoneName)
+}
+
+func retrieveDiskOffering(ccaRes *cloudca.Resources, name string) (diskOffering *cloudca.DiskOffering, err error) {
+	if isID(name) {
+		return ccaRes.DiskOfferings.Get(name)
+	}
+	offerings, err := ccaRes.DiskOfferings.List()
+	if err != nil {
+		return nil, err
+	}
+	for _, offering := range offerings {
+		if strings.EqualFold(offering.Name, name) {
+			log.Printf("Found disk offering: %+v", offering)
+			return &offering, nil
+		}
+	}
+	return nil, fmt.Errorf("Disk offering with name %s not found", name)
 }
 
 func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
