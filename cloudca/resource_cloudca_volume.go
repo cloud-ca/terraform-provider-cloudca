@@ -114,15 +114,13 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
+   if instanceId, ok := d.GetOk("instance_id"); ok {
+      volumeToCreate.InstanceId = instanceId.(string)
+   }
+
 	newVolume, err := ccaResources.Volumes.Create(volumeToCreate)
 	if err != nil {
 		return err
-	}
-	if instanceId, ok := d.GetOk("instance_id"); ok {
-		err = ccaResources.Volumes.AttachToInstance(newVolume, instanceId.(string))
-		if err != nil {
-			return err
-		}
 	}
 	d.SetId(newVolume.Id)
 	return resourceCloudcaVolumeRead(d, meta)
