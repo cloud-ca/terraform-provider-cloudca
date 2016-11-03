@@ -85,7 +85,7 @@ The following arguments are supported:
 - description - (Required) Description of the tier
 - vpc_id - (Required) The ID of the vpc where the tier should be created
 - network_offering - (Required) The name of the network offering to use for the tier
-- network_acl - (Required) The name of the network ACL to use for the tier
+- network_acl_id - (Required) The id of the network ACL to use for the tier
 
 ### Attribute Reference
 - id - ID of tier.
@@ -174,7 +174,7 @@ The following arguments are supported:
 - network_id - (Required) The ID of the network where the instance should be created
 - template - (Required) Name of template to use for the instance
 - compute_offering - (Required) Name of the compute offering to use for the instance
-- user_date - (Optional) User data to add to the instance
+- user_data - (Optional) User data to add to the instance
 - ssh_key_name - (Optional) Name of the SSH key pair to attach to the instance. Mutually exclusive with public_key.
 - public_key - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
 - purge - (Optional) If true, then it will purge the instance on destruction
