@@ -180,7 +180,7 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 
 	if adminRoleExists || userRoleExists || readOnlyRoleExists {
 
-		users, uerr := ccaClient.Users.ListWithOptions(map[string]string{"tenantId": organizationId})
+		users, uerr := ccaClient.Users.ListWithOptions(map[string]string{"organizationId": organizationId})
 		if uerr != nil {
 			return &environment, uerr
 		}
