@@ -20,7 +20,7 @@ $ sudo cp terraform-provider-cloudca $(dirname `which terraform`)
 
 In your configuration file, define a variable that will hold your API key. This variable will have the value of the environment variable "TF_VAR_my_api_key". Create a new "cloudca" provider with the api_key. Optionally, you can override the api_url field of the provider.
 ```hcl
-var "my_api_key" {}
+variable "my_api_key" {}
 
 provider "cloudca" {
 	api_key = "${var.my_api_key}"
