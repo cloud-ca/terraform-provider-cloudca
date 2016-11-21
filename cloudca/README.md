@@ -15,7 +15,7 @@ Manages a cloud.ca environment
 ### Example usage
 ```hcl
 resource "cloudca_environment" "my_environment" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	organization_code = "test"
 	name = "production"
 	description = "Environment for production workloads"
@@ -43,7 +43,7 @@ Create a vpc.
 ### Example usage
 ```hcl
 resource "cloudca_vpc" "my_vpc" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 	name = "test-vpc"
 	description = "This is a test vpc"
@@ -68,7 +68,7 @@ Create a tier.
 ### Example usage
 ```hcl
 resource "cloudca_tier" "my_tier" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 	name = "test-tier"
 	description = "This is a test tier"
@@ -96,7 +96,7 @@ Create a network ACL.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl" "my_acl" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 	name = "test-acl"
 	description = "This is a test acl"
@@ -121,7 +121,7 @@ Create a network ACL rule.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl_rule" "my_acl" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 	rule_number = 55
 	action = "Allow"
@@ -157,7 +157,7 @@ Create and starts an instance.
 ### Example usage
 ```hcl
 resource "cloudca_instance" "my_instance" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 	name = "test-instance"
 	network_id = "672016ef-05ee-4e88-b68f-ac9cc462300b"
@@ -189,7 +189,7 @@ Acquires a public IP in a specific VPC. If you update any of the fields in the r
 ### Example usage
 ```hcl
 resource "cloudca_public_ip" "my_publicip" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
@@ -212,7 +212,7 @@ When adding a port forwarding rule to the default private IP of an instance, onl
 ### Example usage
 ```hcl
 resource "cloudca_port_forwarding_rule" "web_pfr" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 
 	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
@@ -248,7 +248,7 @@ If the instance_id is updated, where the volume has not yet been attached, the v
 ### Example usage
 ```hcl
 resource "cloudca_volume" "data_volume" {
-	service_code = "compute-east"
+	service_code = "compute-qc"
 	environment_name = "dev"
 
 	name = "Data Volume"
