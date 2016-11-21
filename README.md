@@ -9,6 +9,7 @@ $ go get github.com/cloud-ca/terraform-cloudca
 ```
 Compile the provider:
 ```Shell
+$ cd $GOPATH/src/github.com/cloud-ca/terraform-cloudca
 $ go build -o terraform-provider-cloudca
 ```
 Copy it to the directory where terraform is located:
