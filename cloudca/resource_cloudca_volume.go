@@ -41,6 +41,7 @@ func resourceCloudcaVolume() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "The ID or name of the zone into which the volume will be create",
 			},
 			"disk_offering": &schema.Schema{

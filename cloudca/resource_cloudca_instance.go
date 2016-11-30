@@ -81,6 +81,20 @@ func resourceCloudcaInstance() *schema.Resource {
 				Description: "Additional data passed to the new instance during its initialization",
 			},
 
+			"cpu_count": &schema.Schema{
+				Type:        schema.TypeInt,
+				Optional:    true,
+            Computed:    true,
+				Description: "The instances CPU count. If the compute offering is custom, this value is required",
+			},
+
+         "memory_in_mb": &schema.Schema{
+            Type:        schema.TypeInt,
+            Optional:    true,
+            Computed:    true,
+            Description: "The instance's memory in MB. If the compute offering is custom, this value is required",
+         },
+
 			"purge": &schema.Schema{
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -127,6 +141,12 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	if userData, ok := d.GetOk("user_data"); ok {
 		instanceToCreate.UserData = userData.(string)
 	}
+   if cpuCount, ok := d.GetOk("cpu_count"); ok {
+      instanceToCreate.CpuCount = cpuCount.(int)
+   }
+   if memoryInMB, ok := d.GetOk("memory_in_mb"); ok {
+      instanceToCreate.MemoryInMB = memoryInMB.(int)
+   }
 
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
 	if err != nil {

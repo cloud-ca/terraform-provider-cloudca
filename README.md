@@ -2,6 +2,8 @@
 
 Terraform provider for cloud.ca
 
+Tested with Terraform version : 0.7.12
+
 # Installation
 Download the provider:
 ```Shell
