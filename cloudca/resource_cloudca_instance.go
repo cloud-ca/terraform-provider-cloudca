@@ -142,11 +142,22 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	if userData, ok := d.GetOk("user_data"); ok {
 		instanceToCreate.UserData = userData.(string)
 	}
+
+	hasCustomFields := false
 	if cpuCount, ok := d.GetOk("cpu_count"); ok {
 		instanceToCreate.CpuCount = cpuCount.(int)
+		hasCustomFields = true
 	}
 	if memoryInMB, ok := d.GetOk("memory_in_mb"); ok {
 		instanceToCreate.MemoryInMB = memoryInMB.(int)
+		hasCustomFields = true
+	}
+
+	computeOffering, cerr := ccaResources.ComputeOfferings.Get(computeOfferingId)
+	if cerr != nil {
+		return cerr
+	} else if !computeOffering.Custom && hasCustomFields {
+		return fmt.Errorf("Cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
 	}
 
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
@@ -209,12 +220,24 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		instanceToUpdate := cloudca.Instance{Id: d.Id(),
 			ComputeOfferingId: newComputeOfferingId,
 		}
+
+		hasCustomFields := false
 		if cpuCount, ok := d.GetOk("cpu_count"); ok {
 			instanceToUpdate.CpuCount = cpuCount.(int)
+			hasCustomFields = true
 		}
 		if memoryInMB, ok := d.GetOk("memory_in_mb"); ok {
 			instanceToUpdate.MemoryInMB = memoryInMB.(int)
+			hasCustomFields = true
 		}
+
+		computeOffering, cerr := ccaResources.ComputeOfferings.Get(newComputeOfferingId)
+		if cerr != nil {
+			return cerr
+		} else if !computeOffering.Custom && hasCustomFields {
+			return fmt.Errorf("Cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
+		}
+
 		_, err := ccaResources.Instances.ChangeComputeOffering(instanceToUpdate)
 		if err != nil {
 			return err
