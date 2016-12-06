@@ -174,6 +174,8 @@ The following arguments are supported:
 - network_id - (Required) The ID of the network where the instance should be created
 - template - (Required) Name of template to use for the instance
 - compute_offering - (Required) Name of the compute offering to use for the instance
+- cpu_count - (Required if custom compute offering) Number of CPUs the instance should be created with. Can only be used for custom compute offerings.
+- memory_in_mb - (Required if custom compute offering) Amount of memory in MB the instance should be created with. Can only be used for custom compute offerings.
 - user_data - (Optional) User data to add to the instance
 - ssh_key_name - (Optional) Name of the SSH key pair to attach to the instance. Mutually exclusive with public_key.
 - public_key - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
