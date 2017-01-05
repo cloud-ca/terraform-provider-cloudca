@@ -40,6 +40,10 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
             ForceNew:    true,
             Description: "The public IP to which the rule should be applied",
          },
+         "public_ip": &schema.Schema{
+            Type:        schema.TypeString,
+            Computed:    true,
+         },
          "network_id": &schema.Schema{
             Type:        schema.TypeString,
             Optional:    true,
@@ -72,9 +76,9 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
          },
          "instance_ids": &schema.Schema{
             Type:        schema.TypeList,
-            Elem:        &schema.Schema{Type: schema.TypeString},
             Optional:    true,
             Description: "List of instance ids that will be load balanced",
+            Elem:        &schema.Schema{Type: schema.TypeString},
          },
          "stickiness_method": &schema.Schema{
             Type:        schema.TypeString,
@@ -100,18 +104,23 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
    }
 
    lbr := cloudca.LoadBalancerRule{
+      Name:             d.Get("name").(string),
       PublicIpId:       d.Get("public_ip_id").(string),
-      NetworkId:       d.Get("network_id").(string),
+      NetworkId:        d.Get("network_id").(string),
       Protocol:         d.Get("protocol").(string),
-      Algorithm:         d.Get("algorithm").(string),
-      PublicPort:  strconv.Itoa(d.Get("public_port").(int)),
+      Algorithm:        d.Get("algorithm").(string),
+      PublicPort:       strconv.Itoa(d.Get("public_port").(int)),
       PrivatePort:      strconv.Itoa(d.Get("private_port").(int)),
    }
 
-   instanceIds, instanceIdsPresent := d.GetOk("instance_ids")
+   _, instanceIdsPresent := d.GetOk("instance_ids")
 
    if instanceIdsPresent {
-      lbr.InstanceIds = instanceIds.([]string)
+      var instanceIds []string
+      for _, id := range d.Get("instance_ids").([]interface{}) {
+         instanceIds = append(instanceIds, id.(string))
+      }
+      lbr.InstanceIds = instanceIds
    }
 
    newLbr, err := ccaResources.LoadBalancerRules.Create(lbr)
@@ -120,7 +129,7 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
    }
 
    d.SetId(newLbr.Id)
-   return readPortForwardingRule(d, meta)
+   return readLbr(d, meta)
 }
 
 func readLbr(d *schema.ResourceData, meta interface{}) error {
@@ -128,10 +137,20 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
    resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
 
-   _, err := ccaResources.LoadBalancerRules.Get(d.Id())
+   lbr, err := ccaResources.LoadBalancerRules.Get(d.Id())
    if err != nil {
       return handleLbrNotFoundError(err, d)
    }
+
+   d.Set("name", lbr.Name)
+   d.Set("public_ip_id", lbr.PublicIpId)
+   d.Set("network_id", lbr.NetworkId)
+   d.Set("instance_ids", lbr.InstanceIds)
+   d.Set("algorithm", lbr.Algorithm)
+   d.Set("protocol", lbr.Protocol)
+   d.Set("public_port", lbr.PublicPort)
+   d.Set("private_port", lbr.PrivatePort)
+   d.Set("public_ip", lbr.PublicIp)
 
    return nil
 }
@@ -163,9 +182,10 @@ func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
       if ccaError.StatusCode == 404 {
          fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
          d.SetId("")
-         return nil
+         return err
       }
    }
 
    return err
 }
+

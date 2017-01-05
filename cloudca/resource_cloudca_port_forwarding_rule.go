@@ -162,7 +162,7 @@ func handleNotFoundError(err error, d *schema.ResourceData) error {
 		if ccaError.StatusCode == 404 {
 			fmt.Errorf("Port forwarding rule with id %s no longer exists", d.Id())
 			d.SetId("")
-			return nil
+			return err
 		}
 	}
 
