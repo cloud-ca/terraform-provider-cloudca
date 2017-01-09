@@ -8,6 +8,7 @@
 - [**cloudca_public_ip**](#cloudca_public_ip)
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
 - [**cloudca_volume**](#cloudca_volume)
+- [**cloudca_load_balancer_rule**](#cloudca_load_balancer_rule)
 
 ## cloudca_environment
 Manages a cloud.ca environment
