@@ -173,7 +173,7 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
    resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
    ccaResources := resources.(cloudca.Resources)
 
-   if _, err := ccaResources.LoadBalancerRules.Delete(d.Id()); err != nil {
+   if err := ccaResources.LoadBalancerRules.Delete(d.Id()); err != nil {
       return handleLbrNotFoundError(err, d)
    }
    return nil
@@ -198,7 +198,7 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
          if stickinessPolicyParamsPresent {
             stickinessPolicyParameters = getStickinessPolicyParameterMap(stickinessParams.(map[string]interface{}))
          }
-         _, err := ccaResources.LoadBalancerRules.SetLoadBalancerRuleStickinessPolicy(d.Id(), stickinessMethod.(string), stickinessPolicyParameters)
+         err := ccaResources.LoadBalancerRules.SetLoadBalancerRuleStickinessPolicy(d.Id(), stickinessMethod.(string), stickinessPolicyParameters)
          if err != nil {
             return err
          }
@@ -207,7 +207,7 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
          if stickinessPolicyParamsPresent { 
             return errors.New("Stickiness params should be removed if the stickiness method is removed")
          }
-         _, err := ccaResources.LoadBalancerRules.RemoveLoadBalancerRuleStickinessPolicy(d.Id())
+         err := ccaResources.LoadBalancerRules.RemoveLoadBalancerRuleStickinessPolicy(d.Id())
          if err != nil {
             return err
          }
@@ -229,7 +229,7 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
          instanceIds = append(instanceIds, id.(string))
       }
 
-      _, instanceErr := ccaResources.LoadBalancerRules.SetLoadBalancerRuleInstances(d.Id(), instanceIds)
+      instanceErr := ccaResources.LoadBalancerRules.SetLoadBalancerRuleInstances(d.Id(), instanceIds)
       if instanceErr != nil {
          return instanceErr
       }
