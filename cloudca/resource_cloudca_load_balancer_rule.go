@@ -123,6 +123,20 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
       lbr.InstanceIds = instanceIds
    }
 
+   stickinessMethod, stickinessMethodPresent := d.GetOk("stickiness_method")
+   if stickinessMethodPresent {
+      lbr.StickinessMethod = stickinessMethod.(string)
+   }
+
+   stickinessParams, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
+   if stickinessPolicyParamsPresent {
+      var stickinessPolicyParameters = make(map[string]string)
+      for k, v := range stickinessParams.(map[string]interface{}) {
+         stickinessPolicyParameters[k] = v.(string)
+      }
+      lbr.StickinessPolicyParameters = stickinessPolicyParameters;
+   }
+
    newLbr, err := ccaResources.LoadBalancerRules.Create(lbr)
    if err != nil {
       return err
@@ -151,6 +165,8 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
    d.Set("public_port", lbr.PublicPort)
    d.Set("private_port", lbr.PrivatePort)
    d.Set("public_ip", lbr.PublicIp)
+   d.Set("stickiness_method", lbr.StickinessMethod)
+   d.Set("stickiness_params", lbr.StickinessPolicyParameters)
 
    return nil
 }
@@ -187,12 +203,30 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
    }
 
    if d.HasChange("instance_ids") {
-      
-      _, aclErr := ccaResources.Tiers.ChangeAcl(d.Id(), d.Get("network_acl_id").(string))
-      if aclErr != nil {
-         return aclErr
+      var instanceIds []string
+      for _, id := range d.Get("instance_ids").([]interface{}) {
+         instanceIds = append(instanceIds, id.(string))
+      }
+
+      _, instanceErr := ccaResources.LoadBalancerRules.SetLoadBalancerRuleInstances(d.Id(), instanceIds)
+      if instanceErr != nil {
+         return instanceErr
       }
    }
+
+   if d.HasChange("instance_ids") {
+      var instanceIds []string
+      for _, id := range d.Get("instance_ids").([]interface{}) {
+         instanceIds = append(instanceIds, id.(string))
+      }
+
+      _, instanceErr := ccaResources.LoadBalancerRules.SetLoadBalancerRuleInstances(d.Id(), instanceIds)
+      if instanceErr != nil {
+         return instanceErr
+      }
+   }
+
+
 
    d.Partial(false)
 
@@ -214,6 +248,9 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
    //       instanceIds = append(instanceIds, id.(string))
    //    }
    //    lbr.InstanceIds = instanceIds
+
+
+
    // }
 
    // newLbr, err := ccaResources.LoadBalancerRules.Create(lbr)
