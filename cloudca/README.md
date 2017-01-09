@@ -274,3 +274,42 @@ resource "cloudca_volume" "data_volume" {
 
 ### Attribute reference
 - id - the volume ID
+
+
+## cloudca_load_balancer_rule
+Manage load balancer rules. Modifying the ports or public IP will cause the rule to be recreated
+
+### Example usage
+```hcl
+resource "cloudca_load_balancer_rule" "lbr" {
+   service_code = "compute-qc"
+   environment_name = "dev"
+   name="web_lb"
+   public_ip_id="5cd3a059-f15b-49f7-b7e1-254fef15968d"
+   protocol="tcp"
+   algorithm = "leastconn"
+   public_port = 80
+   private_port = 80
+   instance_ids = ["071e2929-672e-45bc-a5b6-703d17c08367"]
+   stickiness_method = "AppCookie"
+   stickiness_params {
+      cookieName = "allo"
+   }
+}
+```
+
+### Argument reference
+- service_code - (Required)
+- environment_name - (Required)
+- name - (Required) Name of the load balancer rule
+- public_ip_id - (Required) The id of the public IP to load balance on
+- protocol - (Required) The protocol to load balance
+- algorithm - (Required) The algorithm to use for load balancing. Supports: "leastconn", "roundrobin" or "source"
+- instance_ids - (Optional) The list of instances to load balance
+- stickiness_method - (Optional) The stickiness method to use. Supports : "LbCookie", "AppCookie" and "SourceBased"
+- stickiness_params - (Optional) The additional parameters required for each stickiness method. See (TODO ADD LINK here) for more information
+- network_id - (Optional) If the public IP is not associated with a network yet, you must specify the id of the network to bind to
+
+### Attribute reference
+- id - the load balancer rule ID
+
