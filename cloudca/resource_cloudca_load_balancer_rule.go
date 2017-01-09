@@ -167,14 +167,62 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func updateLbr(d *schema.ResourceData, meta interface{}) error {
-   // client := meta.(*cca.CcaClient)
-   // resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-   // ccaResources := resources.(cloudca.Resources)
+   client := meta.(*cca.CcaClient)
+   resources, err := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+   ccaResources := resources.(cloudca.Resources)
 
-   // if _, err := ccaResources.LoadBalancerRules.U(d.Id()); err != nil {
-   //    return handleLbrNotFoundError(err, d)
+   if err != nil {
+      return err
+   }
+
+   d.Partial(true)
+
+   if d.HasChange("name") || d.HasChange("algorithm") {
+      newName := d.Get("name").(string)
+      newAlgorithm := d.Get("algorithm").(string)
+      _, err := ccaResources.LoadBalancerRules.Update(cloudca.LoadBalancerRule{Id: d.Id(), Name: newName, Algorithm: newAlgorithm})
+      if err != nil {
+         return err
+      }
+   }
+
+   if d.HasChange("instance_ids") {
+      
+      _, aclErr := ccaResources.Tiers.ChangeAcl(d.Id(), d.Get("network_acl_id").(string))
+      if aclErr != nil {
+         return aclErr
+      }
+   }
+
+   d.Partial(false)
+
+   // lbr := cloudca.LoadBalancerRule{
+   //    Name:             d.Get("name").(string),
+   //    PublicIpId:       d.Get("public_ip_id").(string),
+   //    NetworkId:        d.Get("network_id").(string),
+   //    Protocol:         d.Get("protocol").(string),
+   //    Algorithm:        d.Get("algorithm").(string),
+   //    PublicPort:       strconv.Itoa(d.Get("public_port").(int)),
+   //    PrivatePort:      strconv.Itoa(d.Get("private_port").(int)),
    // }
-   return nil
+
+   // _, instanceIdsPresent := d.GetOk("instance_ids")
+
+   // if instanceIdsPresent {
+   //    var instanceIds []string
+   //    for _, id := range d.Get("instance_ids").([]interface{}) {
+   //       instanceIds = append(instanceIds, id.(string))
+   //    }
+   //    lbr.InstanceIds = instanceIds
+   // }
+
+   // newLbr, err := ccaResources.LoadBalancerRules.Create(lbr)
+   // if err != nil {
+   //    return err
+   // }
+
+   // d.SetId(newLbr.Id)
+   return readLbr(d, meta)
 }
 
 func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
