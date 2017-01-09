@@ -7,6 +7,7 @@ import (
    "github.com/cloud-ca/go-cloudca/services/cloudca"
    "github.com/hashicorp/terraform/helper/schema"
    "strconv"
+   "errors"
 )
 
 func resourceCloudcaLoadBalancerRule() *schema.Resource {
@@ -130,11 +131,7 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
 
    stickinessParams, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
    if stickinessPolicyParamsPresent {
-      var stickinessPolicyParameters = make(map[string]string)
-      for k, v := range stickinessParams.(map[string]interface{}) {
-         stickinessPolicyParameters[k] = v.(string)
-      }
-      lbr.StickinessPolicyParameters = stickinessPolicyParameters;
+      lbr.StickinessPolicyParameters = getStickinessPolicyParameterMap(stickinessParams.(map[string]interface{}))
    }
 
    newLbr, err := ccaResources.LoadBalancerRules.Create(lbr)
@@ -193,6 +190,30 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
 
    d.Partial(true)
 
+   if d.HasChange("stickiness_method") || d.HasChange("stickiness_params") {
+      stickinessMethod := d.Get("stickiness_method")
+      if len(stickinessMethod.(string)) > 0 {
+         var stickinessPolicyParameters map[string]string
+         stickinessParams, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
+         if stickinessPolicyParamsPresent {
+            stickinessPolicyParameters = getStickinessPolicyParameterMap(stickinessParams.(map[string]interface{}))
+         }
+         _, err := ccaResources.LoadBalancerRules.SetLoadBalancerRuleStickinessPolicy(d.Id(), stickinessMethod.(string), stickinessPolicyParameters)
+         if err != nil {
+            return err
+         }
+      }else{
+         _, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
+         if stickinessPolicyParamsPresent { 
+            return errors.New("Stickiness params should be removed if the stickiness method is removed")
+         }
+         _, err := ccaResources.LoadBalancerRules.RemoveLoadBalancerRuleStickinessPolicy(d.Id())
+         if err != nil {
+            return err
+         }
+      }
+   }
+
    if d.HasChange("name") || d.HasChange("algorithm") {
       newName := d.Get("name").(string)
       newAlgorithm := d.Get("algorithm").(string)
@@ -213,53 +234,16 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
          return instanceErr
       }
    }
-
-   if d.HasChange("instance_ids") {
-      var instanceIds []string
-      for _, id := range d.Get("instance_ids").([]interface{}) {
-         instanceIds = append(instanceIds, id.(string))
-      }
-
-      _, instanceErr := ccaResources.LoadBalancerRules.SetLoadBalancerRuleInstances(d.Id(), instanceIds)
-      if instanceErr != nil {
-         return instanceErr
-      }
-   }
-
-
-
    d.Partial(false)
-
-   // lbr := cloudca.LoadBalancerRule{
-   //    Name:             d.Get("name").(string),
-   //    PublicIpId:       d.Get("public_ip_id").(string),
-   //    NetworkId:        d.Get("network_id").(string),
-   //    Protocol:         d.Get("protocol").(string),
-   //    Algorithm:        d.Get("algorithm").(string),
-   //    PublicPort:       strconv.Itoa(d.Get("public_port").(int)),
-   //    PrivatePort:      strconv.Itoa(d.Get("private_port").(int)),
-   // }
-
-   // _, instanceIdsPresent := d.GetOk("instance_ids")
-
-   // if instanceIdsPresent {
-   //    var instanceIds []string
-   //    for _, id := range d.Get("instance_ids").([]interface{}) {
-   //       instanceIds = append(instanceIds, id.(string))
-   //    }
-   //    lbr.InstanceIds = instanceIds
-
-
-
-   // }
-
-   // newLbr, err := ccaResources.LoadBalancerRules.Create(lbr)
-   // if err != nil {
-   //    return err
-   // }
-
-   // d.SetId(newLbr.Id)
    return readLbr(d, meta)
+}
+
+func getStickinessPolicyParameterMap(policyMap map[string]interface{}) map[string]string {
+   var paramMap = make(map[string]string)
+   for k, v := range policyMap {
+      paramMap[k] = v.(string)
+   }
+   return paramMap
 }
 
 func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
