@@ -1,9 +1,7 @@
 package cloudca
 
 import (
-	"fmt"
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 	"strconv"
@@ -155,16 +153,4 @@ func deletePortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d)
 	}
 	return nil
-}
-
-func handleNotFoundError(err error, d *schema.ResourceData) error {
-	if ccaError, ok := err.(api.CcaErrorResponse); ok {
-		if ccaError.StatusCode == 404 {
-			fmt.Errorf("Port forwarding rule with id %s no longer exists", d.Id())
-			d.SetId("")
-			return nil
-		}
-	}
-
-	return err
 }
