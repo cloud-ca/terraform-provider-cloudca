@@ -6,6 +6,7 @@
 - [**cloudca_network_acl_rule**](#cloudca_network_acl_rule)
 - [**cloudca_instance**](#cloudca_instance)
 - [**cloudca_public_ip**](#cloudca_public_ip)
+- [**cloudca_static_nat**](#cloudca_static_nat)
 - [**cloudca_port_forwarding_rule**](#cloudca_port_forwarding_rule)
 - [**cloudca_volume**](#cloudca_volume)
 
@@ -205,6 +206,26 @@ The following arguments are supported:
 ### Attribute Reference
 - id - The public IP ID.
 - ip_address - The public IP address
+
+## cloudca_static_nat
+Configures static NAT between a public and a private IP. Enabling static NAT is equivalent to forwarding every public port to every private port.
+
+### Example usage
+```hcl
+resource "cloudca_static_nat" "dev_static_nat" {
+	service_code     = "compute-qc"
+	environment_name = "dev"
+
+	public_ip_id     = "10d523c1-907a-4f85-9181-9d62b16851c9"
+	private_ip_id    = "c0d9824b-cb83-45ca-baca-e7e6c63a96a8"
+}
+```
+
+### Argument reference
+- service_code - (Required)
+- environment_name - (Required)
+- public_ip_id - (Required) The public IP to configure static NAT on. Cannot have any other purpose (e.g. load balancing, port forwarding)
+- private_ip_id - (Required) The private IP to configure static NAT on. Must be in the same VPC as the public IP
 
 ## cloudca_port_forwarding_rule
 Manages port forwarding rules. Modifying any field will result in destruction and recreation of the rule.
