@@ -208,7 +208,7 @@ The following arguments are supported:
 - ip_address - The public IP address
 
 ## cloudca_static_nat
-Configures static NAT between a public and a private IP. Enabling static NAT is equivalent to forwarding every public port to every private port.
+Configures static NAT between a public and a private IP of an instance. Enabling static NAT is equivalent to forwarding every public port to every private port.
 
 ### Example usage
 ```hcl
@@ -225,7 +225,7 @@ resource "cloudca_static_nat" "dev_static_nat" {
 - service_code - (Required)
 - environment_name - (Required)
 - public_ip_id - (Required) The public IP to configure static NAT on. Cannot have any other purpose (e.g. load balancing, port forwarding)
-- private_ip_id - (Required) The private IP to configure static NAT on. Must be in the same VPC as the public IP
+- private_ip_id - (Required) A private IP of the instance to configure static NAT on. Must be in the same VPC as the public IP. Secondary IPs can be used here
 
 ## cloudca_port_forwarding_rule
 Manages port forwarding rules. Modifying any field will result in destruction and recreation of the rule.

@@ -23,15 +23,8 @@ func resourceCloudcaStaticNat() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name of environment where tier should be created",
+				Description: "Name of environment where static NAT should be enabled",
 			},
-			"organization_code": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "Entry point of organization",
-			},
-
 			"public_ip_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
