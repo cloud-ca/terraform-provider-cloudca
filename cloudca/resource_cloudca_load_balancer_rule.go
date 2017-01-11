@@ -124,13 +124,13 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
       lbr.InstanceIds = instanceIds
    }
 
-   stickinessMethod, stickinessMethodPresent := d.GetOk("stickiness_method")
-   if stickinessMethodPresent {
+   
+   if stickinessMethod, ok := d.GetOk("stickiness_method"); ok {
       lbr.StickinessMethod = stickinessMethod.(string)
    }
 
-   stickinessParams, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
-   if stickinessPolicyParamsPresent {
+   
+   if stickinessParams, ok := d.GetOk("stickiness_params"); ok {
       lbr.StickinessPolicyParameters = getStickinessPolicyParameterMap(stickinessParams.(map[string]interface{}))
    }
 
@@ -194,8 +194,7 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
       stickinessMethod := d.Get("stickiness_method")
       if len(stickinessMethod.(string)) > 0 {
          var stickinessPolicyParameters map[string]string
-         stickinessParams, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
-         if stickinessPolicyParamsPresent {
+         if stickinessParams, ok := d.GetOk("stickiness_params"); ok {
             stickinessPolicyParameters = getStickinessPolicyParameterMap(stickinessParams.(map[string]interface{}))
          }
          err := ccaResources.LoadBalancerRules.SetLoadBalancerRuleStickinessPolicy(d.Id(), stickinessMethod.(string), stickinessPolicyParameters)
@@ -203,8 +202,8 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
             return err
          }
       }else{
-         _, stickinessPolicyParamsPresent := d.GetOk("stickiness_params")
-         if stickinessPolicyParamsPresent { 
+         
+         if _, ok := d.GetOk("stickiness_params"); ok { 
             return errors.New("Stickiness params should be removed if the stickiness method is removed")
          }
          err := ccaResources.LoadBalancerRules.RemoveLoadBalancerRuleStickinessPolicy(d.Id())
@@ -251,7 +250,7 @@ func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
       if ccaError.StatusCode == 404 {
          fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
          d.SetId("")
-         return err
+         return nil
       }
    }
 
