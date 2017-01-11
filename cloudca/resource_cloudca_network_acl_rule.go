@@ -106,7 +106,6 @@ func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{
 	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	ccaResources := resources.(cloudca.Resources)
 
-
 	aclRuleToCreate := cloudca.NetworkAclRule{
 		RuleNumber:   strconv.Itoa(d.Get("rule_number").(int)),
 		Cidr:         d.Get("cidr").(string),
@@ -142,7 +141,7 @@ func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{
 		RuleNumber:  strconv.Itoa(d.Get("rule_number").(int)),
 		Cidr:        d.Get("cidr").(string),
 		Action:      d.Get("action").(string),
-		Protocol:     d.Get("protocol").(string),
+		Protocol:    d.Get("protocol").(string),
 		TrafficType: d.Get("traffic_type").(string),
 	}
 	fillPortFields(d, &aclRuleToUpdate)
