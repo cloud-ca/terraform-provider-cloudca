@@ -1,9 +1,13 @@
 package cloudca
 
 import (
+	"github.com/cloud-ca/go-cloudca"
+	"github.com/cloud-ca/go-cloudca/services/cloudca"
+	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/hashicorp/terraform/helper/schema"
 	"regexp"
 	"strconv"
+	"fmt"
 )
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {
@@ -18,6 +22,7 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_load_balancer_rule":   resourceCloudcaLoadBalancerRule(),
 		"cloudca_network_acl":          resourceCloudcaNetworkAcl(),
 		"cloudca_network_acl_rule":     resourceCloudcaNetworkAclRule(),
+		"cloudca_static_nat":           resourceCloudcaStaticNat(),
 	}
 }
 
@@ -40,4 +45,23 @@ func readIntFromString(valStr string) int {
 		valInt, _ = strconv.Atoi(valStr)
 	}
 	return valInt
+}
+
+// Provides a common, simple way to deal with 404s.
+func handleNotFoundError(err error, d *schema.ResourceData) error {
+	if ccaError, ok := err.(api.CcaErrorResponse); ok {
+		if ccaError.StatusCode == 404 {
+			fmt.Errorf("Entity (id=%s) not found", d.Id())
+			d.SetId("")
+			return nil
+		}
+	}
+	return err
+}
+
+// Deals with all of the casting done to get a cloudca.Resources.
+func getResources(d *schema.ResourceData, meta interface{}) cloudca.Resources {
+	client := meta.(*cca.CcaClient)
+	_resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
+	return _resources.(cloudca.Resources)
 }
