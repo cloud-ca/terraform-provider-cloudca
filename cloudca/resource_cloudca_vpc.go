@@ -56,6 +56,13 @@ func resourceCloudcaVpc() *schema.Resource {
 				ForceNew:    true,
 				Description: "A custom DNS suffix at the level of a network",
 			},
+			"zone": &schema.Schema{
+				Type:        schema.TypeString,
+				Computed:    true,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Zone ID or name where the VPC is created",
+			},
 		},
 	}
 }
@@ -79,6 +86,18 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 
 	if networkDomain, ok := d.GetOk("network_domain"); ok {
 		vpcToCreate.NetworkDomain = networkDomain.(string)
+	}
+
+	if zone, ok := d.GetOk("zone"); ok {
+		if isID(zone.(string)) {
+			vpcToCreate.ZoneId = zone.(string)
+		} else {
+			var zErr error
+			vpcToCreate.ZoneId, zErr = retrieveZoneId(&ccaResources, zone.(string))
+			if zErr != nil {
+				return zErr
+			}
+		}
 	}
 
 	newVpc, err := ccaResources.Vpcs.Create(vpcToCreate)
@@ -107,6 +126,8 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		return err
 	}
+
+	setValueOrID(d, "zone", vpc.ZoneName, vpc.ZoneId)
 
 	vpcOffering, offErr := ccaResources.VpcOfferings.Get(vpc.VpcOfferingId)
 	if offErr != nil {

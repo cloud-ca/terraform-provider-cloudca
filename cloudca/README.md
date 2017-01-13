@@ -60,6 +60,7 @@ The following arguments are supported:
 - description - (Required) Description of the VPC
 - vpc_offering - (Required) The name of the VPC offering to use for the vpc
 - network_domain - (Optional) A custom DNS suffix at the level of a network
+- zone - (Optional) The zone name or ID where the VPC will be created
 
 ### Attribute Reference
 - id - ID of VPC.
