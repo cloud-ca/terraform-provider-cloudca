@@ -1,4 +1,4 @@
-# terraform-cloudca
+# terraform-provider-cloudca
 
 Terraform provider for cloud.ca
 
