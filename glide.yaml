@@ -1,0 +1,15 @@
+package: github.com/cloud-ca/terraform-provider-cloudca
+import:
+- package: github.com/cloud-ca/go-cloudca
+  subpackages:
+  - api
+  - configuration
+  - services/cloudca
+- package: github.com/hashicorp/terraform
+  version: ^0.8.4
+  subpackages:
+  - helper/schema
+  - plugin
+  - terraform
+- package: github.com/mitchellh/gox
+  version: ^0.3.0

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/cloud-ca/terraform-cloudca/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
 	"os"
 	"strconv"
+
+	"github.com/cloud-ca/terraform-provider-cloudca/cloudca"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
 )
 
 func Provider() terraform.ResourceProvider {

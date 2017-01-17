@@ -3,7 +3,7 @@ package main
 import "github.com/cloud-ca/go-cloudca"
 
 // Config is the configuration structure used to instantiate a
-// new CloudStack client.
+// new cloudca client.
 type Config struct {
 	APIURL   string
 	APIKey   string
