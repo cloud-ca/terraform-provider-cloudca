@@ -9,12 +9,22 @@ build:
 	go build .
 
 build-all:
-		gox -verbose \
+	# compile for all OS/Arch using Gox
+	gox -verbose \
 		-ldflags "-X main.version=${VERSION}" \
-		-os="linux darwin windows freebsd openbsd" \
-		-arch="amd64 386 armv5 armv6 armv7 arm64" \
-		-osarch="!darwin/arm64" \
+		-os="linux darwin windows freebsd openbsd solaris" \
+		-arch="386 amd64 arm" \
+		-osarch="!darwin/arm !darwin/386" \
 		-output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+
+	# zip the executables
+	for PLATFORM in `find ./dist -mindepth 1 -maxdepth 1 -type d` ; do \
+		OSARCH=`basename $$PLATFORM` ; \
+		echo "--> $$OSARCH" ; \
+		pushd $$PLATFORM >/dev/null 2>&1 ; \
+		zip ../$$OSARCH.zip ./* ; \
+		popd >/dev/null 2>&1 ; \
+	done
 
 clean:
 	rm -rf dist terraform-provider-cloudca
