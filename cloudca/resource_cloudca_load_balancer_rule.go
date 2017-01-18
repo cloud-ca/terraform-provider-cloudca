@@ -76,7 +76,7 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 				Description: "The port to which the traffic will be load balanced internally",
 			},
 			"instance_ids": &schema.Schema{
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "List of instance ids that will be load balanced",
 				Elem:        &schema.Schema{Type: schema.TypeString},
