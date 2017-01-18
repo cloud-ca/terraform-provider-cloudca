@@ -7,11 +7,11 @@ Tested with Terraform version : 0.7.12
 # Installation
 Download the provider:
 ```Shell
-$ go get github.com/cloud-ca/terraform-cloudca
+$ go get github.com/cloud-ca/terraform-provider-cloudca
 ```
 Compile the provider:
 ```Shell
-$ cd $GOPATH/src/github.com/cloud-ca/terraform-cloudca
+$ cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
 $ go build -o terraform-provider-cloudca
 ```
 Copy it to the directory where terraform is located:
@@ -30,7 +30,7 @@ provider "cloudca" {
 ```
 
 # Links
-- [**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
+- [**Resources documentation**](https://github.com/cloud-ca/terraform-provider-cloudca/blob/master/cloudca/README.md)
 
 # License
 
