@@ -25,7 +25,7 @@ provider "cloudca" {
 # Links
 - [**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
 
-# Building from source
+# Build from source
 
 Download the provider source:
 ```Shell
@@ -41,7 +41,11 @@ Copy the provider to the directory where terraform is located:
 ```Shell
 $ sudo cp terraform-provider-cloudca $(dirname `which terraform`)
 ```
-
+# Build for all OS/architectures
+To build zip files containing the executables for each OS/architecture combination, use
+```Shell
+$ make build-all
+```
 # License
 
 This project is licensed under the terms of the MIT license.
