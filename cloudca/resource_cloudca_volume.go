@@ -37,13 +37,6 @@ func resourceCloudcaVolume() *schema.Resource {
 				ForceNew:    true,
 				Description: "The name of the volume to be created",
 			},
-			"zone": &schema.Schema{
-				Type:        schema.TypeString,
-				Optional:    true,
-				ForceNew:    true,
-				Computed:    true,
-				Description: "The ID or name of the zone into which the volume will be create",
-			},
 			"disk_offering": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
@@ -69,8 +62,8 @@ func resourceCloudcaVolume() *schema.Resource {
 			},
 			"instance_id": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "The id of the instance to which the volume should be attached",
+				Required:    true,
+				Description: "The id of the instance to which the volume will be attached",
 			},
 		},
 	}
@@ -137,7 +130,6 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 		return handleVolumeNotFoundError(err, d)
 	}
 	d.Set("name", volume.Name)
-	setValueOrID(d, "zone", volume.ZoneName, volume.ZoneId)
 	setValueOrID(d, "disk_offering", strings.ToLower(volume.DiskOfferingName), volume.DiskOfferingId)
 	d.Set("size_in_gb", volume.GbSize)
 	d.Set("iops", volume.Iops)
