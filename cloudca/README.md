@@ -268,7 +268,7 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 ## cloudca_volume
 Manages volumes. Modifying all fields with the exception of instance_id will result in destruction and recreation of the volume.
 
-If the instance_id is updated, where the volume has not yet been attached, the volume will be attached to the instance, where the volume is attached to an existing instance, the volume will be detached from the previous instance and attached to the new instance.
+If the instance_id is updated, the volume will be detached from the previous instance and attached to the new instance.
 
 ### Example usage
 ```hcl
@@ -292,8 +292,7 @@ resource "cloudca_volume" "data_volume" {
 - disk_offering - (Required) The name or id of the disk offering to use for the volume
 - size_in_gb - (Optional) The size in GB of the volume. Only for disk offerings with custom size.
 - iops - (Optional) The number of IOPS of the volume. Only for disk offerings with custom iops.
-- zone - (Optional) Only required if there is more than one zone in the service specified by the `service_code`. Can be a name of an ID of a zone.
-- instance_id - (Optional) If not specified, volume will be created but not attached. Note that changing the instance ID will _not_ result in the destruction of this volume
+- instance_id - The instance ID that the volume will be attached to. Note that changing the instance ID will _not_ result in the destruction of this volume
 
 ### Attribute reference
 - id - the volume ID
