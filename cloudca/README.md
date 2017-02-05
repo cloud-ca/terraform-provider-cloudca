@@ -127,6 +127,7 @@ resource "cloudca_network_acl_rule" "my_acl" {
 	service_code = "compute-qc"
 	environment_name = "dev"
 	rule_number = 55
+	cidr = "10.212.208.0/22"
 	action = "Allow"
 	protocol = "TCP"
 	start_port = 80
