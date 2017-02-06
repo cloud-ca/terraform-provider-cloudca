@@ -92,6 +92,7 @@ The following arguments are supported:
 
 ### Attribute Reference
 - id - ID of tier.
+- cidr - Cidr of tier
 
 ## cloudca_network_acl
 Create a network ACL.
@@ -188,6 +189,7 @@ The following arguments are supported:
 ### Attribute Reference
 - id - ID of instance.
 - private_ip_id - ID of instance's private IP
+- private_ip - Instance's private IP
 
 ## cloudca_public_ip
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
@@ -335,4 +337,3 @@ resource "cloudca_load_balancer_rule" "lbr" {
 
 ### Attribute reference
 - id - the load balancer rule ID
-
