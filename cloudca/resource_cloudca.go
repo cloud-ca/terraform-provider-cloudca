@@ -1,13 +1,13 @@
 package cloudca
 
 import (
+	"fmt"
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
+	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 	"regexp"
 	"strconv"
-	"fmt"
 )
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {

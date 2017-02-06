@@ -106,10 +106,10 @@ func resourceCloudcaInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-         "private_ip": &schema.Schema{
-            Type:     schema.TypeString,
-            Computed: true,
-         },
+			"private_ip": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
