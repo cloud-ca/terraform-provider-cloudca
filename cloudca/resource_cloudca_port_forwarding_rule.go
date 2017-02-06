@@ -81,8 +81,11 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 }
 
 func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	pfr := cloudca.PortForwardingRule{
 		PublicIpId:       d.Get("public_ip_id").(string),
 		Protocol:         d.Get("protocol").(string),
@@ -109,8 +112,11 @@ func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 }
 
 func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	pfr, err := ccaResources.PortForwardingRules.Get(d.Id())
 	if err != nil {
 		return handleNotFoundError(err, d)
@@ -131,8 +137,11 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 }
 
 func deletePortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	if _, err := ccaResources.PortForwardingRules.Delete(d.Id()); err != nil {
 		return handleNotFoundError(err, d)
 	}

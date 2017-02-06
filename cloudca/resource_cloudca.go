@@ -68,9 +68,15 @@ func getResources(d *schema.ResourceData, meta interface{}) cloudca.Resources {
 }
 
 // Deals with all of the casting done to get a cloudca.Resources.
-func getResourcesForEnvironmentId(d *schema.ResourceData, meta interface{}) cloudca.Resources {
+func getResourcesForEnvironmentId(d *schema.ResourceData, meta interface{}) (cloudca.Resources, error) {
 	client := meta.(*cca.CcaClient)
-	environment, _ := client.Environments.Get(d.Get("environment_id").(string))
-	_resources, _ := client.GetResources(environment.ServiceConnection.ServiceCode, environment.Name)
-	return _resources.(cloudca.Resources)
+	environment, err := client.Environments.Get(d.Get("environment_id").(string))
+	if err != nil {
+		return cloudca.Resources{}, err
+	}
+	resources, err2 := client.GetResources(environment.ServiceConnection.ServiceCode, environment.Name)
+	if err2 != nil {
+		return cloudca.Resources{}, err2
+	}
+	return resources.(cloudca.Resources), nil
 }

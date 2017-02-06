@@ -104,7 +104,11 @@ func resourceCloudcaInstance() *schema.Resource {
 }
 
 func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 
 	computeOfferingId, cerr := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
 
@@ -167,8 +171,11 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	// Get the virtual machine details
 	instance, err := ccaResources.Instances.Get(d.Id())
 	if err != nil {
@@ -193,8 +200,11 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	d.Partial(true)
 
 	if d.HasChange("compute_offering") || d.HasChange("cpu_count") || d.HasChange("memory_in_mb") {
@@ -248,8 +258,11 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	fmt.Println("[INFO] Destroying instance: %s", d.Get("name").(string))
 	if _, err := ccaResources.Instances.Destroy(d.Id(), d.Get("purge").(bool)); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {

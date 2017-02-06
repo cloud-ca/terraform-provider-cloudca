@@ -90,7 +90,11 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 }
 
 func createLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 
 	lbr := cloudca.LoadBalancerRule{
 		Name:        d.Get("name").(string),
@@ -130,7 +134,11 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func readLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 
 	lbr, err := ccaResources.LoadBalancerRules.Get(d.Id())
 	if err != nil {
@@ -153,8 +161,11 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func deleteLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	if err := ccaResources.LoadBalancerRules.Delete(d.Id()); err != nil {
 		return handleLbrNotFoundError(err, d)
 	}
@@ -162,7 +173,11 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func updateLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 
 	d.Partial(true)
 

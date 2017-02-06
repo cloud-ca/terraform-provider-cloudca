@@ -96,8 +96,11 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 }
 
 func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	aclRuleToCreate := cloudca.NetworkAclRule{
 		RuleNumber:   strconv.Itoa(d.Get("rule_number").(int)),
 		Cidr:         d.Get("cidr").(string),
@@ -124,8 +127,11 @@ func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	aclRuleToUpdate := cloudca.NetworkAclRule{
 		Id:          d.Id(),
 		RuleNumber:  strconv.Itoa(d.Get("rule_number").(int)),
@@ -145,8 +151,11 @@ func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{
 }
 
 func resourceCloudcaNetworkAclRuleRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	aclRule, aErr := ccaResources.NetworkAclRules.Get(d.Id())
 	if aErr != nil {
 		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
@@ -173,8 +182,11 @@ func resourceCloudcaNetworkAclRuleRead(d *schema.ResourceData, meta interface{})
 }
 
 func resourceCloudcaNetworkAclRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	if _, err := ccaResources.NetworkAclRules.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {

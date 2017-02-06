@@ -37,8 +37,11 @@ func resourceCloudcaPublicIp() *schema.Resource {
 }
 
 func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	vpcId := d.Get("vpc_id").(string)
 
 	publicIpToCreate := cloudca.PublicIp{
@@ -53,8 +56,11 @@ func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	publicIp, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
@@ -72,7 +78,11 @@ func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaPublicIpDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 
 	if _, err := ccaResources.PublicIps.Release(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {

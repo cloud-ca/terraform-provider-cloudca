@@ -62,8 +62,11 @@ func resourceCloudcaVpc() *schema.Resource {
 }
 
 func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	vpcOfferingId, cerr := retrieveVpcOfferingID(&ccaResources, d.Get("vpc_offering").(string))
 
 	if cerr != nil {
@@ -102,8 +105,11 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	// Get the vpc details
 	vpc, err := ccaResources.Vpcs.Get(d.Id())
 	if err != nil {
@@ -141,8 +147,11 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	if d.HasChange("name") || d.HasChange("description") {
 		newName := d.Get("name").(string)
 		newDescription := d.Get("description").(string)
@@ -157,8 +166,11 @@ func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	fmt.Println("[INFO] Destroying VPC: %s", d.Get("name").(string))
 	if _, err := ccaResources.Vpcs.Destroy(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {

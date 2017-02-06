@@ -37,7 +37,11 @@ func resourceCloudcaStaticNat() *schema.Resource {
 }
 
 func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 	staticNatPublicIp := cloudca.PublicIp{
 		Id:          d.Get("public_ip_id").(string),
 		PrivateIpId: d.Get("private_ip_id").(string),
@@ -51,7 +55,11 @@ func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 	publicIp, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
 		return handleNotFoundError(err, d)
@@ -67,7 +75,11 @@ func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceCloudcaStaticNatDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+
+	if rerr != nil {
+		return rerr
+	}
 	_, err := ccaResources.PublicIps.DisableStaticNat(d.Id())
 	return handleNotFoundError(err, d)
 }

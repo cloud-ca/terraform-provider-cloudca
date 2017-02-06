@@ -63,8 +63,11 @@ func resourceCloudcaVolume() *schema.Resource {
 }
 
 func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	diskOffering, err := retrieveDiskOffering(&ccaResources, d.Get("disk_offering").(string))
 	if err != nil {
 		return err
@@ -112,8 +115,11 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	volume, err := ccaResources.Volumes.Get(d.Id())
 	if err != nil {
 		return handleVolumeNotFoundError(err, d)
@@ -127,8 +133,11 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	d.Partial(true)
 	if d.HasChange("instance_id") {
 		oldInstanceId, newInstanceId := d.GetChange("instance_id")
@@ -154,8 +163,11 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	if instanceId, ok := d.GetOk("instance_id"); ok && instanceId != "" {
 		volume := &cloudca.Volume{
 			Id: d.Id(),

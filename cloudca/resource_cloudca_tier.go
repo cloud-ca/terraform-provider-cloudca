@@ -62,8 +62,11 @@ func resourceCloudcaTier() *schema.Resource {
 }
 
 func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	networkOfferingId, nerr := retrieveNetworkOfferingId(&ccaResources, d.Get("network_offering").(string))
 	if nerr != nil {
 		return nerr
@@ -89,8 +92,11 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	tier, err := ccaResources.Tiers.Get(d.Id())
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
@@ -125,8 +131,11 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	d.Partial(true)
 
 	if d.HasChange("name") || d.HasChange("description") {
@@ -151,8 +160,11 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
 
+	if rerr != nil {
+		return rerr
+	}
 	if _, err := ccaResources.Tiers.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
