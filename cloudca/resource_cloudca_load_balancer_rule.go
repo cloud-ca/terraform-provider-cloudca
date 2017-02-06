@@ -3,11 +3,12 @@ package cloudca
 import (
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strconv"
 )
 
 func resourceCloudcaLoadBalancerRule() *schema.Resource {
@@ -47,9 +48,8 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 			},
 			"network_id": &schema.Schema{
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				ForceNew:    true,
-				Computed:    true,
 				Description: "The network ID to bind to",
 			},
 			"protocol": &schema.Schema{
