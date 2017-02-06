@@ -118,7 +118,7 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
 
 	if instanceIdsPresent {
 		var instanceIds []string
-		for _, id := range d.Get("instance_ids").([]interface{}) {
+		for _, id := range d.Get("instance_ids").(*schema.Set).List() {
 			instanceIds = append(instanceIds, id.(string))
 		}
 		lbr.InstanceIds = instanceIds
@@ -222,7 +222,7 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("instance_ids") {
 		var instanceIds []string
-		for _, id := range d.Get("instance_ids").([]interface{}) {
+		for _, id := range d.Get("instance_ids").(*schema.Set).List() {
 			instanceIds = append(instanceIds, id.(string))
 		}
 
