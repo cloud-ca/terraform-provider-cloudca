@@ -2,12 +2,13 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
-	"strings"
 )
 
 func resourceCloudcaTier() *schema.Resource {
@@ -62,6 +63,10 @@ func resourceCloudcaTier() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Id of the network ACL",
+			},
+			"cidr": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -131,6 +136,7 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 	setValueOrID(d, "network_offering", offering.Name, tier.NetworkOfferingId)
 	d.Set("vpc_id", tier.VpcId)
 	d.Set("network_acl_id", tier.NetworkAclId)
+	d.Set("cidr", tier.Cidr)
 	return nil
 }
 

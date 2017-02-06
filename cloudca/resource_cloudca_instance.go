@@ -106,6 +106,10 @@ func resourceCloudcaInstance() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"private_ip": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -199,6 +203,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
 	d.Set("network_id", instance.NetworkId)
 	d.Set("private_ip_id", instance.IpAddressId)
+	d.Set("private_ip", instance.IpAddress)
 
 	return nil
 }
