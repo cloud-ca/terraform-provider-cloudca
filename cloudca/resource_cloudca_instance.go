@@ -95,13 +95,6 @@ func resourceCloudcaInstance() *schema.Resource {
 				Computed:    true,
 				Description: "The instance's memory in MB. If the compute offering is custom, this value is required",
 			},
-
-			"purge": &schema.Schema{
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "If true, then it will purge the instance on destruction",
-			},
 			"private_ip_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -266,7 +259,7 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	ccaResources := resources.(cloudca.Resources)
 
 	fmt.Println("[INFO] Destroying instance: %s", d.Get("name").(string))
-	if _, err := ccaResources.Instances.Destroy(d.Id(), d.Get("purge").(bool)); err != nil {
+	if _, err := ccaResources.Instances.Destroy(d.Id(), true); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
 				fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
