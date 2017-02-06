@@ -2,12 +2,12 @@ package cloudca
 
 import (
 	"fmt"
-	"github.com/cloud-ca/go-cloudca"
+	"log"
+	"strings"
+
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
-	"strings"
 )
 
 func resourceCloudcaVpc() *schema.Resource {
@@ -18,17 +18,11 @@ func resourceCloudcaVpc() *schema.Resource {
 		Delete: resourceCloudcaVpcDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where VPC should be created",
+				Description: "ID of environment where VPC should be created",
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -68,9 +62,7 @@ func resourceCloudcaVpc() *schema.Resource {
 }
 
 func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	vpcOfferingId, cerr := retrieveVpcOfferingID(&ccaResources, d.Get("vpc_offering").(string))
 
@@ -110,9 +102,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	// Get the vpc details
 	vpc, err := ccaResources.Vpcs.Get(d.Id())
@@ -151,9 +141,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	if d.HasChange("name") || d.HasChange("description") {
 		newName := d.Get("name").(string)
@@ -169,9 +157,7 @@ func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	fmt.Println("[INFO] Destroying VPC: %s", d.Get("name").(string))
 	if _, err := ccaResources.Vpcs.Destroy(d.Id()); err != nil {

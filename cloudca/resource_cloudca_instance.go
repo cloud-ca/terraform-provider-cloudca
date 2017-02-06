@@ -5,7 +5,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -19,17 +18,11 @@ func resourceCloudcaInstance() *schema.Resource {
 		Delete: resourceCloudcaInstanceDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where instance should be created",
+				Description: "ID of environment where instance should be created",
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -111,9 +104,7 @@ func resourceCloudcaInstance() *schema.Resource {
 }
 
 func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	computeOfferingId, cerr := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
 
@@ -176,9 +167,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	// Get the virtual machine details
 	instance, err := ccaResources.Instances.Get(d.Id())
@@ -204,9 +193,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	d.Partial(true)
 
@@ -261,9 +248,7 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	fmt.Println("[INFO] Destroying instance: %s", d.Get("name").(string))
 	if _, err := ccaResources.Instances.Destroy(d.Id(), d.Get("purge").(bool)); err != nil {

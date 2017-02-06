@@ -1,10 +1,10 @@
 package cloudca
 
 import (
-	"github.com/cloud-ca/go-cloudca"
+	"strconv"
+
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"strconv"
 )
 
 func resourceCloudcaPortForwardingRule() *schema.Resource {
@@ -14,17 +14,11 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 		Delete: deletePortForwardingRule,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where port forwarding rule should be created",
+				Description: "ID of environment where port forwarding rule should be created",
 			},
 			"public_ip_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -87,13 +81,7 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 }
 
 func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, err := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
-
-	if err != nil {
-		return err
-	}
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	pfr := cloudca.PortForwardingRule{
 		PublicIpId:       d.Get("public_ip_id").(string),
@@ -121,9 +109,7 @@ func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 }
 
 func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	pfr, err := ccaResources.PortForwardingRules.Get(d.Id())
 	if err != nil {
@@ -145,9 +131,7 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 }
 
 func deletePortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	if _, err := ccaResources.PortForwardingRules.Delete(d.Id()); err != nil {
 		return handleNotFoundError(err, d)

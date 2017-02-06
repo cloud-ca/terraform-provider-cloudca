@@ -2,11 +2,11 @@ package cloudca
 
 import (
 	"fmt"
-	"github.com/cloud-ca/go-cloudca"
+	"log"
+
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
 )
 
 func resourceCloudcaPublicIp() *schema.Resource {
@@ -16,17 +16,11 @@ func resourceCloudcaPublicIp() *schema.Resource {
 		Delete: resourceCloudcaPublicIpDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where the public IP should be created",
+				Description: "ID of environment where the public IP should be created",
 			},
 			"vpc_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -43,9 +37,7 @@ func resourceCloudcaPublicIp() *schema.Resource {
 }
 
 func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	vpcId := d.Get("vpc_id").(string)
 
@@ -61,9 +53,7 @@ func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	publicIp, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
@@ -82,9 +72,8 @@ func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaPublicIpDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
+
 	if _, err := ccaResources.PublicIps.Release(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {

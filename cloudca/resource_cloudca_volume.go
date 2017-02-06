@@ -5,7 +5,6 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -19,17 +18,11 @@ func resourceCloudcaVolume() *schema.Resource {
 		Delete: resourceCloudcaVolumeDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where the volume should be created",
+				Description: "ID of environment where the volume should be created",
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -70,9 +63,7 @@ func resourceCloudcaVolume() *schema.Resource {
 }
 
 func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	diskOffering, err := retrieveDiskOffering(&ccaResources, d.Get("disk_offering").(string))
 	if err != nil {
@@ -121,9 +112,7 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	volume, err := ccaResources.Volumes.Get(d.Id())
 	if err != nil {
@@ -138,9 +127,7 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 
 	d.Partial(true)
 	if d.HasChange("instance_id") {
@@ -167,9 +154,8 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
+
 	if instanceId, ok := d.GetOk("instance_id"); ok && instanceId != "" {
 		volume := &cloudca.Volume{
 			Id: d.Id(),

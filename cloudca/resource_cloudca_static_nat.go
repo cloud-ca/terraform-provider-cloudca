@@ -1,9 +1,10 @@
 package cloudca
 
 import (
+	"fmt"
+
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"fmt"
 )
 
 func resourceCloudcaStaticNat() *schema.Resource {
@@ -13,17 +14,11 @@ func resourceCloudcaStaticNat() *schema.Resource {
 		Delete: resourceCloudcaStaticNatDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where static NAT should be enabled",
+				Description: "ID of environment where static NAT should be enabled",
 			},
 			"public_ip_id": &schema.Schema{
 				Type:        schema.TypeString,
@@ -42,12 +37,12 @@ func resourceCloudcaStaticNat() *schema.Resource {
 }
 
 func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) error {
-	resources := getResources(d, meta)
+	ccaResources := getResourcesForEnvironmentId(d, meta)
 	staticNatPublicIp := cloudca.PublicIp{
 		Id:          d.Get("public_ip_id").(string),
 		PrivateIpId: d.Get("private_ip_id").(string),
 	}
-	_, err := resources.PublicIps.EnableStaticNat(staticNatPublicIp)
+	_, err := ccaResources.PublicIps.EnableStaticNat(staticNatPublicIp)
 	if err != nil {
 		return fmt.Errorf("Error enabling static NAT: %s", err)
 	}
@@ -56,8 +51,8 @@ func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) error {
-	resources := getResources(d, meta)
-	publicIp, err := resources.PublicIps.Get(d.Id())
+	ccaResources := getResourcesForEnvironmentId(d, meta)
+	publicIp, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
 		return handleNotFoundError(err, d)
 	}
@@ -72,7 +67,7 @@ func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceCloudcaStaticNatDelete(d *schema.ResourceData, meta interface{}) error {
-	resources := getResources(d, meta)
-	_, err := resources.PublicIps.DisableStaticNat(d.Id())
+	ccaResources := getResourcesForEnvironmentId(d, meta)
+	_, err := ccaResources.PublicIps.DisableStaticNat(d.Id())
 	return handleNotFoundError(err, d)
 }
