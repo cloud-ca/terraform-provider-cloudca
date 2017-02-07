@@ -45,8 +45,7 @@ Create a vpc.
 ### Example usage
 ```hcl
 resource "cloudca_vpc" "my_vpc" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-vpc"
 	description = "This is a test vpc"
 	vpc_offering = "Default VPC offering"
@@ -54,8 +53,7 @@ resource "cloudca_vpc" "my_vpc" {
 ```
 ### Argument Reference
 The following arguments are supported:
-- service_code - (Required) Service code
-- environment_name - (Required) Name of environment
+- environment_id - (Required) ID of environment
 - name - (Required) Name of the VPC
 - description - (Required) Description of the VPC
 - vpc_offering - (Required) The name of the VPC offering to use for the vpc
@@ -71,8 +69,7 @@ Create a tier.
 ### Example usage
 ```hcl
 resource "cloudca_tier" "my_tier" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-tier"
 	description = "This is a test tier"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
@@ -82,8 +79,7 @@ resource "cloudca_tier" "my_tier" {
 ```
 ### Argument Reference
 The following arguments are supported:
-- service_code - (Required) Service code
-- environment_name - (Required) Name of environment
+- environment_id - (Required) ID of environment
 - name - (Required) Name of the tier
 - description - (Required) Description of the tier
 - vpc_id - (Required) The ID of the vpc where the tier should be created
@@ -99,8 +95,7 @@ Create a network ACL.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl" "my_acl" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-acl"
 	description = "This is a test acl"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
@@ -108,8 +103,7 @@ resource "cloudca_network_acl" "my_acl" {
 ```
 ###Argument Reference
 The following arguments are supported:
-- service_code - (Required) Service code
-- environment_name - (Required) Name of environment
+- environment_id - (Required) ID of environment
 - name - (Required) Name of the network ACL
 - description - (Required) Description of the network ACL
 - vpc_id - (Required) ID of the VPC where the network ACL should be created
@@ -124,8 +118,7 @@ Create a network ACL rule.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl_rule" "my_acl" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	rule_number = 55
 	cidr = "10.212.208.0/22"
 	action = "Allow"
@@ -138,8 +131,7 @@ resource "cloudca_network_acl_rule" "my_acl" {
 ```
 ### Argument Reference
 The following arguments are supported:
-- service_code - (Required) Service code
-- environment_name - (Required) Name of environment
+- environment_id - (Required) ID of environment
 - network_acl_id - (Required) ID of the network ACL where the rule should be created
 - rule_number - (Required) Rule number of the network ACL rule
 - cidr - (Required) CIDR of the network ACL rule
@@ -161,8 +153,7 @@ Create and starts an instance.
 ### Example usage
 ```hcl
 resource "cloudca_instance" "my_instance" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-instance"
 	network_id = "672016ef-05ee-4e88-b68f-ac9cc462300b"
 	template = "CentOS 6.7 base (64bit)"
@@ -172,8 +163,7 @@ resource "cloudca_instance" "my_instance" {
 ```
 ### Argument Reference
 The following arguments are supported:
-- service_code - (Required) Service code
-- environment_name - (Required) Name of environment
+- environment_id - (Required) ID of environment
 - name - (Required) Name of instance
 - network_id - (Required) The ID of the network where the instance should be created
 - template - (Required) Name of template to use for the instance
@@ -195,15 +185,13 @@ Acquires a public IP in a specific VPC. If you update any of the fields in the r
 ### Example usage
 ```hcl
 resource "cloudca_public_ip" "my_publicip" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
 ### Argument Reference
 The following arguments are supported:
-- service_code - (Required) Service code
-- environment_name - (Required) Name of environment
+- environment_id - (Required) ID of environment
 - vpc_id - (Required) The ID of the VPC to acquire the public IP
 
 ### Attribute Reference
@@ -216,8 +204,7 @@ Configures static NAT between a public and a private IP of an instance. Enabling
 ### Example usage
 ```hcl
 resource "cloudca_static_nat" "dev_static_nat" {
-	service_code     = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	public_ip_id     = "10d523c1-907a-4f85-9181-9d62b16851c9"
 	private_ip_id    = "c0d9824b-cb83-45ca-baca-e7e6c63a96a8"
@@ -225,8 +212,7 @@ resource "cloudca_static_nat" "dev_static_nat" {
 ```
 
 ### Argument reference
-- service_code - (Required)
-- environment_name - (Required)
+- environment_id - (Required) ID of environment
 - public_ip_id - (Required) The public IP to configure static NAT on. Cannot have any other purpose (e.g. load balancing, port forwarding)
 - private_ip_id - (Required) A private IP of the instance to configure static NAT on. Must be in the same VPC as the public IP. Secondary IPs can be used here
 
@@ -238,8 +224,7 @@ When adding a port forwarding rule to the default private IP of an instance, onl
 ### Example usage
 ```hcl
 resource "cloudca_port_forwarding_rule" "web_pfr" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
 	public_port_start = 80
@@ -250,8 +235,7 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 ```
 
 ### Argument reference
-- service_code - (Required)
-- environment_name - (Required)
+- environment_id - (Required) ID of environment_id
 - private_ip_id - (Required) The private IP which should be used to create this rule
 - private_port_start - (Required)
 - private_port_end - (Optional) If not specified, defaults to the private start port
@@ -274,8 +258,7 @@ If the instance_id is updated, the volume will be detached from the previous ins
 ### Example usage
 ```hcl
 resource "cloudca_volume" "data_volume" {
-	service_code = "compute-qc"
-	environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	name = "Data Volume"
 
@@ -287,8 +270,7 @@ resource "cloudca_volume" "data_volume" {
 ```
 
 ### Argument reference
-- service_code - (Required)
-- environment_name - (Required)
+- environment_id - (Required) ID of environment
 - name - (Required) The name of the volume to be created
 - disk_offering - (Required) The name or id of the disk offering to use for the volume
 - size_in_gb - (Optional) The size in GB of the volume. Only for disk offerings with custom size.
@@ -305,8 +287,8 @@ Manage load balancer rules. Modifying the ports or public IP will cause the rule
 ### Example usage
 ```hcl
 resource "cloudca_load_balancer_rule" "lbr" {
-   service_code = "compute-qc"
-   environment_name = "dev"
+   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+
    name="web_lb"
    public_ip_id="5cd3a059-f15b-49f7-b7e1-254fef15968d"
    protocol="tcp"
@@ -322,8 +304,7 @@ resource "cloudca_load_balancer_rule" "lbr" {
 ```
 
 ### Argument reference
-- service_code - (Required)
-- environment_name - (Required)
+- environment_id - (Required) ID of environment
 - name - (Required) Name of the load balancer rule
 - public_ip_id - (Required) The id of the public IP to load balance on
 - protocol - (Required) The protocol to load balance
@@ -335,4 +316,3 @@ resource "cloudca_load_balancer_rule" "lbr" {
 
 ### Attribute reference
 - id - the load balancer rule ID
-
