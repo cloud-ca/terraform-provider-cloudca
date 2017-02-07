@@ -310,6 +310,7 @@ resource "cloudca_load_balancer_rule" "lbr" {
    service_code = "compute-qc"
    environment_name = "dev"
    name="web_lb"
+   network_id  = "7bb97867-8021-443b-b548-c15897e3816d"
    public_ip_id="5cd3a059-f15b-49f7-b7e1-254fef15968d"
    protocol="tcp"
    algorithm = "leastconn"
@@ -327,13 +328,13 @@ resource "cloudca_load_balancer_rule" "lbr" {
 - service_code - (Required)
 - environment_name - (Required)
 - name - (Required) Name of the load balancer rule
+- network_id - (Required) Id of the load balancing tier to bind to
 - public_ip_id - (Required) The id of the public IP to load balance on
 - protocol - (Required) The protocol to load balance
 - algorithm - (Required) The algorithm to use for load balancing. Supports: "leastconn", "roundrobin" or "source"
 - instance_ids - (Optional) The list of instances to load balance
 - stickiness_method - (Optional) The stickiness method to use. Supports : "LbCookie", "AppCookie" and "SourceBased"
 - stickiness_params - (Optional) The additional parameters required for each stickiness method. See (TODO ADD LINK here) for more information
-- network_id - (Optional) If the public IP is not associated with a network yet, you must specify the id of the network to bind to
 
 ### Attribute reference
 - id - the load balancer rule ID
