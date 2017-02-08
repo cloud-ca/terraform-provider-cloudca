@@ -19,17 +19,11 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 		Update: updateLbr,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where load balancer rule should be created",
+				Description: "ID of environment where load balancer rule should be created",
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -96,12 +90,10 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 }
 
 func createLbr(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, err := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
-	if err != nil {
-		return err
+	if rerr != nil {
+		return rerr
 	}
 
 	lbr := cloudca.LoadBalancerRule{
@@ -142,9 +134,11 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func readLbr(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+
+	if rerr != nil {
+		return rerr
+	}
 
 	lbr, err := ccaResources.LoadBalancerRules.Get(d.Id())
 	if err != nil {
@@ -167,10 +161,11 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func deleteLbr(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
+	if rerr != nil {
+		return rerr
+	}
 	if err := ccaResources.LoadBalancerRules.Delete(d.Id()); err != nil {
 		return handleLbrNotFoundError(err, d)
 	}
@@ -178,12 +173,10 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func updateLbr(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*cca.CcaClient)
-	resources, err := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
-	if err != nil {
-		return err
+	if rerr != nil {
+		return rerr
 	}
 
 	d.Partial(true)

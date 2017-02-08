@@ -2,12 +2,13 @@ package cloudca
 
 import (
 	"fmt"
+	"regexp"
+	"strconv"
+
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
-	"regexp"
-	"strconv"
 )
 
 func GetCloudCAResourceMap() map[string]*schema.Resource {
@@ -64,4 +65,17 @@ func getResources(d *schema.ResourceData, meta interface{}) cloudca.Resources {
 	client := meta.(*cca.CcaClient)
 	_resources, _ := client.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
 	return _resources.(cloudca.Resources)
+}
+
+// Deals with all of the casting done to get a cloudca.Resources.
+func getResourcesForEnvironmentId(client *cca.CcaClient, environmentId string) (cloudca.Resources, error) {
+	environment, err := client.Environments.Get(environmentId)
+	if err != nil {
+		return cloudca.Resources{}, err
+	}
+	resources, err := client.GetResources(environment.ServiceConnection.ServiceCode, environment.Name)
+	if err != nil {
+		return cloudca.Resources{}, err
+	}
+	return resources.(cloudca.Resources), nil
 }

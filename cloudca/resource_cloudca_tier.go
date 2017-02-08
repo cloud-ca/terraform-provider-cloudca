@@ -19,17 +19,11 @@ func resourceCloudcaTier() *schema.Resource {
 		Delete: resourceCloudcaTierDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where tier should be created",
+				Description: "ID of environment where tier should be created",
 			},
 			"organization_code": &schema.Schema{
 				Type:        schema.TypeString,
@@ -73,10 +67,11 @@ func resourceCloudcaTier() *schema.Resource {
 }
 
 func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
+	if rerr != nil {
+		return rerr
+	}
 	networkOfferingId, nerr := retrieveNetworkOfferingId(&ccaResources, d.Get("network_offering").(string))
 	if nerr != nil {
 		return nerr
@@ -102,10 +97,11 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
+	if rerr != nil {
+		return rerr
+	}
 	tier, err := ccaResources.Tiers.Get(d.Id())
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
@@ -141,10 +137,11 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
+	if rerr != nil {
+		return rerr
+	}
 	d.Partial(true)
 
 	if d.HasChange("name") || d.HasChange("description") {
@@ -169,9 +166,11 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+
+	if rerr != nil {
+		return rerr
+	}
 	if _, err := ccaResources.Tiers.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {

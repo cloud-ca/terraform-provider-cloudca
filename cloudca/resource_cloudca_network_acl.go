@@ -2,6 +2,7 @@ package cloudca
 
 import (
 	"fmt"
+
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
@@ -15,17 +16,11 @@ func resourceCloudcaNetworkAcl() *schema.Resource {
 		Delete: resourceCloudcaNetworkAclDelete,
 
 		Schema: map[string]*schema.Schema{
-			"service_code": &schema.Schema{
+			"environment_id": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "A cloudca service code",
-			},
-			"environment_name": &schema.Schema{
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    true,
-				Description: "Name of environment where the network ACL should be created",
+				Description: "ID of environment where the network ACL should be created",
 			},
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
@@ -50,9 +45,11 @@ func resourceCloudcaNetworkAcl() *schema.Resource {
 }
 
 func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+
+	if rerr != nil {
+		return rerr
+	}
 
 	aclToCreate := cloudca.NetworkAcl{
 		Name:        d.Get("name").(string),
@@ -68,10 +65,11 @@ func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
+	if rerr != nil {
+		return rerr
+	}
 	acl, aErr := ccaResources.NetworkAcls.Get(d.Id())
 	if aErr != nil {
 		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
@@ -93,9 +91,11 @@ func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaNetworkAclDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaClient := meta.(*cca.CcaClient)
-	resources, _ := ccaClient.GetResources(d.Get("service_code").(string), d.Get("environment_name").(string))
-	ccaResources := resources.(cloudca.Resources)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+
+	if rerr != nil {
+		return rerr
+	}
 	if _, err := ccaResources.NetworkAcls.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
