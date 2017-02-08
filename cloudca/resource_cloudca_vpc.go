@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -62,7 +63,7 @@ func resourceCloudcaVpc() *schema.Resource {
 }
 
 func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -105,7 +106,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -147,7 +148,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -166,7 +167,7 @@ func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -37,7 +38,7 @@ func resourceCloudcaPublicIp() *schema.Resource {
 }
 
 func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -56,7 +57,7 @@ func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -78,7 +79,7 @@ func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaPublicIpDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

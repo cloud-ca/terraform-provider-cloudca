@@ -3,6 +3,7 @@ package cloudca
 import (
 	"fmt"
 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -44,7 +45,7 @@ func resourceCloudcaNetworkAcl() *schema.Resource {
 }
 
 func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -64,7 +65,7 @@ func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) e
 }
 
 func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -90,7 +91,7 @@ func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaNetworkAclDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

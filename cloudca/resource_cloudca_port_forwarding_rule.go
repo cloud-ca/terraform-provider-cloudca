@@ -3,6 +3,7 @@ package cloudca
 import (
 	"strconv"
 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -81,7 +82,7 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 }
 
 func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -112,7 +113,7 @@ func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 }
 
 func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -137,7 +138,7 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 }
 
 func deletePortForwardingRule(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

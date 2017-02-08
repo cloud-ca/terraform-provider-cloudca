@@ -3,6 +3,7 @@ package cloudca
 import (
 	"fmt"
 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -37,7 +38,7 @@ func resourceCloudcaStaticNat() *schema.Resource {
 }
 
 func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -55,7 +56,7 @@ func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) er
 }
 
 func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -75,7 +76,7 @@ func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceCloudcaStaticNatDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

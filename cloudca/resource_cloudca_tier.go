@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -62,7 +63,7 @@ func resourceCloudcaTier() *schema.Resource {
 }
 
 func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -92,7 +93,7 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -131,7 +132,7 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -160,7 +161,7 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(d, meta)
+	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
