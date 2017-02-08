@@ -142,10 +142,11 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 	d.Partial(true)
 	if d.HasChange("instance_id") {
 		oldInstanceId, newInstanceId := d.GetChange("instance_id")
+		curVolume, _ := ccaResources.Volumes.Get(d.Id())
 		volume := &cloudca.Volume{
 			Id: d.Id(),
 		}
-		if oldInstanceId != "" {
+		if oldInstanceId != "" && curVolume.InstanceId != "" {
 			err := ccaResources.Volumes.DetachFromInstance(volume)
 			if err != nil {
 				return err

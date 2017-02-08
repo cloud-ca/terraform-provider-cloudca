@@ -58,6 +58,10 @@ func resourceCloudcaTier() *schema.Resource {
 				Required:    true,
 				Description: "Id of the network ACL",
 			},
+			"cidr": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -128,6 +132,7 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 	setValueOrID(d, "network_offering", offering.Name, tier.NetworkOfferingId)
 	d.Set("vpc_id", tier.VpcId)
 	d.Set("network_acl_id", tier.NetworkAclId)
+	d.Set("cidr", tier.Cidr)
 	return nil
 }
 
