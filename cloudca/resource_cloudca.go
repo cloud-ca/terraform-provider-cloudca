@@ -74,9 +74,9 @@ func getResourcesForEnvironmentId(d *schema.ResourceData, meta interface{}) (clo
 	if err != nil {
 		return cloudca.Resources{}, err
 	}
-	resources, err2 := client.GetResources(environment.ServiceConnection.ServiceCode, environment.Name)
-	if err2 != nil {
-		return cloudca.Resources{}, err2
+	resources, err := client.GetResources(environment.ServiceConnection.ServiceCode, environment.Name)
+	if err != nil {
+		return cloudca.Resources{}, err
 	}
 	return resources.(cloudca.Resources), nil
 }
