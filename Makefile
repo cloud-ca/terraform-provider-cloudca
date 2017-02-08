@@ -16,6 +16,7 @@ build:
 build-all: clean
 	@gox -verbose \
 		-ldflags "-X main.version=${VERSION}" \
+		-gcflags=-trimpath=${GOPATH} \
 		-os="linux darwin windows freebsd openbsd solaris" \
 		-arch="386 amd64 arm" \
 		-osarch="!darwin/arm !darwin/386" \
