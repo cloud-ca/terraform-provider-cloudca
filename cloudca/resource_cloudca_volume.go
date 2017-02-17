@@ -19,19 +19,19 @@ func resourceCloudcaVolume() *schema.Resource {
 		Delete: resourceCloudcaVolumeDelete,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where the volume should be created",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The name of the volume to be created",
 			},
-			"disk_offering": &schema.Schema{
+			"disk_offering": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
@@ -40,21 +40,21 @@ func resourceCloudcaVolume() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			"size_in_gb": &schema.Schema{
+			"size_in_gb": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
 				Description: "The size of the volume in gigabytes",
 			},
-			"iops": &schema.Schema{
+			"iops": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
 				Description: "The number of iops of the volume",
 			},
-			"instance_id": &schema.Schema{
+			"instance_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The id of the instance to which the volume will be attached",

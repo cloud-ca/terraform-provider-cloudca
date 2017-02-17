@@ -11,54 +11,54 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceCloudcaTier() *schema.Resource {
+func resourceCloudcaNetwork() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudcaTierCreate,
-		Read:   resourceCloudcaTierRead,
-		Update: resourceCloudcaTierUpdate,
-		Delete: resourceCloudcaTierDelete,
+		Create: resourceCloudcaNetworkCreate,
+		Read:   resourceCloudcaNetworkRead,
+		Update: resourceCloudcaNetworkUpdate,
+		Delete: resourceCloudcaNetworkDelete,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "ID of environment where tier should be created",
+				Description: "ID of environment where network should be created",
 			},
-			"organization_code": &schema.Schema{
+			"organization_code": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 				Description: "Entry point of organization",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of tier",
+				Description: "Name of network",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Description of tier",
+				Description: "Description of network",
 			},
-			"vpc_id": &schema.Schema{
+			"vpc_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "Id of the VPC",
 			},
-			"network_offering": &schema.Schema{
+			"network_offering": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: `The network offering name or id (e.g. "Standard Tier" or "Load Balanced Tier")`,
+				Description: `The network offering name or id (e.g. "Standard Network" or "Load Balanced Network")`,
 			},
-			"network_acl_id": &schema.Schema{
+			"network_acl_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Id of the network ACL",
 			},
-			"cidr": &schema.Schema{
+			"cidr": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -66,7 +66,7 @@ func resourceCloudcaTier() *schema.Resource {
 	}
 }
 
-func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudcaNetworkCreate(d *schema.ResourceData, meta interface{}) error {
 	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
@@ -77,7 +77,7 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 		return nerr
 	}
 
-	tierToCreate := cloudca.Tier{
+	networkToCreate := cloudca.Network{
 		Name:              d.Get("name").(string),
 		Description:       d.Get("description").(string),
 		VpcId:             d.Get("vpc_id").(string),
@@ -88,25 +88,25 @@ func resourceCloudcaTierCreate(d *schema.ResourceData, meta interface{}) error {
 	if orgId, ok := d.GetOk("organization_code"); ok {
 		options["org_id"] = orgId.(string)
 	}
-	newTier, err := ccaResources.Tiers.Create(tierToCreate, options)
+	newNetwork, err := ccaResources.Networks.Create(networkToCreate, options)
 	if err != nil {
-		return fmt.Errorf("Error creating the new tier %s: %s", tierToCreate.Name, err)
+		return fmt.Errorf("Error creating the new network %s: %s", networkToCreate.Name, err)
 	}
-	d.SetId(newTier.Id)
-	return resourceCloudcaTierRead(d, meta)
+	d.SetId(newNetwork.Id)
+	return resourceCloudcaNetworkRead(d, meta)
 }
 
-func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error {
 	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	tier, err := ccaResources.Tiers.Get(d.Id())
+	network, err := ccaResources.Networks.Get(d.Id())
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				log.Printf("Tier %s was not found", d.Get("name").(string))
+				log.Printf("Network %s was not found", d.Get("name").(string))
 				d.SetId("")
 				return nil
 			}
@@ -114,11 +114,11 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	offering, offErr := ccaResources.NetworkOfferings.Get(tier.NetworkOfferingId)
+	offering, offErr := ccaResources.NetworkOfferings.Get(network.NetworkOfferingId)
 	if offErr != nil {
 		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network offering %s not found", tier.NetworkOfferingId)
+				fmt.Errorf("Network offering %s not found", network.NetworkOfferingId)
 				d.SetId("")
 				return nil
 			}
@@ -127,16 +127,16 @@ func resourceCloudcaTierRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Update the config
-	d.Set("name", tier.Name)
-	d.Set("description", tier.Description)
-	setValueOrID(d, "network_offering", offering.Name, tier.NetworkOfferingId)
-	d.Set("vpc_id", tier.VpcId)
-	d.Set("network_acl_id", tier.NetworkAclId)
-	d.Set("cidr", tier.Cidr)
+	d.Set("name", network.Name)
+	d.Set("description", network.Description)
+	setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId)
+	d.Set("vpc_id", network.VpcId)
+	d.Set("network_acl_id", network.NetworkAclId)
+	d.Set("cidr", network.Cidr)
 	return nil
 }
 
-func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudcaNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
 	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
@@ -147,14 +147,14 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 	if d.HasChange("name") || d.HasChange("description") {
 		newName := d.Get("name").(string)
 		newDescription := d.Get("description").(string)
-		_, err := ccaResources.Tiers.Update(d.Id(), cloudca.Tier{Id: d.Id(), Name: newName, Description: newDescription})
+		_, err := ccaResources.Networks.Update(d.Id(), cloudca.Network{Id: d.Id(), Name: newName, Description: newDescription})
 		if err != nil {
 			return err
 		}
 	}
 
 	if d.HasChange("network_acl_id") {
-		_, aclErr := ccaResources.Tiers.ChangeAcl(d.Id(), d.Get("network_acl_id").(string))
+		_, aclErr := ccaResources.Networks.ChangeAcl(d.Id(), d.Get("network_acl_id").(string))
 		if aclErr != nil {
 			return aclErr
 		}
@@ -165,16 +165,16 @@ func resourceCloudcaTierUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceCloudcaTierDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceCloudcaNetworkDelete(d *schema.ResourceData, meta interface{}) error {
 	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	if _, err := ccaResources.Tiers.Delete(d.Id()); err != nil {
+	if _, err := ccaResources.Networks.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Tier %s not found", d.Id())
+				fmt.Errorf("Network %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

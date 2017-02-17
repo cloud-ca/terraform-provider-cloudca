@@ -19,68 +19,68 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 		Update: updateLbr,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where load balancer rule should be created",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the load balancer rule",
 			},
-			"public_ip_id": &schema.Schema{
+			"public_ip_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The public IP to which the rule should be applied",
 			},
-			"public_ip": &schema.Schema{
+			"public_ip": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"network_id": &schema.Schema{
+			"network_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The network ID to bind to",
 			},
-			"protocol": &schema.Schema{
+			"protocol": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The protocol that this rule should use (eg. TCP, UDP)",
 			},
-			"algorithm": &schema.Schema{
+			"algorithm": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The algorithm used to load balance",
 			},
-			"public_port": &schema.Schema{
+			"public_port": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The port on the public IP",
 			},
-			"private_port": &schema.Schema{
+			"private_port": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The port to which the traffic will be load balanced internally",
 			},
-			"instance_ids": &schema.Schema{
+			"instance_ids": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "List of instance ids that will be load balanced",
 				Elem:        &schema.Schema{Type: schema.TypeString},
 			},
-			"stickiness_method": &schema.Schema{
+			"stickiness_method": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The stickiness method",
 			},
-			"stickiness_params": &schema.Schema{
+			"stickiness_params": {
 				Type:        schema.TypeMap,
 				Optional:    true,
 				Description: "The stickiness policy parameters",

@@ -19,23 +19,23 @@ func resourceCloudcaVpc() *schema.Resource {
 		Delete: resourceCloudcaVpcDelete,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where VPC should be created",
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of VPC",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Description of VPC",
 			},
-			"vpc_offering": &schema.Schema{
+			"vpc_offering": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
@@ -44,14 +44,14 @@ func resourceCloudcaVpc() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			"network_domain": &schema.Schema{
+			"network_domain": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Optional:    true,
 				ForceNew:    true,
 				Description: "A custom DNS suffix at the level of a network",
 			},
-			"zone": &schema.Schema{
+			"zone": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Optional:    true,

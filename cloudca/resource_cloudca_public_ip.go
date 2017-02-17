@@ -17,19 +17,19 @@ func resourceCloudcaPublicIp() *schema.Resource {
 		Delete: resourceCloudcaPublicIpDelete,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where the public IP should be created",
 			},
-			"vpc_id": &schema.Schema{
+			"vpc_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "Id of the VPC",
 			},
-			"ip_address": &schema.Schema{
+			"ip_address": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},

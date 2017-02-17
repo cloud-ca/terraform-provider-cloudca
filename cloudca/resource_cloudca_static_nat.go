@@ -15,19 +15,19 @@ func resourceCloudcaStaticNat() *schema.Resource {
 		Delete: resourceCloudcaStaticNatDelete,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where static NAT should be enabled",
 			},
-			"public_ip_id": &schema.Schema{
+			"public_ip_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The public IP to enable static NAT on",
 			},
-			"private_ip_id": &schema.Schema{
+			"private_ip_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,

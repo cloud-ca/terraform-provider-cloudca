@@ -25,23 +25,23 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 		Delete: resourceCloudcaNetworkAclRuleDelete,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where the network ACL rule should be created",
 			},
-			"rule_number": &schema.Schema{
+			"rule_number": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "The rule number of network ACL",
 			},
-			"cidr": &schema.Schema{
+			"cidr": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The network ACL rule cidr",
 			},
-			"action": &schema.Schema{
+			"action": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The network ACL rule action (i.e. Allow or Deny)",
@@ -49,7 +49,7 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			"protocol": &schema.Schema{
+			"protocol": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
@@ -58,7 +58,7 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			"traffic_type": &schema.Schema{
+			"traffic_type": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The network ACL rule traffc type (i.e. Ingress or Egress)",
@@ -66,27 +66,27 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			"icmp_type": &schema.Schema{
+			"icmp_type": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "The ICMP type. Can only be used with ICMP protocol.",
 			},
-			"icmp_code": &schema.Schema{
+			"icmp_code": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "The ICMP code. Can only be used with ICMP protocol.",
 			},
-			"start_port": &schema.Schema{
+			"start_port": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "The start port. Can only be used with TCP/UDP protocol.",
 			},
-			"end_port": &schema.Schema{
+			"end_port": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "The end port. Can only be used with TCP/UDP protocol.",
 			},
-			"network_acl_id": &schema.Schema{
+			"network_acl_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,

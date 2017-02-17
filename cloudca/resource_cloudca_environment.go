@@ -34,7 +34,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
 		Delete: resourceCloudcaEnvironmentDelete,
 
 		Schema: map[string]*schema.Schema{
-			ORGANIZATION_CODE: &schema.Schema{
+			ORGANIZATION_CODE: {
 				Type:        schema.TypeString,
 				ForceNew:    true,
 				Required:    true,
@@ -43,35 +43,35 @@ func resourceCloudcaEnvironment() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			SERVICE_CODE: &schema.Schema{
+			SERVICE_CODE: {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "A cloudca service code",
 			},
-			NAME: &schema.Schema{
+			NAME: {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes",
 			},
-			DESCRIPTION: &schema.Schema{
+			DESCRIPTION: {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Description for the environment",
 			},
-			ADMIN_ROLE_USERS: &schema.Schema{
+			ADMIN_ROLE_USERS: {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of users that will be given Environment Admin role",
 			},
-			USER_ROLE_USERS: &schema.Schema{
+			USER_ROLE_USERS: {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of users that will be given User role",
 			},
-			READ_ONLY_ROLE_USERS: &schema.Schema{
+			READ_ONLY_ROLE_USERS: {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,

@@ -1,7 +1,7 @@
 # Resources
 - [**cloudca_environment**](#cloudca_environment)
 - [**cloudca_vpc**](#cloudca_vpc)
-- [**cloudca_tier**](#cloudca_tier)
+- [**cloudca_network**](#cloudca_network)
 - [**cloudca_network_acl**](#cloudca_network_acl)
 - [**cloudca_network_acl_rule**](#cloudca_network_acl_rule)
 - [**cloudca_instance**](#cloudca_instance)
@@ -63,32 +63,32 @@ The following arguments are supported:
 ### Attribute Reference
 - id - ID of VPC.
 
-## cloudca_tier
-Create a tier.
+## cloudca_network
+Create a network.
 
 ### Example usage
 ```hcl
-resource "cloudca_tier" "my_tier" {
+resource "cloudca_network" "my_network" {
    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-	name = "test-tier"
-	description = "This is a test tier"
+	name = "test-network"
+	description = "This is a test network"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
-	network_offering = "Standard Tier"
+	network_offering = "Standard Network"
 	network_acl_id = "7d428416-263d-47cd-9270-2cdbdf222f57"
 }
 ```
 ### Argument Reference
 The following arguments are supported:
 - environment_id - (Required) ID of environment
-- name - (Required) Name of the tier
-- description - (Required) Description of the tier
-- vpc_id - (Required) The ID of the vpc where the tier should be created
-- network_offering - (Required) The name of the network offering to use for the tier
-- network_acl_id - (Required) The id of the network ACL to use for the tier
+- name - (Required) Name of the network
+- description - (Required) Description of the network
+- vpc_id - (Required) The ID of the vpc where the network should be created
+- network_offering - (Required) The name of the network offering to use for the network
+- network_acl_id - (Required) The id of the network ACL to use for the network
 
 ### Attribute Reference
-- id - ID of tier.
-- cidr - Cidr of tier
+- id - ID of network.
+- cidr - Cidr of network
 
 ## cloudca_network_acl
 Create a network ACL.
@@ -308,7 +308,7 @@ resource "cloudca_load_balancer_rule" "lbr" {
 ### Argument reference
 - environment_id - (Required) ID of environment
 - name - (Required) Name of the load balancer rule
-- network_id - (Required) Id of the load balancing tier to bind to
+- network_id - (Required) Id of the load balancing network to bind to
 - public_ip_id - (Required) The id of the public IP to load balance on
 - protocol - (Required) The protocol to load balance
 - algorithm - (Required) The algorithm to use for load balancing. Supports: "leastconn", "roundrobin" or "source"

@@ -15,65 +15,65 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 		Delete: deletePortForwardingRule,
 
 		Schema: map[string]*schema.Schema{
-			"environment_id": &schema.Schema{
+			"environment_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "ID of environment where port forwarding rule should be created",
 			},
-			"public_ip_id": &schema.Schema{
+			"public_ip_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The public IP to which these rules should be applied",
 			},
-			"private_ip_id": &schema.Schema{
+			"private_ip_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The ID of the private IP to bind to",
 			},
-			"protocol": &schema.Schema{
+			"protocol": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The protocol that this rule should use (eg. TCP, UDP)",
 			},
-			"private_port_start": &schema.Schema{
+			"private_port_start": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The start of the private port range for this rule",
 			},
-			"private_port_end": &schema.Schema{
+			"private_port_end": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
 				Description: "The end of the private port range for this rule",
 			},
-			"public_port_start": &schema.Schema{
+			"public_port_start": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The start of the public port range for this rule",
 			},
-			"public_port_end": &schema.Schema{
+			"public_port_end": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
 				Description: "The end of the public port range for this rule",
 			},
-			"public_ip": &schema.Schema{
+			"public_ip": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"private_ip": &schema.Schema{
+			"private_ip": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"instance_id": &schema.Schema{
+			"instance_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
