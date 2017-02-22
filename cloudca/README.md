@@ -263,9 +263,7 @@ resource "cloudca_volume" "data_volume" {
 
 	name = "Data Volume"
 
-	disk_offering = "High Performance SSD"
-	size_in_gb = 20
-	iops = 2000
+	disk_offering = "20GB - 20 IOPS Min."
 	instance_id = "f932c530-5753-44ce-8aae-263672e1ae3f"
 }
 ```
