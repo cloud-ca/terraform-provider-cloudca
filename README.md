@@ -2,7 +2,7 @@
 
 Terraform provider for cloud.ca
 
-Tested with Terraform version : 0.8.4
+Tested with Terraform version : 0.9.2
 
 # Installation
 
@@ -26,6 +26,7 @@ provider "cloudca" {
 - [**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
 
 # Build from source
+Install [Go](https://golang.org/doc/install) (version 1.8 is required)
 
 Download the provider source:
 ```Shell
