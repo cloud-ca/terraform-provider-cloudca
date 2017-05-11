@@ -69,7 +69,7 @@ Create a network.
 ### Example usage
 ```hcl
 resource "cloudca_network" "my_network" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-network"
 	description = "This is a test network"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
@@ -96,7 +96,7 @@ Create a network ACL.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl" "my_acl" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-acl"
 	description = "This is a test acl"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
@@ -119,7 +119,7 @@ Create a network ACL rule.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl_rule" "my_acl" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	rule_number = 55
 	cidr = "10.212.208.0/22"
 	action = "Allow"
@@ -154,7 +154,7 @@ Create and starts an instance.
 ### Example usage
 ```hcl
 resource "cloudca_instance" "my_instance" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-instance"
 	network_id = "672016ef-05ee-4e88-b68f-ac9cc462300b"
 	template = "CentOS 6.7 base (64bit)"
@@ -186,7 +186,7 @@ Acquires a public IP in a specific VPC. If you update any of the fields in the r
 ### Example usage
 ```hcl
 resource "cloudca_public_ip" "my_publicip" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
@@ -205,7 +205,7 @@ Configures static NAT between a public and a private IP of an instance. Enabling
 ### Example usage
 ```hcl
 resource "cloudca_static_nat" "dev_static_nat" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	public_ip_id     = "10d523c1-907a-4f85-9181-9d62b16851c9"
 	private_ip_id    = "c0d9824b-cb83-45ca-baca-e7e6c63a96a8"
@@ -225,7 +225,7 @@ When adding a port forwarding rule to the default private IP of an instance, onl
 ### Example usage
 ```hcl
 resource "cloudca_port_forwarding_rule" "web_pfr" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
 	public_port_start = 80
@@ -259,7 +259,7 @@ If the instance_id is updated, the volume will be detached from the previous ins
 ### Example usage
 ```hcl
 resource "cloudca_volume" "data_volume" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	name = "Data Volume"
 
@@ -286,20 +286,20 @@ Manage load balancer rules. Modifying the ports or public IP will cause the rule
 ### Example usage
 ```hcl
 resource "cloudca_load_balancer_rule" "lbr" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
-   name="web_lb"
-   network_id  = "7bb97867-8021-443b-b548-c15897e3816d"
-   public_ip_id="5cd3a059-f15b-49f7-b7e1-254fef15968d"
-   protocol="tcp"
-   algorithm = "leastconn"
-   public_port = 80
-   private_port = 80
-   instance_ids = ["071e2929-672e-45bc-a5b6-703d17c08367"]
-   stickiness_method = "AppCookie"
-   stickiness_params {
-      cookieName = "allo"
-   }
+	name="web_lb"
+	network_id  = "7bb97867-8021-443b-b548-c15897e3816d"
+	public_ip_id="5cd3a059-f15b-49f7-b7e1-254fef15968d"
+	protocol="tcp"
+	algorithm = "leastconn"
+	public_port = 80
+	private_port = 80
+	instance_ids = ["071e2929-672e-45bc-a5b6-703d17c08367"]
+	stickiness_method = "AppCookie"
+	stickiness_params {
+		cookieName = "allo"
+	}
 }
 ```
 
