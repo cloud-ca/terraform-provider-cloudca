@@ -89,6 +89,13 @@ func resourceCloudcaInstance() *schema.Resource {
 				Computed:    true,
 				Description: "The instance's memory in MB. If the compute offering is custom, this value is required",
 			},
+			"root_volume_size_in_gb": &schema.Schema{
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: "The size of the root volume in GB. This can only be set if the template allows choosing a custom root volume size.",
+			},
 			"private_ip_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -153,6 +160,10 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("Cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
 	}
 
+	if rootVolumeSizeInGb, ok := d.GetOk("root_volume_size_in_gb"); ok {
+		instanceToCreate.RootVolumeSizeInGb = rootVolumeSizeInGb.(int)
+	}
+
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
 	if err != nil {
 		return fmt.Errorf("Error creating the new instance %s: %s", instanceToCreate.Name, err)
@@ -179,14 +190,12 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
-				return nil
+				return fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
 			}
 		}
 		return err
 	}
-
 	// Update the config
 	d.Set("name", instance.Name)
 	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
@@ -266,9 +275,8 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	if _, err := ccaResources.Instances.Destroy(d.Id(), true); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
-				return nil
+				return fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
 			}
 		}
 		return err
