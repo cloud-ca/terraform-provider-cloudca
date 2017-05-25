@@ -191,7 +191,8 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
 				d.SetId("")
-				return fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
+				fmt.Printf("Instance %s no longer exist", d.Get("name").(string))
+				return nil
 			}
 		}
 		return err
@@ -276,7 +277,8 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
 				d.SetId("")
-				return fmt.Errorf("Instance %s does no longer exist", d.Get("name").(string))
+				fmt.Printf("Instance %s no longer exist", d.Get("name").(string))
+				return nil
 			}
 		}
 		return err
