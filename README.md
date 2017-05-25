@@ -2,7 +2,7 @@
 
 Terraform provider for cloud.ca
 
-Tested with Terraform version : 0.9.2
+Tested with Terraform version : 0.9.5
 
 # Installation
 

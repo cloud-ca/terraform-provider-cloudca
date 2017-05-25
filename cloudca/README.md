@@ -160,6 +160,7 @@ resource "cloudca_instance" "my_instance" {
 	template = "CentOS 6.7 base (64bit)"
 	compute_offering = "1vCPU.512MB"
 	ssh_key_name = "my_ssh_key"
+	root_volume_size_in_gb = 100
 }
 ```
 ### Argument Reference
@@ -174,6 +175,7 @@ The following arguments are supported:
 - user_data - (Optional) User data to add to the instance
 - ssh_key_name - (Optional) Name of the SSH key pair to attach to the instance. Mutually exclusive with public_key.
 - public_key - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
+- root_size_in_gb - (Optional) Size of the root volume of the instance. This only works for templates that allows root volume resize.
 
 ### Attribute Reference
 - id - ID of instance.
