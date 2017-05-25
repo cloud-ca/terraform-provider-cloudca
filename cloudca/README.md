@@ -69,7 +69,7 @@ Create a network.
 ### Example usage
 ```hcl
 resource "cloudca_network" "my_network" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-network"
 	description = "This is a test network"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
@@ -96,7 +96,7 @@ Create a network ACL.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl" "my_acl" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-acl"
 	description = "This is a test acl"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
@@ -119,7 +119,7 @@ Create a network ACL rule.
 ### Example usage
 ```hcl
 resource "cloudca_network_acl_rule" "my_acl" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	rule_number = 55
 	cidr = "10.212.208.0/22"
 	action = "Allow"
@@ -154,12 +154,13 @@ Create and starts an instance.
 ### Example usage
 ```hcl
 resource "cloudca_instance" "my_instance" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-instance"
 	network_id = "672016ef-05ee-4e88-b68f-ac9cc462300b"
 	template = "CentOS 6.7 base (64bit)"
 	compute_offering = "1vCPU.512MB"
 	ssh_key_name = "my_ssh_key"
+	root_volume_size_in_gb = 100
 }
 ```
 ### Argument Reference
@@ -174,6 +175,7 @@ The following arguments are supported:
 - user_data - (Optional) User data to add to the instance
 - ssh_key_name - (Optional) Name of the SSH key pair to attach to the instance. Mutually exclusive with public_key.
 - public_key - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
+- root_size_in_gb - (Optional) Size of the root volume of the instance. This only works for templates that allows root volume resize.
 
 ### Attribute Reference
 - id - ID of instance.
@@ -186,7 +188,7 @@ Acquires a public IP in a specific VPC. If you update any of the fields in the r
 ### Example usage
 ```hcl
 resource "cloudca_public_ip" "my_publicip" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
@@ -205,7 +207,7 @@ Configures static NAT between a public and a private IP of an instance. Enabling
 ### Example usage
 ```hcl
 resource "cloudca_static_nat" "dev_static_nat" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	public_ip_id     = "10d523c1-907a-4f85-9181-9d62b16851c9"
 	private_ip_id    = "c0d9824b-cb83-45ca-baca-e7e6c63a96a8"
@@ -225,7 +227,7 @@ When adding a port forwarding rule to the default private IP of an instance, onl
 ### Example usage
 ```hcl
 resource "cloudca_port_forwarding_rule" "web_pfr" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
 	public_port_start = 80
@@ -259,7 +261,7 @@ If the instance_id is updated, the volume will be detached from the previous ins
 ### Example usage
 ```hcl
 resource "cloudca_volume" "data_volume" {
-   environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 
 	name = "Data Volume"
 

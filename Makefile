@@ -33,6 +33,17 @@ build-all: clean
 	pushd ./dist ; \
 	shasum -a256 *.zip > ./terraform-provider-cloudca_${VERSION}_SHA256SUMS ; \
 	popd >/dev/null 2>&1 ;
+upload:
+	rm -f ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ;
+	SWIFT_ACCOUNT=`swift stat | grep Account: | sed s/Account:// | tr -d '[:space:]'` ; \
+	SWIFT_URL=https://objects-east.cloud.ca/v1 ; \
+	SWIFT_CONTAINER=terraform-provider-cloudca ; \
+	for FILE in `ls ./dist | grep -i terraform.*\.zip` ; do \
+		echo "Uploading $$FILE to swift" ; \
+		swift upload foo ./dist/$$FILE --object-name ${VERSION}/$$FILE ; \
+		echo "$${SWIFT_URL}/$${SWIFT_ACCOUNT}/$${SWIFT_CONTAINER}/${VERSION}/$$FILE" >> ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ; \
+	done
+release: build-all upload
 clean:
 	rm -rf dist terraform-provider-cloudca
 
