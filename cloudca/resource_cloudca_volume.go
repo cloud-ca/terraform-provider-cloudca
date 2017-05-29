@@ -43,14 +43,12 @@ func resourceCloudcaVolume() *schema.Resource {
 			"size_in_gb": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				ForceNew:    true,
 				Computed:    true,
 				Description: "The size of the volume in gigabytes",
 			},
 			"iops": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				ForceNew:    true,
 				Computed:    true,
 				Description: "The number of iops of the volume",
 			},
@@ -140,9 +138,12 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 		return rerr
 	}
 	d.Partial(true)
+	curVolume, err := ccaResources.Volumes.Get(d.Id())
+	if err != nil {
+		return err
+	}
 	if d.HasChange("instance_id") {
 		oldInstanceId, newInstanceId := d.GetChange("instance_id")
-		curVolume, _ := ccaResources.Volumes.Get(d.Id())
 		volume := &cloudca.Volume{
 			Id: d.Id(),
 		}
@@ -159,6 +160,23 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 			}
 		}
 		d.SetPartial("instance_id")
+	}
+	if d.HasChange("size_in_gb") || d.HasChange("iops") {
+		volumeToResize := cloudca.Volume{
+			Id: d.Id(),
+		}
+		if val, ok := d.GetOk("size_in_gb"); ok {
+			volumeToResize.GbSize = val.(int)
+			if curVolume.GbSize > volumeToResize.GbSize {
+				return fmt.Errorf("Cannot reduce size of a volume")
+			}
+		}
+		if val, ok := d.GetOk("iops"); ok {
+			volumeToResize.Iops = val.(int)
+		}
+		ccaResources.Volumes.Resize(&volumeToResize)
+		d.SetPartial("size_in_gb")
+		d.SetPartial("iops")
 	}
 	d.Partial(false)
 	return resourceCloudcaVolumeRead(d, meta)
