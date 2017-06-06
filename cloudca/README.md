@@ -281,6 +281,7 @@ resource "cloudca_volume" "data_volume" {
 ### Attribute reference
 - id - the volume ID
 
+**WARNING: Updating size_in_gb and/or iops of a volume will cause a REBOOT of the instance it's attached to.**
 
 ## cloudca_load_balancer_rule
 Manage load balancer rules. Modifying the ports or public IP will cause the rule to be recreated
