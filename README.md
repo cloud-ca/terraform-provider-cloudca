@@ -2,12 +2,12 @@
 
 Terraform provider for cloud.ca
 
-Tested with Terraform version : 0.9.5
+Tested with Terraform version : 0.11.1
 
 # Installation
 
 1. Download the cloud.ca Terraform provider binary for your OS from the [releases page](https://github.com/cloud-ca/terraform-provider-cloudca/releases).
-2. Copy the provider to the directory where Terraform is located.
+2. Copy the provider to the plugin directory `~/.terraform.d/plugins`.
 
 Alternate installation: [Terraform documentation](https://www.terraform.io/docs/plugins/basics.html)
 
