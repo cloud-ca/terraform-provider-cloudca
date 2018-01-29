@@ -20,7 +20,7 @@ build-all: clean
 		-os="linux darwin windows freebsd openbsd solaris" \
 		-arch="386 amd64 arm" \
 		-osarch="!darwin/arm !darwin/386" \
-		-output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+		-output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}_${VERSION}" .
 
 	@for PLATFORM in `find ./dist -mindepth 1 -maxdepth 1 -type d` ; do \
 		OSARCH=`basename $$PLATFORM` ; \
