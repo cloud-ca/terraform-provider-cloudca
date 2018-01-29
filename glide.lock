@@ -1,5 +1,5 @@
 hash: 0e691edace7bc3248aa738260b986512c1e9425d04ec76e68c8488667e991ff1
-updated: 2017-05-26T14:57:53.291312593-04:00
+updated: 2017-12-14T17:17:32.991817826-05:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 7e4b007599d4e2076d9a81be723b3912852dda2c
@@ -77,7 +77,7 @@ imports:
   - parser
   - scanner
 - name: github.com/hashicorp/terraform
-  version: 85e0979c6af6a15345c9131e4478ba712bb3c21d
+  version: efca455c35d0d218a9bfee835a8ec3ef8d4d1c8c
   subpackages:
   - config
   - config/module
@@ -110,4 +110,9 @@ imports:
   version: 8d802ff4ae93611b807597f639c19f76074df5c6
 - name: github.com/satori/go.uuid
   version: 5bf94b69c6b68ee1b541973bb8e1144db23a194b
+- name: golang.org/x/crypto
+  version: beef0f4390813b96e8e68fd78570396d0f4751fc
+  subpackages:
+  - bcrypt
+  - blowfish
 testImports: []
