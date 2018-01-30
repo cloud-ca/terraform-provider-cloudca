@@ -28,7 +28,6 @@ func resourceCloudcaInstance() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: "Name of instance",
 			},
 
@@ -264,6 +263,10 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 			return err
 		}
 		d.SetPartial("ssh_key_name")
+	}
+
+	if d.HasChange("private_ip") {
+		return fmt.Errorf("Cannot update the private IP of an instance")
 	}
 
 	d.Partial(false)
