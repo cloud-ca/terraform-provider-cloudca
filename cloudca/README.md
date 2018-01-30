@@ -161,6 +161,7 @@ resource "cloudca_instance" "my_instance" {
 	compute_offering = "1vCPU.512MB"
 	ssh_key_name = "my_ssh_key"
 	root_volume_size_in_gb = 100
+	private_ip = "10.2.1.124"
 }
 ```
 ### Argument Reference
@@ -176,6 +177,7 @@ The following arguments are supported:
 - ssh_key_name - (Optional) Name of the SSH key pair to attach to the instance. Mutually exclusive with public_key.
 - public_key - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
 - root_volume_size_in_gb - (Optional) Size of the root volume of the instance. This only works for templates that allows root volume resize.
+- private_ip - (Optional) Instance's private IPv4 address.
 
 ### Attribute Reference
 - id - ID of instance.
