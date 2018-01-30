@@ -101,8 +101,10 @@ func resourceCloudcaInstance() *schema.Resource {
 				Computed: true,
 			},
 			"private_ip": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "The IPv4 address of the instance. Must be within the network's CIDR and not collide with existing instances.",
 			},
 		},
 	}
@@ -141,6 +143,9 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	}
 	if userData, ok := d.GetOk("user_data"); ok {
 		instanceToCreate.UserData = userData.(string)
+	}
+	if privateIp, ok := d.GetOk("private_ip"); ok {
+		instanceToCreate.IpAddress = privateIp.(string)
 	}
 
 	hasCustomFields := false
