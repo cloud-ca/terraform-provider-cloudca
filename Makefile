@@ -20,7 +20,7 @@ build-all: clean
 		-os="linux darwin windows freebsd openbsd solaris" \
 		-arch="386 amd64 arm" \
 		-osarch="!darwin/arm !darwin/386" \
-		-output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
+		-output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}_${VERSION}" .
 
 	@for PLATFORM in `find ./dist -mindepth 1 -maxdepth 1 -type d` ; do \
 		OSARCH=`basename $$PLATFORM` ; \
@@ -36,14 +36,16 @@ build-all: clean
 upload:
 	rm -f ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ;
 	SWIFT_ACCOUNT=`swift stat | grep Account: | sed s/Account:// | tr -d '[:space:]'` ; \
-	SWIFT_URL=https://objects-east.cloud.ca/v1 ; \
+	SWIFT_URL=https://objects-qc.cloud.ca/v1 ; \
 	SWIFT_CONTAINER=terraform-provider-cloudca ; \
 	for FILE in `ls ./dist | grep -i terraform.*\.zip` ; do \
 		echo "Uploading $$FILE to swift" ; \
-		swift upload foo ./dist/$$FILE --object-name ${VERSION}/$$FILE ; \
+		swift upload $${SWIFT_CONTAINER} ./dist/$$FILE --object-name ${VERSION}/$$FILE ; \
 		echo "$${SWIFT_URL}/$${SWIFT_ACCOUNT}/$${SWIFT_CONTAINER}/${VERSION}/$$FILE" >> ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ; \
 	done
-release: build-all upload
+release-notes: 
+	./release-notes.sh > ./dist/release.md ;
+release: build-all upload release-notes
 clean:
 	rm -rf dist terraform-provider-cloudca
 
