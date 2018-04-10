@@ -1,5 +1,5 @@
-hash: 349a1ba82d4007345d4c59ae28e879a6ca671784bb0b725f4413380b280e323e
-updated: 2018-01-30T11:37:54.042282072-05:00
+hash: 8442c7c24b679c02b5aab391bb4aa4003814f3070058364ea8662b3bd36324a3
+updated: 2018-04-05T11:01:02.719636-04:00
 imports:
 - name: github.com/apparentlymart/go-cidr
   version: 7e4b007599d4e2076d9a81be723b3912852dda2c
@@ -37,7 +37,7 @@ imports:
   subpackages:
   - netrc
 - name: github.com/cloud-ca/go-cloudca
-  version: 4aa67d3271b498bd49fbb12d83316b53fd7c62be
+  version: 40833c727c749ac6ec630cf3650ebcc892f04ad9
   subpackages:
   - api
   - configuration
