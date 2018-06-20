@@ -73,7 +73,7 @@ resource "cloudca_network" "my_network" {
 	name = "test-network"
 	description = "This is a test network"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
-	network_offering = "Standard Network"
+	network_offering = "Standard Tier"
 	network_acl_id = "7d428416-263d-47cd-9270-2cdbdf222f57"
 }
 ```
@@ -157,7 +157,7 @@ resource "cloudca_instance" "my_instance" {
 	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
 	name = "test-instance"
 	network_id = "672016ef-05ee-4e88-b68f-ac9cc462300b"
-	template = "CentOS 6.7 base (64bit)"
+	template = "Ubuntu 16.04.03 HVM"
 	compute_offering = "1vCPU.512MB"
 	ssh_key_name = "my_ssh_key"
 	root_volume_size_in_gb = 100
