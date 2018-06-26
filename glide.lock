@@ -1,5 +1,5 @@
-hash: 72c3c7cb580d48596b3d64ea5e6a99e4904eda8bd60ef6b890a0b651f8304ef9
-updated: 2018-06-20T17:21:18.595299-04:00
+hash: 1aadec8a67dc6aa14d24e8d2b1f60ed5f06bb82c3476f0da0b944554b4b0c3dd
+updated: 2018-06-26T09:23:35.95221-04:00
 imports:
 - name: github.com/agext/levenshtein
   version: 5f10fee965225ac1eecdc234c09daf5cd9e7f7b6
@@ -49,7 +49,7 @@ imports:
 - name: github.com/blang/semver
   version: c5e971dbed7850a93c23aa6ff69db5771d8e23b3
 - name: github.com/cloud-ca/go-cloudca
-  version: bbb13d97688029b3dda4592e96b87ef5713e7815
+  version: 1d21cc0c0bb033f5d3f7aa1fc9a6c4b23eca8f77
   subpackages:
   - api
   - configuration
