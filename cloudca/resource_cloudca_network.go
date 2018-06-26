@@ -53,10 +53,10 @@ func resourceCloudcaNetwork() *schema.Resource {
 				ForceNew:    true,
 				Description: `The network offering name or id (e.g. "Standard Network" or "Load Balanced Network")`,
 			},
-			"network_acl_id": {
+			"network_acl": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Id of the network ACL",
+				Description: "Name or id of the network ACL",
 			},
 			"cidr": {
 				Type:     schema.TypeString,
@@ -77,16 +77,21 @@ func resourceCloudcaNetworkCreate(d *schema.ResourceData, meta interface{}) erro
 		return nerr
 	}
 
+	aclID, nerr := retrieveNetworkAclID(&ccaResources, d.Get("network_acl").(string), d.Get("vpc_id").(string))
+	if nerr != nil {
+		return nerr
+	}
+
 	networkToCreate := cloudca.Network{
 		Name:              d.Get("name").(string),
 		Description:       d.Get("description").(string),
 		VpcId:             d.Get("vpc_id").(string),
 		NetworkOfferingId: networkOfferingId,
-		NetworkAclId:      d.Get("network_acl_id").(string),
+		NetworkAclId:      aclID,
 	}
 	options := map[string]string{}
-	if orgId, ok := d.GetOk("organization_code"); ok {
-		options["org_id"] = orgId.(string)
+	if orgID, ok := d.GetOk("organization_code"); ok {
+		options["org_id"] = orgID.(string)
 	}
 	newNetwork, err := ccaResources.Networks.Create(networkToCreate, options)
 	if err != nil {
@@ -131,7 +136,7 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("description", network.Description)
 	setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId)
 	d.Set("vpc_id", network.VpcId)
-	d.Set("network_acl_id", network.NetworkAclId)
+	setValueOrID(d, "network_acl", network.NetworkAclName, network.NetworkAclId)
 	d.Set("cidr", network.Cidr)
 	return nil
 }
@@ -153,8 +158,12 @@ func resourceCloudcaNetworkUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if d.HasChange("network_acl_id") {
-		_, aclErr := ccaResources.Networks.ChangeAcl(d.Id(), d.Get("network_acl_id").(string))
+	if d.HasChange("network_acl") {
+		aclID, err := retrieveNetworkAclID(&ccaResources, d.Get("network_acl").(string), d.Get("vpc_id").(string))
+		if err != nil {
+			return err
+		}
+		_, aclErr := ccaResources.Networks.ChangeAcl(d.Id(), aclID)
 		if aclErr != nil {
 			return aclErr
 		}
@@ -200,4 +209,20 @@ func retrieveNetworkOfferingId(ccaRes *cloudca.Resources, name string) (id strin
 		}
 	}
 	return "", fmt.Errorf("Network offering with name %s not found", name)
+}
+
+func retrieveNetworkAclID(ccaRes *cloudca.Resources, name, vpcID string) (id string, err error) {
+	if isID(name) {
+		return name, nil
+	}
+	acls, err := ccaRes.NetworkAcls.ListByVpcId(vpcID)
+	if err != nil {
+		return "", err
+	}
+	for _, acl := range acls {
+		if strings.EqualFold(acl.Name, name) {
+			return acl.Id, nil
+		}
+	}
+	return "", fmt.Errorf("Network ACL with name %s not found", name)
 }
