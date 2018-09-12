@@ -74,7 +74,7 @@ resource "cloudca_network" "my_network" {
 	description = "This is a test network"
 	vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 	network_offering = "Standard Tier"
-	network_acl_id = "7d428416-263d-47cd-9270-2cdbdf222f57"
+	network_acl = "7d428416-263d-47cd-9270-2cdbdf222f57"
 }
 ```
 ### Argument Reference
@@ -84,7 +84,7 @@ The following arguments are supported:
 - description - (Required) Description of the network
 - vpc_id - (Required) The ID of the vpc where the network should be created
 - network_offering - (Required) The name of the network offering to use for the network
-- network_acl_id - (Required) The id of the network ACL to use for the network
+- network_acl - (Required) The id or name of the network ACL to use for the network
 
 ### Attribute Reference
 - id - ID of network.
@@ -320,4 +320,24 @@ resource "cloudca_load_balancer_rule" "lbr" {
 - stickiness_params - (Optional) The additional parameters required for each stickiness method. See (TODO ADD LINK here) for more information
 
 ### Attribute reference
+
 - id - the load balancer rule ID
+
+## cloudca_ssh_key
+
+Adds an SSH key to the environment so that it can be associated with instances.
+
+### Example usage
+
+```hcl
+resource "cloudca_ssh_key" "dev_ssh_key" {
+	environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+	name     = "my-ssh-key"
+	public_key    = "my_public_key_data"
+}
+```
+
+### Argument reference
+- environment_id - (Required) ID of environment
+- name - (Required) The name of the SSH key to add
+- public_key - (Required) The public key data
