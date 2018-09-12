@@ -24,6 +24,7 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_network_acl":          resourceCloudcaNetworkAcl(),
 		"cloudca_network_acl_rule":     resourceCloudcaNetworkAclRule(),
 		"cloudca_static_nat":           resourceCloudcaStaticNat(),
+		"cloudca_ssh_key":              resourceCloudcaSSHKey(),
 	}
 }
 
