@@ -6,9 +6,8 @@ endif
 
 default: build
 
-init:
-	curl https://glide.sh/get | sh
-	glide install
+vendor:
+	GO111MODULE=on go mod vendor
 
 build:
 	go build .
@@ -33,6 +32,7 @@ build-all: clean
 	pushd ./dist ; \
 	shasum -a256 *.zip > ./terraform-provider-cloudca_${VERSION}_SHA256SUMS ; \
 	popd >/dev/null 2>&1 ;
+
 upload:
 	rm -f ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ;
 	SWIFT_ACCOUNT=`swift stat | grep Account: | sed s/Account:// | tr -d '[:space:]'` ; \
@@ -43,10 +43,13 @@ upload:
 		swift upload $${SWIFT_CONTAINER} ./dist/$$FILE --object-name ${VERSION}/$$FILE ; \
 		echo "$${SWIFT_URL}/$${SWIFT_ACCOUNT}/$${SWIFT_CONTAINER}/${VERSION}/$$FILE" >> ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ; \
 	done
+
 release-notes: 
 	./release-notes.sh > ./dist/release.md ;
+
 release: build-all upload release-notes
+
 clean:
 	rm -rf dist terraform-provider-cloudca
 
-.PHONY: init build build-all clean
+.PHONY: default deps build build-all upload release-notes release clean
