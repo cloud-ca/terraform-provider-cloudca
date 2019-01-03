@@ -52,4 +52,4 @@ release: build-all upload release-notes
 clean:
 	rm -rf dist terraform-provider-cloudca
 
-.PHONY: default deps build build-all upload release-notes release clean
+.PHONY: default vendor build build-all upload release-notes release clean
