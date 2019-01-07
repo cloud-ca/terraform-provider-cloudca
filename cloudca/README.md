@@ -230,6 +230,8 @@ resource "cloudca_static_nat" "dev_static_nat" {
 }
 ```
 
+The following arguments are supported:
+
 - environment_id - (Required) ID of environment
 - public_ip_id - (Required) The public IP to configure static NAT on. Cannot have any other purpose (e.g. load balancing, port forwarding)
 - private_ip_id - (Required) A private IP of the instance to configure static NAT on. Must be in the same VPC as the public IP. Secondary IPs can be used here
@@ -250,6 +252,8 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
     protocol           = "TCP"
 }
 ```
+
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment_id
 - private_ip_id - (Required) The private IP which should be used to create this rule
@@ -281,6 +285,8 @@ resource "cloudca_volume" "data_volume" {
     instance_id    = "f932c530-5753-44ce-8aae-263672e1ae3f"
 }
 ```
+
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - name - (Required) The name of the volume to be created
@@ -317,6 +323,8 @@ resource "cloudca_load_balancer_rule" "lbr" {
 }
 ```
 
+The following arguments are supported:
+
 - environment_id - (Required) ID of environment
 - name - (Required) Name of the load balancer rule
 - network_id - (Required) Id of the load balancing network to bind to
@@ -342,6 +350,8 @@ resource "cloudca_ssh_key" "dev_ssh_key" {
     public_key     = "my_public_key_data"
 }
 ```
+
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - name - (Required) The name of the SSH key to add
