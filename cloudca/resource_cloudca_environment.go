@@ -2,28 +2,29 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/configuration"
 	"github.com/hashicorp/terraform/helper/schema"
-	"log"
-	"strings"
 )
 
 const (
 	//role name
-	ENVIRONMENT_ADMIN_ROLE = "Environment admin"
-	USER_ROLE              = "User"
-	READ_ONLY_ROLE         = "Read-only"
+	EnvironmentAdminRole = "Environment admin"
+	UserRole             = "User"
+	ReadOnlyRole         = "Read-only"
 
 	//fields
-	ORGANIZATION_CODE    = "organization_code"
-	SERVICE_CODE         = "service_code"
-	NAME                 = "name"
-	DESCRIPTION          = "description"
-	ADMIN_ROLE_USERS     = "admin_role"
-	USER_ROLE_USERS      = "user_role"
-	READ_ONLY_ROLE_USERS = "read_only_role"
+	OrganizationCode  = "organization_code"
+	ServiceCode       = "service_code"
+	Name              = "name"
+	Description       = "description"
+	AdminRoleUsers    = "admin_role"
+	UserRoleUsers     = "user_role"
+	ReadOnlyRoleUsers = "read_only_role"
 )
 
 func resourceCloudcaEnvironment() *schema.Resource {
@@ -34,7 +35,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
 		Delete: resourceCloudcaEnvironmentDelete,
 
 		Schema: map[string]*schema.Schema{
-			ORGANIZATION_CODE: {
+			OrganizationCode: {
 				Type:        schema.TypeString,
 				ForceNew:    true,
 				Required:    true,
@@ -43,35 +44,35 @@ func resourceCloudcaEnvironment() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-			SERVICE_CODE: {
+			ServiceCode: {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "A cloudca service code",
 			},
-			NAME: {
+			Name: {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of environment to be created. Must be lower case, contain alphanumeric charaters, underscores or dashes",
 			},
-			DESCRIPTION: {
+			Description: {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Description for the environment",
 			},
-			ADMIN_ROLE_USERS: {
+			AdminRoleUsers: {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of users that will be given Environment Admin role",
 			},
-			USER_ROLE_USERS: {
+			UserRoleUsers: {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Description: "List of users that will be given User role",
 			},
-			READ_ONLY_ROLE_USERS: {
+			ReadOnlyRoleUsers: {
 				Type:        schema.TypeSet,
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
@@ -96,15 +97,15 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	}
 
 	adminRoleUsers, userRoleUsers, readOnlyRoleUsers := getUsersFromRoles(environment)
-	adminRole, _ := d.GetOk(ADMIN_ROLE_USERS)
-	userRole, _ := d.GetOk(USER_ROLE_USERS)
-	readOnlyRole, _ := d.GetOk(READ_ONLY_ROLE_USERS)
+	adminRole, _ := d.GetOk(AdminRoleUsers)
+	userRole, _ := d.GetOk(UserRoleUsers)
+	readOnlyRole, _ := d.GetOk(ReadOnlyRoleUsers)
 
-	d.Set(NAME, environment.Name)
-	d.Set(DESCRIPTION, environment.Description)
-	d.Set(ADMIN_ROLE_USERS, getListOfUsersByIdOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
-	d.Set(USER_ROLE_USERS, getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
-	d.Set(READ_ONLY_ROLE_USERS, getListOfUsersByIdOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
+	d.Set(Name, environment.Name)
+	d.Set(Description, environment.Description)
+	d.Set(AdminRoleUsers, getListOfUsersByIdOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
+	d.Set(UserRoleUsers, getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
+	d.Set(ReadOnlyRoleUsers, getListOfUsersByIdOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
 
 	return nil
 }
@@ -142,11 +143,11 @@ func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 
 func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
 	ccaClient := meta.(*cca.CcaClient)
-	fmt.Println("[INFO] Destroying environment: %s", d.Get(NAME).(string))
+	fmt.Println("[INFO] Destroying environment: %s", d.Get(Name).(string))
 	if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Environment %s does not exist", d.Get(NAME).(string))
+				fmt.Errorf("Environment %s does not exist", d.Get(Name).(string))
 				d.SetId("")
 				return nil
 			}
@@ -158,15 +159,15 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 
 func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) (*configuration.Environment, error) {
 	environment := configuration.Environment{}
-	environment.Name = d.Get(NAME).(string)
-	environment.Description = d.Get(DESCRIPTION).(string)
+	environment.Name = d.Get(Name).(string)
+	environment.Description = d.Get(Description).(string)
 
-	organizationId, oerr := getOrganizationId(ccaClient, d.Get(ORGANIZATION_CODE).(string))
+	organizationId, oerr := getOrganizationId(ccaClient, d.Get(OrganizationCode).(string))
 	if oerr != nil {
 		return &environment, oerr
 	}
 
-	connectionId, cerr := getServiceConnectionId(ccaClient, d.Get(SERVICE_CODE).(string))
+	connectionId, cerr := getServiceConnectionId(ccaClient, d.Get(ServiceCode).(string))
 	if cerr != nil {
 		return &environment, cerr
 	}
@@ -174,9 +175,9 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 	environment.Organization = configuration.Organization{Id: organizationId}
 	environment.ServiceConnection = configuration.ServiceConnection{Id: connectionId}
 
-	adminRole, adminRoleExists := d.GetOk(ADMIN_ROLE_USERS)
-	userRole, userRoleExists := d.GetOk(USER_ROLE_USERS)
-	readOnlyRole, readOnlyRoleExists := d.GetOk(READ_ONLY_ROLE_USERS)
+	adminRole, adminRoleExists := d.GetOk(AdminRoleUsers)
+	userRole, userRoleExists := d.GetOk(UserRoleUsers)
+	readOnlyRole, readOnlyRoleExists := d.GetOk(ReadOnlyRoleUsers)
 
 	if adminRoleExists || userRoleExists || readOnlyRoleExists {
 
@@ -188,7 +189,7 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 		environment.Roles = []configuration.Role{}
 
 		if adminRoleExists {
-			role, err := mapUsersToRole(ENVIRONMENT_ADMIN_ROLE, adminRole.(*schema.Set).List(), users)
+			role, err := mapUsersToRole(EnvironmentAdminRole, adminRole.(*schema.Set).List(), users)
 			if err != nil {
 				return &environment, err
 			}
@@ -196,7 +197,7 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 		}
 
 		if userRoleExists {
-			role, err := mapUsersToRole(USER_ROLE, userRole.(*schema.Set).List(), users)
+			role, err := mapUsersToRole(UserRole, userRole.(*schema.Set).List(), users)
 			if err != nil {
 				return &environment, err
 			}
@@ -204,7 +205,7 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 		}
 
 		if readOnlyRoleExists {
-			role, err := mapUsersToRole(READ_ONLY_ROLE, readOnlyRole.(*schema.Set).List(), users)
+			role, err := mapUsersToRole(ReadOnlyRole, readOnlyRole.(*schema.Set).List(), users)
 			if err != nil {
 				return &environment, err
 			}
@@ -241,15 +242,15 @@ func getListOfUsersByIdOrUsername(roleUsers []configuration.User, usersWithIdOrN
 func getUsersFromRoles(environment *configuration.Environment) (adminRoleUsers []configuration.User, userRoleUsers []configuration.User, readOnlyRoleUsers []configuration.User) {
 	for _, envRole := range environment.Roles {
 		switch {
-		case strings.EqualFold(envRole.Name, ENVIRONMENT_ADMIN_ROLE):
+		case strings.EqualFold(envRole.Name, EnvironmentAdminRole):
 			for _, user := range envRole.Users {
 				adminRoleUsers = append(adminRoleUsers, user)
 			}
-		case strings.EqualFold(envRole.Name, USER_ROLE):
+		case strings.EqualFold(envRole.Name, UserRole):
 			for _, user := range envRole.Users {
 				userRoleUsers = append(userRoleUsers, user)
 			}
-		case strings.EqualFold(envRole.Name, READ_ONLY_ROLE):
+		case strings.EqualFold(envRole.Name, ReadOnlyRole):
 			for _, user := range envRole.Users {
 				readOnlyRoleUsers = append(readOnlyRoleUsers, user)
 			}
