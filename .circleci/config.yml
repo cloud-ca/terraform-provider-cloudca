@@ -21,6 +21,15 @@ jobs:
         key: repo-{{ .Environment.CIRCLE_SHA1 }}
     - run: make init
 
+  lint:
+    <<: *defaults
+    docker:
+    - image: quay.io/kubermatic/gometalinter:latest
+    steps:
+    - restore_cache:
+        key: repo-{{ .Environment.CIRCLE_SHA1 }}
+    - run: make lint
+
   build:
     <<: *defaults
     steps:
@@ -39,6 +48,13 @@ workflows:
     - dependencies:
         requires:
         - checkout
+        filters:
+          tags:
+            only: /v.*/
+    - lint:
+        requires:
+        - checkout
+        - dependencies
         filters:
           tags:
             only: /v.*/

@@ -36,6 +36,15 @@ build-all: clean
 	shasum -a256 *.zip > ./terraform-provider-cloudca_${VERSION}_SHA256SUMS ; \
 	popd >/dev/null 2>&1 ;
 
+.PHONY: lint
+lint:
+	gometalinter ./...
+
+.PHONY: clean
+clean:
+	rm -rf dist terraform-provider-cloudca
+
+.PHONY: upload
 upload:
 	rm -f ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ;
 	SWIFT_ACCOUNT=`swift stat | grep Account: | sed s/Account:// | tr -d '[:space:]'` ; \
@@ -47,12 +56,9 @@ upload:
 		echo "$${SWIFT_URL}/$${SWIFT_ACCOUNT}/$${SWIFT_CONTAINER}/${VERSION}/$$FILE" >> ./dist/terraform-provider-cloudca_${VERSION}_SWIFTURLS ; \
 	done
 
-release-notes: 
-	./release-notes.sh > ./dist/release.md ;
-
+.PHONY: release
 release: build-all upload release-notes
 
-clean:
-	rm -rf dist terraform-provider-cloudca
-
-.PHONY: default vendor build build-all upload release-notes release clean
+.PHONY: release-notes
+release-notes: 
+	./release-notes.sh > ./dist/release.md ;
