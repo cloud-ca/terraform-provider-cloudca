@@ -4,14 +4,17 @@ ifeq ($(VERSION),)
 VERSION:=$(VERSION_COMMIT)
 endif
 
+.PHONY: default
 default: build
 
 vendor:
 	GO111MODULE=on go mod vendor
 
+.PHONY: build
 build:
 	go build .
 
+.PHONY: build-all
 build-all: clean
 	@gox -verbose \
 		-ldflags "-X main.version=${VERSION}" \
