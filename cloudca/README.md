@@ -16,20 +16,16 @@
 
 Manages a cloud.ca environment
 
-### Example usage
-
 ```hcl
 resource "cloudca_environment" "my_environment" {
-  service_code = "compute-qc"
-  organization_code = "test"
-  name = "production"
-  description = "Environment for production workloads"
-  admin_role = ["pat"]
-  read_only_role = ["franz","bob"]
+    service_code      = "compute-qc"
+    organization_code = "test"
+    name              = "production"
+    description       = "Environment for production workloads"
+    admin_role        = ["pat"]
+    read_only_role    = ["franz","bob"]
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
@@ -41,7 +37,7 @@ The following arguments are supported:
 - user_role - (Optional) List of users that will be given the User role
 - read_only_role - (Optional) List of users that will be given the Read-only role
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - ID of the environment.
 - name - Name of the environment.
@@ -50,18 +46,14 @@ The following arguments are supported:
 
 Create a vpc.
 
-### Example usage
-
 ```hcl
 resource "cloudca_vpc" "my_vpc" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  name = "test-vpc"
-  description = "This is a test vpc"
-  vpc_offering = "Default VPC offering"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name           = "test-vpc"
+    description    = "This is a test vpc"
+    vpc_offering   = "Default VPC offering"
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
@@ -72,7 +64,7 @@ The following arguments are supported:
 - network_domain - (Optional) A custom DNS suffix at the level of a network
 - zone - (Optional) The zone name or ID where the VPC will be created
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - ID of VPC.
 
@@ -80,20 +72,16 @@ The following arguments are supported:
 
 Create a network.
 
-### Example usage
-
 ```hcl
 resource "cloudca_network" "my_network" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  name = "test-network"
-  description = "This is a test network"
-  vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
-  network_offering = "Standard Tier"
-  network_acl = "7d428416-263d-47cd-9270-2cdbdf222f57"
+    environment_id   = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name             = "test-network"
+    description      = "This is a test network"
+    vpc_id           = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
+    network_offering = "Standard Tier"
+    network_acl      = "7d428416-263d-47cd-9270-2cdbdf222f57"
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
@@ -104,7 +92,7 @@ The following arguments are supported:
 - network_offering - (Required) The name of the network offering to use for the network
 - network_acl - (Required) The id or name of the network ACL to use for the network
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - ID of network.
 - cidr - Cidr of network
@@ -113,18 +101,14 @@ The following arguments are supported:
 
 Create a network ACL.
 
-### Example usage
-
 ```hcl
 resource "cloudca_network_acl" "my_acl" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  name = "test-acl"
-  description = "This is a test acl"
-  vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name           = "test-acl"
+    description    = "This is a test acl"
+    vpc_id         = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
@@ -133,7 +117,7 @@ The following arguments are supported:
 - description - (Required) Description of the network ACL
 - vpc_id - (Required) ID of the VPC where the network ACL should be created
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - ID of network ACL.
 - name - Name of network ACL.
@@ -142,23 +126,19 @@ The following arguments are supported:
 
 Create a network ACL rule.
 
-### Example usage
-
 ```hcl
 resource "cloudca_network_acl_rule" "my_acl" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  rule_number = 55
-  cidr = "10.212.208.0/22"
-  action = "Allow"
-  protocol = "TCP"
-  start_port = 80
-  end_port = 80
-  traffic_type = "Ingress"
-  network_acl_id = "c0731f8b-92f0-4fac-9cbd-245468955fdf"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    rule_number    = 55
+    cidr           = "10.212.208.0/22"
+    action         = "Allow"
+    protocol       = "TCP"
+    start_port     = 80
+    end_port       = 80
+    traffic_type   = "Ingress"
+    network_acl_id = "c0731f8b-92f0-4fac-9cbd-245468955fdf"
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
@@ -174,7 +154,7 @@ The following arguments are supported:
 - start_port - (Optional) The start port. Can only be used with TCP/UDP protocol
 - end_port - (Optional) The end port. Can only be used with TCP/UDP protocol
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - ID of network ACL.
 - name - Name of network ACL.
@@ -183,24 +163,18 @@ The following arguments are supported:
 
 Create and starts an instance.
 
-### Example usage
-
 ```hcl
 resource "cloudca_instance" "my_instance" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  name = "test-instance"
-  network_id = "672016ef-05ee-4e88-b68f-ac9cc462300b"
-  template = "Ubuntu 16.04.03 HVM"
-  compute_offering = "Standard"
-  cpu_count = 2
-  memory_in_mb = 1024
-  ssh_key_name = "my_ssh_key"
-  root_volume_size_in_gb = 100
-  private_ip = "10.2.1.124"
+    environment_id         = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name                   = "test-instance"
+    network_id             = "672016ef-05ee-4e88-b68f-ac9cc462300b"
+    template               = "Ubuntu 16.04.03 HVM"
+    compute_offering       = "1vCPU.512MB"
+    ssh_key_name           = "my_ssh_key"
+    root_volume_size_in_gb = 100
+    private_ip             = "10.2.1.124"
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
@@ -217,7 +191,7 @@ The following arguments are supported:
 - root_volume_size_in_gb - (Optional) Size of the root volume of the instance. This only works for templates that allows root volume resize.
 - private_ip - (Optional) Instance's private IPv4 address.
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - ID of instance.
 - private_ip_id - ID of instance's private IP
@@ -227,23 +201,19 @@ The following arguments are supported:
 
 Acquires a public IP in a specific VPC. If you update any of the fields in the resource, then it will release this IP and recreate it.
 
-### Example usage
-
 ```hcl
 resource "cloudca_public_ip" "my_publicip" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  vpc_id = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    vpc_id         = "8b46e2d1-bbc4-4fad-b3bd-1b25fcba4cec"
 }
 ```
-
-### Argument Reference
 
 The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - vpc_id - (Required) The ID of the VPC to acquire the public IP
 
-### Attribute Reference
+The following attributes are returned:
 
 - id - The public IP ID.
 - ip_address - The public IP address
@@ -252,18 +222,15 @@ The following arguments are supported:
 
 Configures static NAT between a public and a private IP of an instance. Enabling static NAT is equivalent to forwarding every public port to every private port.
 
-### Example usage
-
 ```hcl
 resource "cloudca_static_nat" "dev_static_nat" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-
-  public_ip_id     = "10d523c1-907a-4f85-9181-9d62b16851c9"
-  private_ip_id    = "c0d9824b-cb83-45ca-baca-e7e6c63a96a8"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    public_ip_id   = "10d523c1-907a-4f85-9181-9d62b16851c9"
+    private_ip_id  = "c0d9824b-cb83-45ca-baca-e7e6c63a96a8"
 }
 ```
 
-### Argument reference
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - public_ip_id - (Required) The public IP to configure static NAT on. Cannot have any other purpose (e.g. load balancing, port forwarding)
@@ -275,21 +242,18 @@ Manages port forwarding rules. Modifying any field will result in destruction an
 
 When adding a port forwarding rule to the default private IP of an instance, only the instance id is required. Alternatively, the private_ip_id can be used on its own (for example when targeting an instance secondary IP).
 
-### Example usage
-
 ```hcl
 resource "cloudca_port_forwarding_rule" "web_pfr" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-
-  public_ip_id = "319f508f-089b-482d-af17-0f3360520c69"
-  public_port_start = 80
-  private_ip_id = "30face92-f1cf-4064-aa7f-008ea09ef7f0"
-  private_port_start = 8080
-  protocol = "TCP"
+    environment_id     = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    public_ip_id       = "319f508f-089b-482d-af17-0f3360520c69"
+    public_port_start  = 80
+    private_ip_id      = "30face92-f1cf-4064-aa7f-008ea09ef7f0"
+    private_port_start = 8080
+    protocol           = "TCP"
 }
 ```
 
-### Argument reference
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment_id
 - private_ip_id - (Required) The private IP which should be used to create this rule
@@ -300,7 +264,7 @@ resource "cloudca_port_forwarding_rule" "web_pfr" {
 - public_port_end - (Optional) If not specified, defaults to the public start port
 - protocol - (Required) The protocol to be used for this rule - must be TCP or UDP
 
-### Attribute reference
+The following attributes are returned:
 
 - id - the rule ID
 - public_ip - the public IP address of this rule
@@ -313,21 +277,16 @@ Manages volumes. Modifying all fields with the exception of instance_id will res
 
 If the instance_id is updated, the volume will be detached from the previous instance and attached to the new instance.
 
-### Example usage
-
 ```hcl
 resource "cloudca_volume" "data_volume" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-
-  name = "Data Volume"
-
-  disk_offering = "Guaranteed Performance, 1000 iops min"
-  size_in_gb = 50
-  instance_id = "f932c530-5753-44ce-8aae-263672e1ae3f"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name           = "Data Volume"
+    disk_offering  = "20GB - 20 IOPS Min."
+    instance_id    = "f932c530-5753-44ce-8aae-263672e1ae3f"
 }
 ```
 
-### Argument reference
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - name - (Required) The name of the volume to be created
@@ -336,7 +295,7 @@ resource "cloudca_volume" "data_volume" {
 - iops - (Optional) The number of IOPS of the volume. Only for disk offerings with custom iops.
 - instance_id - The instance ID that the volume will be attached to. Note that changing the instance ID will _not_ result in the destruction of this volume
 
-### Attribute reference
+The following attributes are returned:
 
 - id - the volume ID
 
@@ -346,28 +305,25 @@ resource "cloudca_volume" "data_volume" {
 
 Manage load balancer rules. Modifying the ports or public IP will cause the rule to be recreated
 
-### Example usage
-
 ```hcl
 resource "cloudca_load_balancer_rule" "lbr" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-
-  name="web_lb"
-  network_id  = "7bb97867-8021-443b-b548-c15897e3816d"
-  public_ip_id="5cd3a059-f15b-49f7-b7e1-254fef15968d"
-  protocol="tcp"
-  algorithm = "leastconn"
-  public_port = 80
-  private_port = 80
-  instance_ids = ["071e2929-672e-45bc-a5b6-703d17c08367"]
-  stickiness_method = "AppCookie"
-  stickiness_params {
-    cookieName = "allo"
-  }
+    environment_id    = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name              = "web_lb"
+    network_id        = "7bb97867-8021-443b-b548-c15897e3816d"
+    public_ip_id      = "5cd3a059-f15b-49f7-b7e1-254fef15968d"
+    protocol          = "tcp"
+    algorithm         = "leastconn"
+    public_port       = 80
+    private_port      = 80
+    instance_ids      = ["071e2929-672e-45bc-a5b6-703d17c08367"]
+    stickiness_method = "AppCookie"
+    stickiness_params {
+        cookieName = "allo"
+    }
 }
 ```
 
-### Argument reference
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - name - (Required) Name of the load balancer rule
@@ -379,8 +335,7 @@ resource "cloudca_load_balancer_rule" "lbr" {
 - stickiness_method - (Optional) The stickiness method to use. Supports : "LbCookie", "AppCookie" and "SourceBased"
 - stickiness_params - (Optional) The additional parameters required for each stickiness method. See (TODO ADD LINK here) for more information
 
-### Attribute reference
-
+The following attributes are returned:
 
 - id - the load balancer rule ID
 
@@ -388,17 +343,15 @@ resource "cloudca_load_balancer_rule" "lbr" {
 
 Adds an SSH key to the environment so that it can be associated with instances.
 
-### Example usage
-
 ```hcl
 resource "cloudca_ssh_key" "dev_ssh_key" {
-  environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
-  name = "my-ssh-key"
-  public_key = "my_public_key_data"
+    environment_id = "4cad744d-bf1f-423d-887b-bbb34f4d1b5b"
+    name           = "my-ssh-key"
+    public_key     = "my_public_key_data"
 }
 ```
 
-### Argument reference
+The following arguments are supported:
 
 - environment_id - (Required) ID of environment
 - name - (Required) The name of the SSH key to add
