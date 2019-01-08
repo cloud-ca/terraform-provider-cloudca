@@ -8,11 +8,11 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceCloudcaStaticNat() *schema.Resource {
+func resourceCloudcaStaticNAT() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudcaStaticNatCreate,
-		Read:   resourceCloudcaStaticNatRead,
-		Delete: resourceCloudcaStaticNatDelete,
+		Create: resourceCloudcaStaticNATCreate,
+		Read:   resourceCloudcaStaticNATRead,
+		Delete: resourceCloudcaStaticNATDelete,
 
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
@@ -37,46 +37,46 @@ func resourceCloudcaStaticNat() *schema.Resource {
 	}
 }
 
-func resourceCloudcaStaticNatCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaStaticNATCreate(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	staticNatPublicIp := cloudca.PublicIp{
+	staticNATPublicIP := cloudca.PublicIp{
 		Id:          d.Get("public_ip_id").(string),
 		PrivateIpId: d.Get("private_ip_id").(string),
 	}
-	_, err := ccaResources.PublicIps.EnableStaticNat(staticNatPublicIp)
+	_, err := ccaResources.PublicIps.EnableStaticNat(staticNATPublicIP)
 	if err != nil {
 		return fmt.Errorf("Error enabling static NAT: %s", err)
 	}
-	d.SetId(staticNatPublicIp.Id)
-	return resourceCloudcaStaticNatRead(d, meta)
+	d.SetId(staticNATPublicIP.Id)
+	return resourceCloudcaStaticNATRead(d, meta)
 }
 
-func resourceCloudcaStaticNatRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaStaticNATRead(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	publicIp, err := ccaResources.PublicIps.Get(d.Id())
+	publicIP, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
 		return handleNotFoundError(err, d)
 	}
-	if publicIp.PrivateIpId == "" {
+	if publicIP.PrivateIpId == "" {
 		// If the private IP ID is missing, it means the public IP no longer has static NAT
 		// enabled and so this entity is "missing" (at least as far as terraform is concerned).
 		d.SetId("")
 		return nil
 	}
-	d.Set("private_ip_id", publicIp.PrivateIpId)
+	d.Set("private_ip_id", publicIP.PrivateIpId)
 	return nil
 }
 
-func resourceCloudcaStaticNatDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaStaticNATDelete(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

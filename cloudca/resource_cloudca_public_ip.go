@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceCloudcaPublicIp() *schema.Resource {
+func resourceCloudcaPublicIP() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudcaPublicIpCreate,
-		Read:   resourceCloudcaPublicIpRead,
-		Delete: resourceCloudcaPublicIpDelete,
+		Create: resourceCloudcaPublicIPCreate,
+		Read:   resourceCloudcaPublicIPRead,
+		Delete: resourceCloudcaPublicIPDelete,
 
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
@@ -37,32 +37,32 @@ func resourceCloudcaPublicIp() *schema.Resource {
 	}
 }
 
-func resourceCloudcaPublicIpCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaPublicIPCreate(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	vpcId := d.Get("vpc_id").(string)
+	vpcID := d.Get("vpc_id").(string)
 
-	publicIpToCreate := cloudca.PublicIp{
-		VpcId: vpcId,
+	publicIPToCreate := cloudca.PublicIp{
+		VpcId: vpcID,
 	}
-	newPublicIp, err := ccaResources.PublicIps.Acquire(publicIpToCreate)
+	newPublicIP, err := ccaResources.PublicIps.Acquire(publicIPToCreate)
 	if err != nil {
 		return fmt.Errorf("Error acquiring the new public ip %s", err)
 	}
-	d.SetId(newPublicIp.Id)
-	return resourceCloudcaPublicIpRead(d, meta)
+	d.SetId(newPublicIP.Id)
+	return resourceCloudcaPublicIPRead(d, meta)
 }
 
-func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	publicIp, err := ccaResources.PublicIps.Get(d.Id())
+	publicIP, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
@@ -73,13 +73,13 @@ func resourceCloudcaPublicIpRead(d *schema.ResourceData, meta interface{}) error
 		}
 		return err
 	}
-	d.Set("vpc_id", publicIp.VpcId)
-	d.Set("ip_address", publicIp.IpAddress)
+	d.Set("vpc_id", publicIP.VpcId)
+	d.Set("ip_address", publicIP.IpAddress)
 	return nil
 }
 
-func resourceCloudcaPublicIpDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaPublicIPDelete(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

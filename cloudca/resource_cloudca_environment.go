@@ -103,9 +103,9 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 
 	d.Set(Name, environment.Name)
 	d.Set(Description, environment.Description)
-	d.Set(AdminRoleUsers, getListOfUsersByIdOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
-	d.Set(UserRoleUsers, getListOfUsersByIdOrUsername(userRoleUsers, userRole.(*schema.Set)))
-	d.Set(ReadOnlyRoleUsers, getListOfUsersByIdOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
+	d.Set(AdminRoleUsers, getListOfUsersByIDOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
+	d.Set(UserRoleUsers, getListOfUsersByIDOrUsername(userRoleUsers, userRole.(*schema.Set)))
+	d.Set(ReadOnlyRoleUsers, getListOfUsersByIDOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
 
 	return nil
 }
@@ -162,18 +162,18 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 	environment.Name = d.Get(Name).(string)
 	environment.Description = d.Get(Description).(string)
 
-	organizationId, oerr := getOrganizationId(ccaClient, d.Get(OrganizationCode).(string))
+	organizationID, oerr := getOrganizationID(ccaClient, d.Get(OrganizationCode).(string))
 	if oerr != nil {
 		return &environment, oerr
 	}
 
-	connectionId, cerr := getServiceConnectionId(ccaClient, d.Get(ServiceCode).(string))
+	connectionID, cerr := getServiceConnectionID(ccaClient, d.Get(ServiceCode).(string))
 	if cerr != nil {
 		return &environment, cerr
 	}
 
-	environment.Organization = configuration.Organization{Id: organizationId}
-	environment.ServiceConnection = configuration.ServiceConnection{Id: connectionId}
+	environment.Organization = configuration.Organization{Id: organizationID}
+	environment.ServiceConnection = configuration.ServiceConnection{Id: connectionID}
 
 	adminRole, adminRoleExists := d.GetOk(AdminRoleUsers)
 	userRole, userRoleExists := d.GetOk(UserRoleUsers)
@@ -181,7 +181,7 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 
 	if adminRoleExists || userRoleExists || readOnlyRoleExists {
 
-		users, uerr := ccaClient.Users.ListWithOptions(map[string]string{"organizationId": organizationId})
+		users, uerr := ccaClient.Users.ListWithOptions(map[string]string{"organizationId": organizationID})
 		if uerr != nil {
 			return &environment, uerr
 		}
@@ -215,11 +215,11 @@ func getEnvironmentFromConfig(ccaClient *cca.CcaClient, d *schema.ResourceData) 
 	return &environment, nil
 }
 
-func getListOfUsersByIdOrUsername(roleUsers []configuration.User, usersWithIdOrName *schema.Set) *schema.Set {
+func getListOfUsersByIDOrUsername(roleUsers []configuration.User, usersWithIDOrName *schema.Set) *schema.Set {
 	mappedList := []interface{}{}
 	for _, user := range roleUsers {
 		found := false
-		for _, idOrUsername := range usersWithIdOrName.List() {
+		for _, idOrUsername := range usersWithIDOrName.List() {
 			if isID(idOrUsername.(string)) {
 				if strings.EqualFold(user.Id, idOrUsername.(string)) {
 					found = true
@@ -285,7 +285,7 @@ func mapUsersToRole(roleName string, userList []interface{}, users []configurati
 	return role, nil
 }
 
-func getServiceConnectionId(ccaClient *cca.CcaClient, serviceCode string) (id string, err error) {
+func getServiceConnectionID(ccaClient *cca.CcaClient, serviceCode string) (id string, err error) {
 	if isID(serviceCode) {
 		return serviceCode, nil
 	}
@@ -302,7 +302,7 @@ func getServiceConnectionId(ccaClient *cca.CcaClient, serviceCode string) (id st
 	return "", nil
 }
 
-func getOrganizationId(ccaClient *cca.CcaClient, entryPoint string) (id string, err error) {
+func getOrganizationID(ccaClient *cca.CcaClient, entryPoint string) (id string, err error) {
 	if isID(entryPoint) {
 		return entryPoint, nil
 	}

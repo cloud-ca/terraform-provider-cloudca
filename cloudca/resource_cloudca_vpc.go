@@ -63,12 +63,12 @@ func resourceCloudcaVpc() *schema.Resource {
 }
 
 func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	vpcOfferingId, cerr := retrieveVpcOfferingID(&ccaResources, d.Get("vpc_offering").(string))
+	vpcOfferingID, cerr := retrieveVpcOfferingID(&ccaResources, d.Get("vpc_offering").(string))
 
 	if cerr != nil {
 		return cerr
@@ -77,7 +77,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 	vpcToCreate := cloudca.Vpc{
 		Name:          d.Get("name").(string),
 		Description:   d.Get("description").(string),
-		VpcOfferingId: vpcOfferingId,
+		VpcOfferingId: vpcOfferingID,
 	}
 
 	if networkDomain, ok := d.GetOk("network_domain"); ok {
@@ -89,7 +89,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 			vpcToCreate.ZoneId = zone.(string)
 		} else {
 			var zErr error
-			vpcToCreate.ZoneId, zErr = retrieveZoneId(&ccaResources, zone.(string))
+			vpcToCreate.ZoneId, zErr = retrieveZoneID(&ccaResources, zone.(string))
 			if zErr != nil {
 				return zErr
 			}
@@ -106,7 +106,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -148,7 +148,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -167,7 +167,7 @@ func resourceCloudcaVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

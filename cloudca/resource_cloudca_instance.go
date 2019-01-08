@@ -110,27 +110,27 @@ func resourceCloudcaInstance() *schema.Resource {
 }
 
 func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
 
-	computeOfferingId, cerr := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
+	computeOfferingID, cerr := retrieveComputeOfferingID(&ccaResources, d.Get("compute_offering").(string))
 
 	if cerr != nil {
 		return cerr
 	}
 
-	templateId, terr := retrieveTemplateID(&ccaResources, d.Get("template").(string))
+	templateID, terr := retrieveTemplateID(&ccaResources, d.Get("template").(string))
 
 	if terr != nil {
 		return terr
 	}
 
 	instanceToCreate := cloudca.Instance{Name: d.Get("name").(string),
-		ComputeOfferingId: computeOfferingId,
-		TemplateId:        templateId,
+		ComputeOfferingId: computeOfferingID,
+		TemplateId:        templateID,
 		NetworkId:         d.Get("network_id").(string),
 	}
 
@@ -143,8 +143,8 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	if userData, ok := d.GetOk("user_data"); ok {
 		instanceToCreate.UserData = userData.(string)
 	}
-	if privateIp, ok := d.GetOk("private_ip"); ok {
-		instanceToCreate.IpAddress = privateIp.(string)
+	if privateIP, ok := d.GetOk("private_ip"); ok {
+		instanceToCreate.IpAddress = privateIP.(string)
 	}
 
 	hasCustomFields := false
@@ -157,7 +157,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		hasCustomFields = true
 	}
 
-	computeOffering, cerr := ccaResources.ComputeOfferings.Get(computeOfferingId)
+	computeOffering, cerr := ccaResources.ComputeOfferings.Get(computeOfferingID)
 	if cerr != nil {
 		return cerr
 	} else if !computeOffering.Custom && hasCustomFields {
@@ -184,7 +184,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -213,7 +213,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -223,12 +223,12 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 	if d.HasChange("compute_offering") || d.HasChange("cpu_count") || d.HasChange("memory_in_mb") {
 		newComputeOffering := d.Get("compute_offering").(string)
 		log.Printf("[DEBUG] Compute offering has changed for %s, changing compute offering...", newComputeOffering)
-		newComputeOfferingId, ferr := retrieveComputeOfferingID(&ccaResources, newComputeOffering)
+		newComputeOfferingID, ferr := retrieveComputeOfferingID(&ccaResources, newComputeOffering)
 		if ferr != nil {
 			return ferr
 		}
 		instanceToUpdate := cloudca.Instance{Id: d.Id(),
-			ComputeOfferingId: newComputeOfferingId,
+			ComputeOfferingId: newComputeOfferingID,
 		}
 
 		hasCustomFields := false
@@ -241,7 +241,7 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 			hasCustomFields = true
 		}
 
-		computeOffering, cerr := ccaResources.ComputeOfferings.Get(newComputeOfferingId)
+		computeOffering, cerr := ccaResources.ComputeOfferings.Get(newComputeOfferingID)
 		if cerr != nil {
 			return cerr
 		} else if !computeOffering.Custom && hasCustomFields {
@@ -275,7 +275,7 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

@@ -90,7 +90,7 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 }
 
 func createLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -134,7 +134,7 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func readLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -161,7 +161,7 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func deleteLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -173,7 +173,7 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
 }
 
 func updateLbr(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

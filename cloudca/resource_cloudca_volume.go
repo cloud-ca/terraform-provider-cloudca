@@ -62,7 +62,7 @@ func resourceCloudcaVolume() *schema.Resource {
 }
 
 func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -94,15 +94,15 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 		if isID(zone.(string)) {
 			volumeToCreate.ZoneId = zone.(string)
 		} else {
-			volumeToCreate.ZoneId, err = retrieveZoneId(&ccaResources, zone.(string))
+			volumeToCreate.ZoneId, err = retrieveZoneID(&ccaResources, zone.(string))
 			if err != nil {
 				return err
 			}
 		}
 	}
 
-	if instanceId, ok := d.GetOk("instance_id"); ok {
-		volumeToCreate.InstanceId = instanceId.(string)
+	if instanceID, ok := d.GetOk("instance_id"); ok {
+		volumeToCreate.InstanceId = instanceID.(string)
 	}
 
 	newVolume, err := ccaResources.Volumes.Create(volumeToCreate)
@@ -114,7 +114,7 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -132,7 +132,7 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -143,18 +143,18 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 	if d.HasChange("instance_id") {
-		oldInstanceId, newInstanceId := d.GetChange("instance_id")
+		oldInstanceID, newInstanceID := d.GetChange("instance_id")
 		volume := &cloudca.Volume{
 			Id: d.Id(),
 		}
-		if oldInstanceId != "" && curVolume.InstanceId != "" {
+		if oldInstanceID != "" && curVolume.InstanceId != "" {
 			err := ccaResources.Volumes.DetachFromInstance(volume)
 			if err != nil {
 				return err
 			}
 		}
-		if newInstanceId != "" {
-			err := ccaResources.Volumes.AttachToInstance(volume, newInstanceId.(string))
+		if newInstanceID != "" {
+			err := ccaResources.Volumes.AttachToInstance(volume, newInstanceID.(string))
 			if err != nil {
 				return err
 			}
@@ -183,12 +183,12 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 }
 
 func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	if instanceId, ok := d.GetOk("instance_id"); ok && instanceId != "" {
+	if instanceID, ok := d.GetOk("instance_id"); ok && instanceID != "" {
 		volume := &cloudca.Volume{
 			Id: d.Id(),
 		}
@@ -203,7 +203,7 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
 	return nil
 }
 
-func retrieveZoneId(ccaResources *cloudca.Resources, zoneName string) (zoneId string, nerr error) {
+func retrieveZoneID(ccaResources *cloudca.Resources, zoneName string) (zoneID string, nerr error) {
 	zones, err := ccaResources.Zones.List()
 	if err != nil {
 		return "", err
