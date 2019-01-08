@@ -143,7 +143,7 @@ func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 
 func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) error {
 	ccaClient := meta.(*cca.CcaClient)
-	fmt.Println("[INFO] Destroying environment: %s", d.Get(Name).(string))
+	fmt.Printf("[INFO] Destroying environment: %s\n", d.Get(Name).(string))
 	if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {

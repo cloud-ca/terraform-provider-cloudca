@@ -280,7 +280,7 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	if rerr != nil {
 		return rerr
 	}
-	fmt.Println("[INFO] Destroying instance: %s", d.Get("name").(string))
+	fmt.Printf("[INFO] Destroying instance: %s\n", d.Get("name").(string))
 	if _, err := ccaResources.Instances.Destroy(d.Id(), true); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {

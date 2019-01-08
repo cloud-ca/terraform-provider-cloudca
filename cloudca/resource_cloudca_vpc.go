@@ -172,7 +172,7 @@ func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
 	if rerr != nil {
 		return rerr
 	}
-	fmt.Println("[INFO] Destroying VPC: %s", d.Get("name").(string))
+	fmt.Printf("[INFO] Destroying VPC: %s\n", d.Get("name").(string))
 	if _, err := ccaResources.Vpcs.Destroy(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
