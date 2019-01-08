@@ -14,13 +14,6 @@ jobs:
         paths:
         - /go/src/github.com/cloud-ca/terraform-provider-cloudca
 
-  dependencies:
-    <<: *defaults
-    steps:
-    - restore_cache:
-        key: repo-{{ .Environment.CIRCLE_SHA1 }}
-    - run: make init
-
   lint:
     <<: *defaults
     docker:
@@ -35,6 +28,7 @@ jobs:
     steps:
     - restore_cache:
         key: repo-{{ .Environment.CIRCLE_SHA1 }}
+    - run: make init
     - run: make build
 
 workflows:
@@ -45,16 +39,9 @@ workflows:
         filters:
           tags:
             only: /v.*/
-    - dependencies:
-        requires:
-        - checkout
-        filters:
-          tags:
-            only: /v.*/
     - lint:
         requires:
         - checkout
-        - dependencies
         filters:
           tags:
             only: /v.*/
