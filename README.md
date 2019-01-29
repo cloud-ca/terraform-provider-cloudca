@@ -40,9 +40,9 @@ go get github.com/cloud-ca/terraform-provider-cloudca
 Compile the provider:
 
 ```Shell
-cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
-make init
-make build
+$ cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
+$ make vendor
+$ make build
 ```
 
 Copy the provider to the directory where terraform is located:
