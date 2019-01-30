@@ -25,7 +25,7 @@ provider "cloudca" {
 
 ## Links
 
-- [**Resources documentation**](https://github.com/cloud-ca/terraform-cloudca/blob/master/cloudca/README.md)
+- [**Resources documentation**](https://github.com/cloud-ca/terraform-provider-cloudca/tree/master/doc)
 
 ## Build from source
 
