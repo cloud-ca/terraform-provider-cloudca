@@ -80,6 +80,7 @@ build: clean log-build ## Build binary for current OS/ARCH
 	@ GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION) && echo "./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)"
 
 .PHONY: build-all
+build-all: SHELL :=/bin/bash
 build-all: clean log-build-all ## Build binary for all OS/ARCH
 	@gox -verbose \
 		-ldflags "${LDFLAGS}" \
@@ -89,17 +90,19 @@ build-all: clean log-build-all ## Build binary for all OS/ARCH
 		-osarch="!darwin/arm !darwin/386" \
 		-output="$(BUILD_DIR)/{{.OS}}-{{.Arch}}/{{.Dir}}_${VERSION}" .
 
+	@printf "\n"
 	@for platform in `find ./$(BUILD_DIR) -mindepth 1 -maxdepth 1 -type d` ; do \
 		OSARCH=`basename $${platform}` ; \
-		echo "--> $${OSARCH}" ; \
-		pushd $${PLATFORM} >/dev/null 2>&1 ; \
-		zip ../$(NAME)_$(VERSION)_$${OSARCH}.zip ./* ; \
+		printf -- "--> %15s: Done\n" "$${OSARCH}" ; \
+		pushd $${platform} >/dev/null 2>&1 ; \
+		zip -q ../$(NAME)_$(VERSION)_$${OSARCH}.zip ./* ; \
 		popd >/dev/null 2>&1 ; \
 	done
 
-	pushd ./$(BUILD_DIR) ; \
+	@ pushd ./$(BUILD_DIR) >/dev/null 2>&1 ; \
 	shasum -a256 *.zip > ./$(NAME)_${VERSION}_SHA256SUMS ; \
-	popd >/dev/null 2>&1 ;
+	popd >/dev/null 2>&1 ; \
+	printf -- "\n--> %15s: Done\n" "sha256sum" ; \
 
 #####################
 ## Release targets ##
