@@ -19,5 +19,3 @@ The following arguments are supported:
 - [environment_id](#environment_id) - (Required) ID of environment
 - [name](#name) - (Required) The name of the SSH key to add
 - [public_key](#public_key) - (Required) The public key data
-
-## Attribute Reference

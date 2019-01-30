@@ -4,7 +4,7 @@ Manages volumes. Modifying all fields with the exception of instance_id will res
 
 If the instance_id is updated, the volume will be detached from the previous instance and attached to the new instance.
 
-**WARNING: Updating size_in_gb and/or iops of a volume will cause a REBOOT of the instance it's attached to.**
+**WARNING: Updating `size_in_gb` and/or `iops` of a volume will cause a REBOOT of the instance it's attached to.**
 
 ## Example Usage
 
