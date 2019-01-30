@@ -23,9 +23,6 @@ GOBUILD     := go build -ldflags "$(LDFLAGS)"
 BLUE_COLOR  := \033[36m
 NO_COLOR    := \033[0m
 
-.PHONY: default
-default: build
-
 .PHONY: version
 version:
 	@echo $(VERSION)
