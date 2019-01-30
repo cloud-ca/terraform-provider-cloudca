@@ -1,6 +1,6 @@
 defaults: &defaults
   docker:
-  - image: golang:1.11.4
+  - image: golang:1.11
   working_directory: /go/src/github.com/cloud-ca/terraform-provider-cloudca
 
 version: 2
@@ -14,6 +14,24 @@ jobs:
         paths:
         - /go/src/github.com/cloud-ca/terraform-provider-cloudca
 
+  vendor:
+    <<: *defaults
+    steps:
+    - restore_cache:
+        key: repo-{{ .Environment.CIRCLE_SHA1 }}
+    - run:
+        name: "Verify 'vendor' dependencies"
+        command: make verify
+
+  format:
+    <<: *defaults
+    steps:
+    - restore_cache:
+        key: repo-{{ .Environment.CIRCLE_SHA1 }}
+    - run:
+        name: "Check formatting of all go files"
+        command: make checkfmt
+
   lint:
     <<: *defaults
     docker:
@@ -21,15 +39,30 @@ jobs:
     steps:
     - restore_cache:
         key: repo-{{ .Environment.CIRCLE_SHA1 }}
-    - run: make lint
+    - run:
+        name: "Install required tools"
+        command: make tools
+    - run:
+        name: "Run linter"
+        command: make lint
+
+  test:
+    <<: *defaults
+    steps:
+    - restore_cache:
+        key: repo-{{ .Environment.CIRCLE_SHA1 }}
+    - run:
+        name: "Run tests"
+        command: make test
 
   build:
     <<: *defaults
     steps:
     - restore_cache:
         key: repo-{{ .Environment.CIRCLE_SHA1 }}
-    - run: make init
-    - run: make build
+    - run:
+        name: "Build binary for current OS/ARCH"
+        command: make build
 
 workflows:
   version: 2
@@ -39,7 +72,25 @@ workflows:
         filters:
           tags:
             only: /v.*/
+    - vendor:
+        requires:
+        - checkout
+        filters:
+          tags:
+            only: /v.*/
+    - format:
+        requires:
+        - checkout
+        filters:
+          tags:
+            only: /v.*/
     - lint:
+        requires:
+        - checkout
+        filters:
+          tags:
+            only: /v.*/
+    - test:
         requires:
         - checkout
         filters:
