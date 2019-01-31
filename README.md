@@ -1,5 +1,8 @@
 # terraform-provider-cloudca
 
+[![Build Status](https://circleci.com/gh/cloud-ca/terraform-provider-cloudca.svg?style=svg)](https://circleci.com/gh/cloud-ca/terraform-provider-cloudca)
+[![license](https://img.shields.io/github/license/cloud-ca/terraform-provider-cloudca.svg)](https://github.com/cloud-ca/terraform-provider-cloudca/blob/master/LICENSE)
+
 Terraform provider for cloud.ca
 
 Tested with Terraform version : 0.11.5
