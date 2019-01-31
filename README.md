@@ -59,6 +59,24 @@ To build zip files containing the executables for each OS/architecture combinati
 make build-all
 ```
 
+## Prepare a Release
+
+To prepare a new release, use one of the following:
+
+```shell
+make patch # e.g. move from v1.2.3 to v1.2.4
+make minor # e.g. move from v1.2.3 to v1.3.0
+make major # e.g. move from v1.2.3 to v2.0.0
+```
+
+or
+
+```shell
+make release version=x.y.z # where x, y and z are non-negative integers
+```
+
+also you can use `push=true` flag in all of the above to push the newly released tag to GitHub.
+
 ## License
 
 This project is licensed under the terms of the MIT license.
