@@ -29,7 +29,7 @@ provider "cloudca" {
 
 ## Build from source
 
-Install [Go](https://golang.org/doc/install) (version 1.8 is required)
+Install [Go](https://golang.org/doc/install) (version 1.11 is required)
 
 Download the provider source:
 
