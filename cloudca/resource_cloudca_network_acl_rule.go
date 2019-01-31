@@ -17,12 +17,12 @@ const (
 	ICMP = "ICMP"
 )
 
-func resourceCloudcaNetworkAclRule() *schema.Resource {
+func resourceCloudcaNetworkACLRule() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudcaNetworkAclRuleCreate,
-		Update: resourceCloudcaNetworkAclRuleUpdate,
-		Read:   resourceCloudcaNetworkAclRuleRead,
-		Delete: resourceCloudcaNetworkAclRuleDelete,
+		Create: resourceCloudcaNetworkACLRuleCreate,
+		Update: resourceCloudcaNetworkACLRuleUpdate,
+		Read:   resourceCloudcaNetworkACLRuleRead,
+		Delete: resourceCloudcaNetworkACLRuleDelete,
 
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
@@ -96,8 +96,8 @@ func resourceCloudcaNetworkAclRule() *schema.Resource {
 	}
 }
 
-func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLRuleCreate(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -119,16 +119,16 @@ func resourceCloudcaNetworkAclRuleCreate(d *schema.ResourceData, meta interface{
 		return fmt.Errorf("Cannot have icmp fields if not ICMP protocol")
 	}
 
-	newAclRule, err := ccaResources.NetworkAclRules.Create(aclRuleToCreate)
+	newACLRule, err := ccaResources.NetworkAclRules.Create(aclRuleToCreate)
 	if err != nil {
 		return fmt.Errorf("Error creating the new network ACL rule %s: %s", aclRuleToCreate.RuleNumber, err)
 	}
-	d.SetId(newAclRule.Id)
-	return resourceCloudcaNetworkAclRuleRead(d, meta)
+	d.SetId(newACLRule.Id)
+	return resourceCloudcaNetworkACLRuleRead(d, meta)
 }
 
-func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -151,8 +151,8 @@ func resourceCloudcaNetworkAclRuleUpdate(d *schema.ResourceData, meta interface{
 	return nil
 }
 
-func resourceCloudcaNetworkAclRuleRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLRuleRead(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -182,8 +182,8 @@ func resourceCloudcaNetworkAclRuleRead(d *schema.ResourceData, meta interface{})
 	return nil
 }
 
-func resourceCloudcaNetworkAclRuleDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLRuleDelete(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

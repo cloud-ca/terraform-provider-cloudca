@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func resourceCloudcaNetworkAcl() *schema.Resource {
+func resourceCloudcaNetworkACL() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceCloudcaNetworkAclCreate,
-		Read:   resourceCloudcaNetworkAclRead,
-		Delete: resourceCloudcaNetworkAclDelete,
+		Create: resourceCloudcaNetworkACLCreate,
+		Read:   resourceCloudcaNetworkACLRead,
+		Delete: resourceCloudcaNetworkACLDelete,
 
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
@@ -44,8 +44,8 @@ func resourceCloudcaNetworkAcl() *schema.Resource {
 	}
 }
 
-func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLCreate(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -56,16 +56,16 @@ func resourceCloudcaNetworkAclCreate(d *schema.ResourceData, meta interface{}) e
 		Description: d.Get("description").(string),
 		VpcId:       d.Get("vpc_id").(string),
 	}
-	newAcl, err := ccaResources.NetworkAcls.Create(aclToCreate)
+	newACL, err := ccaResources.NetworkAcls.Create(aclToCreate)
 	if err != nil {
 		return fmt.Errorf("Error creating the new network ACL %s: %s", aclToCreate.Name, err)
 	}
-	d.SetId(newAcl.Id)
-	return resourceCloudcaNetworkAclRead(d, meta)
+	d.SetId(newACL.Id)
+	return resourceCloudcaNetworkACLRead(d, meta)
 }
 
-func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLRead(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -90,8 +90,8 @@ func resourceCloudcaNetworkAclRead(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func resourceCloudcaNetworkAclDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+func resourceCloudcaNetworkACLDelete(d *schema.ResourceData, meta interface{}) error {
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr

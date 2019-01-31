@@ -67,17 +67,17 @@ func resourceCloudcaNetwork() *schema.Resource {
 }
 
 func resourceCloudcaNetworkCreate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
 	}
-	networkOfferingId, nerr := retrieveNetworkOfferingId(&ccaResources, d.Get("network_offering").(string))
+	networkOfferingID, nerr := retrieveNetworkOfferingID(&ccaResources, d.Get("network_offering").(string))
 	if nerr != nil {
 		return nerr
 	}
 
-	aclID, nerr := retrieveNetworkAclID(&ccaResources, d.Get("network_acl").(string), d.Get("vpc_id").(string))
+	aclID, nerr := retrieveNetworkACLID(&ccaResources, d.Get("network_acl").(string), d.Get("vpc_id").(string))
 	if nerr != nil {
 		return nerr
 	}
@@ -86,7 +86,7 @@ func resourceCloudcaNetworkCreate(d *schema.ResourceData, meta interface{}) erro
 		Name:              d.Get("name").(string),
 		Description:       d.Get("description").(string),
 		VpcId:             d.Get("vpc_id").(string),
-		NetworkOfferingId: networkOfferingId,
+		NetworkOfferingId: networkOfferingID,
 		NetworkAclId:      aclID,
 	}
 	options := map[string]string{}
@@ -102,7 +102,7 @@ func resourceCloudcaNetworkCreate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -142,7 +142,7 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceCloudcaNetworkUpdate(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -159,7 +159,7 @@ func resourceCloudcaNetworkUpdate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	if d.HasChange("network_acl") {
-		aclID, err := retrieveNetworkAclID(&ccaResources, d.Get("network_acl").(string), d.Get("vpc_id").(string))
+		aclID, err := retrieveNetworkACLID(&ccaResources, d.Get("network_acl").(string), d.Get("vpc_id").(string))
 		if err != nil {
 			return err
 		}
@@ -175,7 +175,7 @@ func resourceCloudcaNetworkUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceCloudcaNetworkDelete(d *schema.ResourceData, meta interface{}) error {
-	ccaResources, rerr := getResourcesForEnvironmentId(meta.(*cca.CcaClient), d.Get("environment_id").(string))
+	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 
 	if rerr != nil {
 		return rerr
@@ -194,7 +194,7 @@ func resourceCloudcaNetworkDelete(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func retrieveNetworkOfferingId(ccaRes *cloudca.Resources, name string) (id string, err error) {
+func retrieveNetworkOfferingID(ccaRes *cloudca.Resources, name string) (id string, err error) {
 	if isID(name) {
 		return name, nil
 	}
@@ -211,7 +211,7 @@ func retrieveNetworkOfferingId(ccaRes *cloudca.Resources, name string) (id strin
 	return "", fmt.Errorf("Network offering with name %s not found", name)
 }
 
-func retrieveNetworkAclID(ccaRes *cloudca.Resources, name, vpcID string) (id string, err error) {
+func retrieveNetworkACLID(ccaRes *cloudca.Resources, name, vpcID string) (id string, err error) {
 	if isID(name) {
 		return name, nil
 	}

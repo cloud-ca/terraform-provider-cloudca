@@ -18,12 +18,12 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_vpc":                  resourceCloudcaVpc(),
 		"cloudca_network":              resourceCloudcaNetwork(),
 		"cloudca_port_forwarding_rule": resourceCloudcaPortForwardingRule(),
-		"cloudca_public_ip":            resourceCloudcaPublicIp(),
+		"cloudca_public_ip":            resourceCloudcaPublicIP(),
 		"cloudca_volume":               resourceCloudcaVolume(),
 		"cloudca_load_balancer_rule":   resourceCloudcaLoadBalancerRule(),
-		"cloudca_network_acl":          resourceCloudcaNetworkAcl(),
-		"cloudca_network_acl_rule":     resourceCloudcaNetworkAclRule(),
-		"cloudca_static_nat":           resourceCloudcaStaticNat(),
+		"cloudca_network_acl":          resourceCloudcaNetworkACL(),
+		"cloudca_network_acl_rule":     resourceCloudcaNetworkACLRule(),
+		"cloudca_static_nat":           resourceCloudcaStaticNAT(),
 		"cloudca_ssh_key":              resourceCloudcaSSHKey(),
 	}
 }
@@ -69,8 +69,8 @@ func getResources(d *schema.ResourceData, meta interface{}) cloudca.Resources {
 }
 
 // Deals with all of the casting done to get a cloudca.Resources.
-func getResourcesForEnvironmentId(client *cca.CcaClient, environmentId string) (cloudca.Resources, error) {
-	environment, err := client.Environments.Get(environmentId)
+func getResourcesForEnvironmentID(client *cca.CcaClient, environmentID string) (cloudca.Resources, error) {
+	environment, err := client.Environments.Get(environmentID)
 	if err != nil {
 		return cloudca.Resources{}, err
 	}
