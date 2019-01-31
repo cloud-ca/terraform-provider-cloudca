@@ -7,7 +7,7 @@ LICENSE     := MIT
 
 # Build variables
 BUILD_DIR   := bin
-VERSION     := $(shell git describe --tags --exact-match 2>/dev/null || git describe --tags 2>/dev/null)
+VERSION     := $(shell git describe --always --tags --dirty 2>/dev/null || echo "0.0.0" )
 COMMIT_HASH := $(shell git rev-parse --short HEAD 2>/dev/null)
 BUILD_DATE  := $(shell date +%FT%T%z)
 
@@ -113,24 +113,34 @@ authors: log-authors ## Generate list of Authors
 changelog: log-changelog ## Generate content of Changelog
 	git-chglog --output CHANGELOG.md
 
-.PHONY: upload
-upload:
-	rm -f ./$(BUILD_DIR)/terraform-provider-cloudca_${VERSION}_SWIFTURLS ;
-	SWIFT_ACCOUNT=`swift stat | grep Account: | sed s/Account:// | tr -d '[:space:]'` ; \
-	SWIFT_URL=https://objects-qc.cloud.ca/v1 ; \
-	SWIFT_CONTAINER=terraform-provider-cloudca ; \
-	for FILE in `ls ./$(BUILD_DIR) | grep -i terraform.*\.zip` ; do \
-		echo "Uploading $$FILE to swift" ; \
-		swift upload $${SWIFT_CONTAINER} ./$(BUILD_DIR)/$$FILE --object-name ${VERSION}/$$FILE ; \
-		echo "$${SWIFT_URL}/$${SWIFT_ACCOUNT}/$${SWIFT_CONTAINER}/${VERSION}/$$FILE" >> ./$(BUILD_DIR)/terraform-provider-cloudca_${VERSION}_SWIFTURLS ; \
-	done
+.PHONY: release patch minor major
+PATTERN =
 
-.PHONY: release
-release: build-all upload release-notes
+release: version ?= $(shell echo $(VERSION) | sed 's/^v//' | awk -F'[ .]' '{print $(PATTERN)}')
+release: push ?= false
+release: SHELL :=/bin/bash
+release: log-release ## Prepare Module release (flags: tag=[true|false] push=[true|false])
+	@ if [ -z "$(version)" ]; then \
+		echo "Error: missing value for 'version'. e.g. 'make release version=x.y.z'"; \
+	elif [ "v$(version)" = "$(VERSION)" ] ; then \
+		echo "Error: provided version (v$(version)) exists."; \
+	else \
+		git tag --annotate --message "v$(version) Release" v$(version); \
+		echo "Tag v$(version) Release"; \
+		if [ $(push) = "true" ]; then \
+			git push origin v$(version); \
+			echo "Push v$(version) Release"; \
+		fi \
+	fi
 
-.PHONY: release-notes
-release-notes: 
-	./release-notes.sh > ./$(BUILD_DIR)/release.md ;
+patch: PATTERN = '\$$1\".\"\$$2\".\"\$$3+1'
+patch: release ## Prepare Module Patch release
+
+minor: PATTERN = '\$$1\".\"\$$2+1\".0\"'
+minor: release ## Prepare Module Minor release
+
+major: PATTERN = '\$$1+1\".0.0\"'
+major: release ## Prepare Module Major release
 
 ####################################
 ## Self-Documenting Makefile Help ##
