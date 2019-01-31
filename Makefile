@@ -64,8 +64,8 @@ test: log-test ## Run tests
 .PHONY: tools
 tools: log-tools ## Install required tools
 	@curl -L https://git.io/vp6lP | sh # gometalinter
-	@go get -v -u github.com/mitchellh/gox # gox
-	@go get -v -u github.com/git-chglog/git-chglog/cmd/git-chglog # git-chglog
+	@cd /tmp && go get -v -u github.com/mitchellh/gox # gox
+	@cd /tmp && go get -v -u github.com/git-chglog/git-chglog/cmd/git-chglog # git-chglog
 
 ###################
 ## Build targets ##
@@ -99,7 +99,7 @@ build-all: clean log-build-all ## Build binary for all OS/ARCH
 	@ pushd ./$(BUILD_DIR) >/dev/null 2>&1 ; \
 	shasum -a256 *.zip > ./$(NAME)_${VERSION}_SHA256SUMS ; \
 	popd >/dev/null 2>&1 ; \
-	printf -- "\n--> %15s: Done\n" "sha256sum" ; \
+	printf -- "\n--> %15s: Done\n" "sha256sum"
 
 #####################
 ## Release targets ##
