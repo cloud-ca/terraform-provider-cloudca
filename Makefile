@@ -7,7 +7,7 @@ LICENSE     := MIT
 
 # Build variables
 BUILD_DIR   := bin
-VERSION     := $(shell git describe --always --tags --dirty 2>/dev/null || echo "0.0.0" )
+VERSION     := $(shell git describe --always --tags --dirty 2>/dev/null || echo "0.0.0")
 COMMIT_HASH := $(shell git rev-parse --short HEAD 2>/dev/null)
 BUILD_DATE  := $(shell date +%FT%T%z)
 
