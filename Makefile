@@ -24,8 +24,8 @@ BLUE_COLOR  := \033[36m
 NO_COLOR    := \033[0m
 
 .PHONY: version
-version:
-	@echo $(VERSION)
+version: ## Show version of provider
+	@echo "$(NAME) - $(VERSION) - $(BUILD_DATE)"
 
 #########################
 ## Development targets ##
