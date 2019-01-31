@@ -40,15 +40,14 @@ go get github.com/cloud-ca/terraform-provider-cloudca
 Compile the provider:
 
 ```Shell
-$ cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
-$ make vendor
-$ make build
+cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
+make build
 ```
 
 Copy the provider to the directory where terraform is located:
 
 ```Shell
-sudo cp terraform-provider-cloudca $(dirname `which terraform`)
+sudo cp ./bin/$(go env GOOS)-$(go env GOARCH)/terraform-provider-cloudca_* $(dirname `which terraform`)
 ```
 
 ## Build for all OS/architectures
