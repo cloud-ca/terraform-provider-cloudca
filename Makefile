@@ -119,7 +119,7 @@ PATTERN =
 release: version ?= $(shell echo $(VERSION) | sed 's/^v//' | awk -F'[ .]' '{print $(PATTERN)}')
 release: push ?= false
 release: SHELL :=/bin/bash
-release: log-release ## Prepare Module release (flags: tag=[true|false] push=[true|false])
+release: log-release ## Prepare Module release
 	@ if [ -z "$(version)" ]; then \
 		echo "Error: missing value for 'version'. e.g. 'make release version=x.y.z'"; \
 	elif [ "v$(version)" = "$(VERSION)" ] ; then \
