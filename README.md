@@ -32,7 +32,7 @@ provider "cloudca" {
 
 ## Build from source
 
-Install [Go](https://golang.org/doc/install) (version 1.8 is required)
+Install [Go](https://golang.org/doc/install) (version 1.11 is required)
 
 Download the provider source:
 
@@ -43,15 +43,14 @@ go get github.com/cloud-ca/terraform-provider-cloudca
 Compile the provider:
 
 ```Shell
-$ cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
-$ make vendor
-$ make build
+cd $GOPATH/src/github.com/cloud-ca/terraform-provider-cloudca
+make build
 ```
 
 Copy the provider to the directory where terraform is located:
 
 ```Shell
-sudo cp terraform-provider-cloudca $(dirname `which terraform`)
+sudo cp ./bin/$(go env GOOS)-$(go env GOARCH)/terraform-provider-cloudca_* $(dirname `which terraform`)
 ```
 
 ## Build for all OS/architectures
@@ -61,6 +60,24 @@ To build zip files containing the executables for each OS/architecture combinati
 ```Shell
 make build-all
 ```
+
+## Prepare a Release
+
+To prepare a new release, use one of the following:
+
+```shell
+make patch # e.g. move from v1.2.3 to v1.2.4
+make minor # e.g. move from v1.2.3 to v1.3.0
+make major # e.g. move from v1.2.3 to v2.0.0
+```
+
+or
+
+```shell
+make release version=x.y.z # where x, y and z are non-negative integers
+```
+
+also you can use `push=true` flag in all of the above to push the newly released tag to GitHub.
 
 ## License
 
