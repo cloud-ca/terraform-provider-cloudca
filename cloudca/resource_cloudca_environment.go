@@ -11,8 +11,9 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+// role names and fields
 const (
-	//role name
+	// role name
 	EnvironmentAdminRole = "Environment admin"
 	UserRole             = "User"
 	ReadOnlyRole         = "Read-only"
