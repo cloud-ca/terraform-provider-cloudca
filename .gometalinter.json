@@ -6,7 +6,8 @@
   ],
   "Exclude": [
     "should have comment or be unexported",
-    "should have comment \\(or a comment on this block\\) or be unexported"
+    "should have comment \\(or a comment on this block\\) or be unexported", 
+    "func getResources is unused"
   ],
   "Deadline": "5m",
   "Enable": [
