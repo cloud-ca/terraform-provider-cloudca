@@ -88,7 +88,7 @@ func resourceCloudcaPublicIPDelete(d *schema.ResourceData, meta interface{}) err
 	if _, err := ccaResources.PublicIps.Release(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Public Ip %s not found", d.Id())
+				_ = fmt.Errorf("Public Ip %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

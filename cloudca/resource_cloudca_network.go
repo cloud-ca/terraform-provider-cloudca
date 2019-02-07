@@ -123,7 +123,7 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 	if offErr != nil {
 		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network offering %s not found", network.NetworkOfferingId)
+				_ = fmt.Errorf("Network offering %s not found", network.NetworkOfferingId)
 				d.SetId("")
 				return nil
 			}
@@ -183,7 +183,7 @@ func resourceCloudcaNetworkDelete(d *schema.ResourceData, meta interface{}) erro
 	if _, err := ccaResources.Networks.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network %s not found", d.Id())
+				_ = fmt.Errorf("Network %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

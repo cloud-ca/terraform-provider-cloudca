@@ -74,7 +74,7 @@ func resourceCloudcaNetworkACLRead(d *schema.ResourceData, meta interface{}) err
 	if aErr != nil {
 		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("ACL %s not found", d.Id())
+				_ = fmt.Errorf("ACL %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}
@@ -99,7 +99,7 @@ func resourceCloudcaNetworkACLDelete(d *schema.ResourceData, meta interface{}) e
 	if _, err := ccaResources.NetworkAcls.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network ACL %s not found", d.Id())
+				_ = fmt.Errorf("Network ACL %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

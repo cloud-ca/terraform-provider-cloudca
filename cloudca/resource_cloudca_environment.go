@@ -89,7 +89,7 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Environment %s does not exist", d.Id())
+				_ = fmt.Errorf("Environment %s does not exist", d.Id())
 				d.SetId("")
 				return nil
 			}
@@ -148,7 +148,7 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 	if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Environment %s does not exist", d.Get(Name).(string))
+				_ = fmt.Errorf("Environment %s does not exist", d.Get(Name).(string))
 				d.SetId("")
 				return nil
 			}

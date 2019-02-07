@@ -116,7 +116,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
+				_ = fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
 				return nil
 			}
@@ -130,7 +130,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	if offErr != nil {
 		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("VPC offering id=%s does no longer exist", vpc.VpcOfferingId)
+				_ = fmt.Errorf("VPC offering id=%s does no longer exist", vpc.VpcOfferingId)
 				d.SetId("")
 				return nil
 			}
@@ -176,7 +176,7 @@ func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
 	if _, err := ccaResources.Vpcs.Destroy(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
+				_ = fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
 				d.SetId("")
 				return nil
 			}

@@ -236,7 +236,7 @@ func retrieveDiskOffering(ccaRes *cloudca.Resources, name string) (diskOffering 
 func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			fmt.Errorf("Volume with id='%s' was not found", d.Id())
+			_ = fmt.Errorf("Volume with id='%s' was not found", d.Id())
 			d.SetId("")
 			return nil
 		}

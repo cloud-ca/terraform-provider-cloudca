@@ -161,7 +161,7 @@ func resourceCloudcaNetworkACLRuleRead(d *schema.ResourceData, meta interface{})
 	if aErr != nil {
 		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("ACL rule %s not found", d.Id())
+				_ = fmt.Errorf("ACL rule %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}
@@ -191,7 +191,7 @@ func resourceCloudcaNetworkACLRuleDelete(d *schema.ResourceData, meta interface{
 	if _, err := ccaResources.NetworkAclRules.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network ACL rule %s not found", d.Id())
+				_ = fmt.Errorf("Network ACL rule %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

@@ -239,7 +239,7 @@ func getStickinessPolicyParameterMap(policyMap map[string]interface{}) map[strin
 func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
+			_ = fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
 			d.SetId("")
 			return nil
 		}
