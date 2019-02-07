@@ -14,6 +14,7 @@
     "golint",
     "varcheck",
     "structcheck",
+    "staticcheck",
     "errcheck"
   ],
   "Linters": {
