@@ -244,17 +244,11 @@ func getUsersFromRoles(environment *configuration.Environment) (adminRoleUsers [
 	for _, envRole := range environment.Roles {
 		switch {
 		case strings.EqualFold(envRole.Name, EnvironmentAdminRole):
-			for _, user := range envRole.Users {
-				adminRoleUsers = append(adminRoleUsers, user)
-			}
+			adminRoleUsers = append(adminRoleUsers, envRole.Users...)
 		case strings.EqualFold(envRole.Name, UserRole):
-			for _, user := range envRole.Users {
-				userRoleUsers = append(userRoleUsers, user)
-			}
+			userRoleUsers = append(userRoleUsers, envRole.Users...)
 		case strings.EqualFold(envRole.Name, ReadOnlyRole):
-			for _, user := range envRole.Users {
-				readOnlyRoleUsers = append(readOnlyRoleUsers, user)
-			}
+			readOnlyRoleUsers = append(readOnlyRoleUsers, envRole.Users...)
 		}
 	}
 	return
