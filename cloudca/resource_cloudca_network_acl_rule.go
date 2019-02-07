@@ -114,15 +114,15 @@ func resourceCloudcaNetworkACLRuleCreate(d *schema.ResourceData, meta interface{
 	fillPortFields(d, &aclRuleToCreate)
 	fillIcmpFields(d, &aclRuleToCreate)
 	if !(strings.EqualFold(TCP, aclRuleToCreate.Protocol) || strings.EqualFold(UDP, aclRuleToCreate.Protocol)) && (aclRuleToCreate.StartPort != "" || aclRuleToCreate.EndPort != "") {
-		return fmt.Errorf("Cannot have ports if not TCP or UDP protocol")
+		return fmt.Errorf("cannot have ports if not TCP or UDP protocol")
 	}
 	if !strings.EqualFold(ICMP, aclRuleToCreate.Protocol) && (aclRuleToCreate.IcmpType != "" || aclRuleToCreate.IcmpCode != "") {
-		return fmt.Errorf("Cannot have icmp fields if not ICMP protocol")
+		return fmt.Errorf("cannot have icmp fields if not ICMP protocol")
 	}
 
 	newACLRule, err := ccaResources.NetworkAclRules.Create(aclRuleToCreate)
 	if err != nil {
-		return fmt.Errorf("Error creating the new network ACL rule %s: %s", aclRuleToCreate.RuleNumber, err)
+		return fmt.Errorf("error creating the new network ACL rule %s: %s", aclRuleToCreate.RuleNumber, err)
 	}
 	d.SetId(newACLRule.Id)
 	return resourceCloudcaNetworkACLRuleRead(d, meta)
@@ -192,7 +192,7 @@ func resourceCloudcaNetworkACLRuleDelete(d *schema.ResourceData, meta interface{
 	if _, err := ccaResources.NetworkAclRules.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Network ACL rule %s not found", d.Id())
+				_ = fmt.Errorf("network ACL rule %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

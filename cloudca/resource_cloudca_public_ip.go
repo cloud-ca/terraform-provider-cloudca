@@ -50,7 +50,7 @@ func resourceCloudcaPublicIPCreate(d *schema.ResourceData, meta interface{}) err
 	}
 	newPublicIP, err := ccaResources.PublicIps.Acquire(publicIPToCreate)
 	if err != nil {
-		return fmt.Errorf("Error acquiring the new public ip %s", err)
+		return fmt.Errorf("error acquiring the new public IP %s", err)
 	}
 	d.SetId(newPublicIP.Id)
 	return resourceCloudcaPublicIPRead(d, meta)
@@ -66,7 +66,7 @@ func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				log.Printf("Public Ip with id='%s' was not found", d.Id())
+				log.Printf("Public IP with id='%s' was not found", d.Id())
 				d.SetId("")
 				return nil
 			}
@@ -88,7 +88,7 @@ func resourceCloudcaPublicIPDelete(d *schema.ResourceData, meta interface{}) err
 	if _, err := ccaResources.PublicIps.Release(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Public Ip %s not found", d.Id())
+				_ = fmt.Errorf("public IP %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}

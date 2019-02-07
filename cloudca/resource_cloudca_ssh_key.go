@@ -53,7 +53,7 @@ func createSSHKey(d *schema.ResourceData, meta interface{}) error {
 	}
 	newSk, err := ccaResources.SSHKeys.Create(sk)
 	if err != nil {
-		return fmt.Errorf("Error creating new SSH key %s", err)
+		return fmt.Errorf("error creating new SSH key %s", err)
 	}
 	d.SetId(newSk.ID)
 	return readSSHKey(d, meta)
