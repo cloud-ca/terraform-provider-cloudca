@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+// GetCloudCAResourceMap resutrn the available Resource map
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		"cloudca_instance":             resourceCloudcaInstance(),

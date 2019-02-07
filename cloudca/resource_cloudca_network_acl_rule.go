@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+// type of ACL rules
 const (
 	TCP  = "TCP"
 	UDP  = "UDP"
