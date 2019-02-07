@@ -76,7 +76,7 @@ func readSSHKey(d *schema.ResourceData, meta interface{}) error {
 		}
 		return err
 	}
-	d.Set("name", sk.Name)
+	_ = d.Set("name", sk.Name)
 	return nil
 }
 

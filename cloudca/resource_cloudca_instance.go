@@ -212,17 +212,17 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 	// Update the config
-	d.Set("name", instance.Name)
+	_ = d.Set("name", instance.Name)
 	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
 	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
-	d.Set("network_id", instance.NetworkId)
-	d.Set("private_ip_id", instance.IpAddressId)
-	d.Set("private_ip", instance.IpAddress)
+	_ = d.Set("network_id", instance.NetworkId)
+	_ = d.Set("private_ip_id", instance.IpAddressId)
+	_ = d.Set("private_ip", instance.IpAddress)
 	dID, dIDErr := getDedicatedGroupId(ccaResources, instance)
 	if dIDErr != nil {
 		return dIDErr
 	}
-	d.Set("dedicated_group_id", dID)
+	_ = d.Set("dedicated_group_id", dID)
 
 	return nil
 }

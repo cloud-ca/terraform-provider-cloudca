@@ -83,9 +83,9 @@ func resourceCloudcaNetworkACLRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	// Update the config
-	d.Set("name", acl.Name)
-	d.Set("description", acl.Description)
-	d.Set("vpc_id", acl.VpcId)
+	_ = d.Set("name", acl.Name)
+	_ = d.Set("description", acl.Description)
+	_ = d.Set("vpc_id", acl.VpcId)
 
 	return nil
 }

@@ -102,11 +102,11 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	userRole, _ := d.GetOk(UserRoleUsers)
 	readOnlyRole, _ := d.GetOk(ReadOnlyRoleUsers)
 
-	d.Set(Name, environment.Name)
-	d.Set(Description, environment.Description)
-	d.Set(AdminRoleUsers, getListOfUsersByIDOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
-	d.Set(UserRoleUsers, getListOfUsersByIDOrUsername(userRoleUsers, userRole.(*schema.Set)))
-	d.Set(ReadOnlyRoleUsers, getListOfUsersByIDOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
+	_ = d.Set(Name, environment.Name)
+	_ = d.Set(Description, environment.Description)
+	_ = d.Set(AdminRoleUsers, getListOfUsersByIDOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
+	_ = d.Set(UserRoleUsers, getListOfUsersByIDOrUsername(userRoleUsers, userRole.(*schema.Set)))
+	_ = d.Set(ReadOnlyRoleUsers, getListOfUsersByIDOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
 
 	return nil
 }

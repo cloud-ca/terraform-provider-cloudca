@@ -123,16 +123,16 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d)
 	}
 
-	d.Set("public_ip_id", pfr.PublicIpId)
-	d.Set("private_ip_id", pfr.PrivateIpId)
-	d.Set("instance_id", pfr.InstanceId)
-	d.Set("protocol", pfr.Protocol)
-	d.Set("public_port_start", pfr.PublicPortStart)
-	d.Set("public_port_end", pfr.PublicPortEnd)
-	d.Set("private_port_start", pfr.PrivatePortStart)
-	d.Set("private_port_end", pfr.PrivatePortEnd)
-	d.Set("private_ip", pfr.PrivateIp)
-	d.Set("public_ip", pfr.PublicIp)
+	_ = d.Set("public_ip_id", pfr.PublicIpId)
+	_ = d.Set("private_ip_id", pfr.PrivateIpId)
+	_ = d.Set("instance_id", pfr.InstanceId)
+	_ = d.Set("protocol", pfr.Protocol)
+	_ = d.Set("public_port_start", pfr.PublicPortStart)
+	_ = d.Set("public_port_end", pfr.PublicPortEnd)
+	_ = d.Set("private_port_start", pfr.PrivatePortStart)
+	_ = d.Set("private_port_end", pfr.PrivatePortEnd)
+	_ = d.Set("private_ip", pfr.PrivateIp)
+	_ = d.Set("public_ip", pfr.PublicIp)
 
 	return nil
 }

@@ -145,17 +145,17 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 		return handleLbrNotFoundError(err, d)
 	}
 
-	d.Set("name", lbr.Name)
-	d.Set("public_ip_id", lbr.PublicIpId)
-	d.Set("network_id", lbr.NetworkId)
-	d.Set("instance_ids", lbr.InstanceIds)
-	d.Set("algorithm", lbr.Algorithm)
-	d.Set("protocol", lbr.Protocol)
-	d.Set("public_port", lbr.PublicPort)
-	d.Set("private_port", lbr.PrivatePort)
-	d.Set("public_ip", lbr.PublicIp)
-	d.Set("stickiness_method", lbr.StickinessMethod)
-	d.Set("stickiness_params", lbr.StickinessPolicyParameters)
+	_ = d.Set("name", lbr.Name)
+	_ = d.Set("public_ip_id", lbr.PublicIpId)
+	_ = d.Set("network_id", lbr.NetworkId)
+	_ = d.Set("instance_ids", lbr.InstanceIds)
+	_ = d.Set("algorithm", lbr.Algorithm)
+	_ = d.Set("protocol", lbr.Protocol)
+	_ = d.Set("public_port", lbr.PublicPort)
+	_ = d.Set("private_port", lbr.PrivatePort)
+	_ = d.Set("public_ip", lbr.PublicIp)
+	_ = d.Set("stickiness_method", lbr.StickinessMethod)
+	_ = d.Set("stickiness_params", lbr.StickinessPolicyParameters)
 
 	return nil
 }

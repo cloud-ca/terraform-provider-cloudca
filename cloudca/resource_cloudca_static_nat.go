@@ -71,7 +71,7 @@ func resourceCloudcaStaticNATRead(d *schema.ResourceData, meta interface{}) erro
 		d.SetId("")
 		return nil
 	}
-	d.Set("private_ip_id", publicIP.PrivateIpId)
+	_ = d.Set("private_ip_id", publicIP.PrivateIpId)
 	return nil
 }
 

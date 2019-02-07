@@ -123,11 +123,11 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return handleVolumeNotFoundError(err, d)
 	}
-	d.Set("name", volume.Name)
+	_ = d.Set("name", volume.Name)
 	setValueOrID(d, "disk_offering", strings.ToLower(volume.DiskOfferingName), volume.DiskOfferingId)
-	d.Set("size_in_gb", volume.GbSize)
-	d.Set("iops", volume.Iops)
-	d.Set("instance_id", volume.InstanceId)
+	_ = d.Set("size_in_gb", volume.GbSize)
+	_ = d.Set("iops", volume.Iops)
+	_ = d.Set("instance_id", volume.InstanceId)
 	return nil
 }
 
@@ -174,7 +174,7 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 		if val, ok := d.GetOk("iops"); ok {
 			volumeToResize.Iops = val.(int)
 		}
-		ccaResources.Volumes.Resize(&volumeToResize)
+		_ = ccaResources.Volumes.Resize(&volumeToResize)
 		d.SetPartial("size_in_gb")
 		d.SetPartial("iops")
 	}

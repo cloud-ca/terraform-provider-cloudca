@@ -139,10 +139,10 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Update the config
-	d.Set("name", vpc.Name)
-	d.Set("description", vpc.Description)
+	_ = d.Set("name", vpc.Name)
+	_ = d.Set("description", vpc.Description)
 	setValueOrID(d, "vpc_offering", strings.ToLower(vpcOffering.Name), vpc.VpcOfferingId)
-	d.Set("network_domain", vpc.NetworkDomain)
+	_ = d.Set("network_domain", vpc.NetworkDomain)
 
 	return nil
 }

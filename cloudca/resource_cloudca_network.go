@@ -132,12 +132,12 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	// Update the config
-	d.Set("name", network.Name)
-	d.Set("description", network.Description)
+	_ = d.Set("name", network.Name)
+	_ = d.Set("description", network.Description)
 	setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId)
-	d.Set("vpc_id", network.VpcId)
+	_ = d.Set("vpc_id", network.VpcId)
 	setValueOrID(d, "network_acl", network.NetworkAclName, network.NetworkAclId)
-	d.Set("cidr", network.Cidr)
+	_ = d.Set("cidr", network.Cidr)
 	return nil
 }
 

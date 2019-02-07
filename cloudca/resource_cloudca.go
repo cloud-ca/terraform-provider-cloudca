@@ -31,9 +31,9 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 
 func setValueOrID(d *schema.ResourceData, key string, value string, id string) {
 	if isID(d.Get(key).(string)) {
-		d.Set(key, id)
+		_ = d.Set(key, id)
 	} else {
-		d.Set(key, value)
+		_ = d.Set(key, value)
 	}
 }
 

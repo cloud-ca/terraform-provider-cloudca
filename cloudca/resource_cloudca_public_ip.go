@@ -73,8 +73,8 @@ func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error
 		}
 		return err
 	}
-	d.Set("vpc_id", publicIP.VpcId)
-	d.Set("ip_address", publicIP.IpAddress)
+	_ = d.Set("vpc_id", publicIP.VpcId)
+	_ = d.Set("ip_address", publicIP.IpAddress)
 	return nil
 }
 
