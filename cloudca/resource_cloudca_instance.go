@@ -109,7 +109,7 @@ func resourceCloudcaInstance() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Id of the dedicate group into which the new instance will be created",
+				Description: "Id of the dedicated group into which the new instance will be created",
 			},
 		},
 	}
