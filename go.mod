@@ -3,7 +3,7 @@ module github.com/cloud-ca/terraform-provider-cloudca
 require (
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
-	github.com/cloud-ca/go-cloudca v1.2.0
+	github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528
 	github.com/hashicorp/go-getter v1.0.3 // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20190109152822-4783caec6f2e // indirect
 	github.com/hashicorp/go-plugin v0.0.0-20190129155509-362c99b11937 // indirect

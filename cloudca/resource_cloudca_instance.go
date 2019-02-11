@@ -105,6 +105,12 @@ func resourceCloudcaInstance() *schema.Resource {
 				Computed:    true,
 				Description: "The IPv4 address of the instance. Must be within the network's CIDR and not collide with existing instances.",
 			},
+			"dedicated_group_id": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Id of the dedicate group into which the new instance will be created",
+			},
 		},
 	}
 }
@@ -168,6 +174,10 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 		instanceToCreate.RootVolumeSizeInGb = rootVolumeSizeInGb.(int)
 	}
 
+	if dedicatedGroupID, ok := d.GetOk("dedicated_group_id"); ok {
+		instanceToCreate.DedicatedGroupId = dedicatedGroupID.(string)
+	}
+
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
 	if err != nil {
 		return fmt.Errorf("Error creating the new instance %s: %s", instanceToCreate.Name, err)
@@ -208,6 +218,11 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("network_id", instance.NetworkId)
 	d.Set("private_ip_id", instance.IpAddressId)
 	d.Set("private_ip", instance.IpAddress)
+	dID, dIDErr := getDedicatedGroupId(ccaResources, instance)
+	if dIDErr != nil {
+		return dIDErr
+	}
+	d.Set("dedicated_group_id", dID)
 
 	return nil
 }
@@ -333,4 +348,22 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	}
 
 	return "", fmt.Errorf("Template with name %s not found", name)
+}
+
+
+func getDedicatedGroupId(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
+	dedicatedGroups, err := ccaRes.AffinityGroups.ListWithOptions(map[string]string{
+		"type": "ExplicitDedication",
+	})
+	if err != nil {
+		return "", err
+	}
+	for _, dedicatedGroup := range dedicatedGroups {
+		for _, affinityGroupId := range instance.AffinityGroupIds {
+			if strings.EqualFold(dedicatedGroup.Id, affinityGroupId) {
+				return dedicatedGroup.Id, nil
+			}
+		}
+	}
+	return "", nil
 }

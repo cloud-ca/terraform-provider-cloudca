@@ -2,6 +2,7 @@ package cloudca
 
 //All entity types for the cloudca service
 const (
+	AFFINITY_GROUP_ENTITY_TYPE       = "affinitygroups"
 	INSTANCE_ENTITY_TYPE             = "instances"
 	VOLUME_ENTITY_TYPE               = "volumes"
 	TEMPLATE_ENTITY_TYPE             = "templates"
