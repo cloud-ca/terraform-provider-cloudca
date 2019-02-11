@@ -61,6 +61,8 @@ type Instance struct {
 	VolumeIdToAttach         string        `json:"volumeIdToAttach,omitempty"`
 	PortsToForward           []string      `json:"portsToForward,omitempty"`
 	RootVolumeSizeInGb       int           `json:"rootVolumeSizeInGb,omitempty"`
+	DedicatedGroupId         string        `json:"dedicatedGroupId,omitempty"`
+	AffinityGroupIds         []string      `json:"affinityGroupIds,omitempty"`
 }
 
 type DestroyOptions struct {

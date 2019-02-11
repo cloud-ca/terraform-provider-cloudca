@@ -12,6 +12,7 @@ type Resources struct {
 	apiClient           api.ApiClient
 	serviceCode         string
 	environmentName     string
+	AffinityGroups      AffinityGroupService
 	Instances           InstanceService
 	Volumes             VolumeService
 	Templates           TemplateService
@@ -35,6 +36,7 @@ func NewResources(apiClient api.ApiClient, serviceCode string, environmentName s
 		apiClient:           apiClient,
 		serviceCode:         serviceCode,
 		environmentName:     environmentName,
+		AffinityGroups:      NewAffinityGroupsService(apiClient, serviceCode, environmentName),
 		Instances:           NewInstanceService(apiClient, serviceCode, environmentName),
 		Volumes:             NewVolumeService(apiClient, serviceCode, environmentName),
 		Templates:           NewTemplateService(apiClient, serviceCode, environmentName),

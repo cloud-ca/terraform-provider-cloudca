@@ -14,6 +14,7 @@ resource "cloudca_instance" "my_instance" {
     ssh_key_name           = "my_ssh_key"
     root_volume_size_in_gb = 100
     private_ip             = "10.2.1.124"
+    dedicated_group_id      = "78fdce97-3a46-4b50-bca7-c70ef8449da8"
 }
 ```
 
@@ -33,6 +34,7 @@ The following arguments are supported:
 - [public_key](#public_key) - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
 - [root_volume_size_in_gb](#root_volume_size_in_gb) - (Optional) Size of the root volume of the instance. This only works for templates that allows root volume resize.
 - [private_ip](#private_ip) - (Optional) Instance's private IPv4 address.
+- [dedicated_group_id](#dedicated_group_id) - (Optional) Dedicated group id in which the instance will be created
 
 ## Attribute Reference
 
