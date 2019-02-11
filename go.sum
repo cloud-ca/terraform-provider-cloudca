@@ -21,6 +21,8 @@ github.com/cloud-ca/go-cloudca v1.2.0 h1:215x34c2XUMxj9GV5gYH9JhqtabDysX2quXvNiK
 github.com/cloud-ca/go-cloudca v1.2.0/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
 github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528 h1:DPBpPNdP0SD6InpeChFXPksAPK+3UQFQNY6vBua0QPc=
 github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
+github.com/cloud-ca/go-cloudca v1.3.0 h1:LhoCxu+Tna/OOoDbSD2adgwlA+WgKfUzzcHBcEu5akE=
+github.com/cloud-ca/go-cloudca v1.3.0/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=

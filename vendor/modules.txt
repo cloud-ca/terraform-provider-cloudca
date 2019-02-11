@@ -46,7 +46,7 @@ github.com/bgentry/go-netrc/netrc
 github.com/bgentry/speakeasy
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528
+# github.com/cloud-ca/go-cloudca v1.3.0
 github.com/cloud-ca/go-cloudca
 github.com/cloud-ca/go-cloudca/api
 github.com/cloud-ca/go-cloudca/configuration
