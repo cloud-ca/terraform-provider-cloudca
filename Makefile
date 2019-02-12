@@ -32,7 +32,7 @@ version: ## Show version of provider
 #########################
 .PHONY: clean
 clean: log-clean ## Clean builds
-	rm -rf ./$(BUILD_DIR) $(NAME)
+	rm -rf ./bin ./$(BUILD_DIR) $(NAME)
 
 .PHONY: vendor
 vendor: log-vendor ## Install 'vendor' dependencies
@@ -63,7 +63,7 @@ test: log-test ## Run tests
 
 .PHONY: tools
 tools: log-tools ## Install required tools
-	@curl -L https://git.io/vp6lP | sh # gometalinter
+	@curl -L https://git.io/vp6lP | sh && mv ./bin/* $${GOPATH}/bin && rm -rf ./bin # gometalinter
 	@cd /tmp && go get -v -u github.com/mitchellh/gox # gox
 	@cd /tmp && go get -v -u github.com/git-chglog/git-chglog/cmd/git-chglog # git-chglog
 
