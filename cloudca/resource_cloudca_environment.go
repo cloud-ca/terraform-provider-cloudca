@@ -89,7 +89,7 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("environment %s does not exist", d.Id())
+				_ = fmt.Errorf("Environment %s does not exist", d.Id())
 				d.SetId("")
 				return nil
 			}
@@ -130,12 +130,12 @@ func resourceCloudcaEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 
 	environment, err := getEnvironmentFromConfig(ccaClient, d)
 	if err != nil {
-		return fmt.Errorf("error parsing environment %s: %s", environment.Name, err)
+		return fmt.Errorf("Error parsing environment %s: %s", environment.Name, err)
 	}
 
 	newEnvironment, newErr := ccaClient.Environments.Create(*environment)
 	if newErr != nil {
-		return fmt.Errorf("error creating the new environment %s: %s", environment.Name, newErr)
+		return fmt.Errorf("Error creating the new environment %s: %s", environment.Name, newErr)
 	}
 
 	d.SetId(newEnvironment.Id)
@@ -147,11 +147,11 @@ func resourceCloudcaEnvironmentUpdate(d *schema.ResourceData, meta interface{}) 
 	ccaClient := meta.(*cca.CcaClient)
 	environment, err := getEnvironmentFromConfig(ccaClient, d)
 	if err != nil {
-		return fmt.Errorf("error parsing environment %s: %s", environment.Name, err)
+		return fmt.Errorf("Error parsing environment %s: %s", environment.Name, err)
 	}
 	_, uerr := ccaClient.Environments.Update(d.Id(), *environment)
 	if uerr != nil {
-		return fmt.Errorf("error updating environment %s: %s", environment.Name, uerr)
+		return fmt.Errorf("Error updating environment %s: %s", environment.Name, uerr)
 	}
 	return resourceCloudcaEnvironmentRead(d, meta)
 }
@@ -162,7 +162,7 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 	if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("environment %s does not exist", d.Get(Name).(string))
+				_ = fmt.Errorf("Environment %s does not exist", d.Get(Name).(string))
 				d.SetId("")
 				return nil
 			}
@@ -288,7 +288,7 @@ func mapUsersToRole(roleName string, userList []interface{}, users []configurati
 			}
 		}
 		if !found {
-			return configuration.Role{}, fmt.Errorf("user %s was not found", userToFind)
+			return configuration.Role{}, fmt.Errorf("User %s was not found", userToFind)
 		}
 	}
 	return role, nil
@@ -325,5 +325,5 @@ func getOrganizationID(ccaClient *cca.CcaClient, entryPoint string) (id string, 
 			return org.Id, nil
 		}
 	}
-	return "", fmt.Errorf("organization with entry point %s not found", entryPoint)
+	return "", fmt.Errorf("Organization with entry point %s not found", entryPoint)
 }

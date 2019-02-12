@@ -53,7 +53,7 @@ func readIntFromString(valStr string) int {
 func handleNotFoundError(err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			_ = fmt.Errorf("entity (id=%s) not found", d.Id())
+			_ = fmt.Errorf("Entity (id=%s) not found", d.Id())
 			d.SetId("")
 			return nil
 		}

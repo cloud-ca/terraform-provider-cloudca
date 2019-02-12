@@ -98,7 +98,7 @@ func resourceCloudcaVpcCreate(d *schema.ResourceData, meta interface{}) error {
 
 	newVpc, err := ccaResources.Vpcs.Create(vpcToCreate)
 	if err != nil {
-		return fmt.Errorf("error creating the new VPC %s: %s", vpcToCreate.Name, err)
+		return fmt.Errorf("Error creating the new VPC %s: %s", vpcToCreate.Name, err)
 	}
 	d.SetId(newVpc.Id)
 

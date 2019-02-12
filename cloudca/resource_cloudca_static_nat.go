@@ -49,7 +49,7 @@ func resourceCloudcaStaticNATCreate(d *schema.ResourceData, meta interface{}) er
 	}
 	_, err := ccaResources.PublicIps.EnableStaticNat(staticNATPublicIP)
 	if err != nil {
-		return fmt.Errorf("error enabling static NAT: %s", err)
+		return fmt.Errorf("Error enabling static NAT: %s", err)
 	}
 	d.SetId(staticNATPublicIP.Id)
 	return resourceCloudcaStaticNATRead(d, meta)

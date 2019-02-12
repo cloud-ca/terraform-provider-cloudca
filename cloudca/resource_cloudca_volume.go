@@ -78,14 +78,14 @@ func resourceCloudcaVolumeCreate(d *schema.ResourceData, meta interface{}) error
 
 	if val, ok := d.GetOk("size_in_gb"); ok {
 		if !diskOffering.CustomSize {
-			return fmt.Errorf("disk offering %s doesn't allow custom size", diskOffering.Id)
+			return fmt.Errorf("Disk offering %s doesn't allow custom size", diskOffering.Id)
 		}
 		volumeToCreate.GbSize = val.(int)
 	}
 
 	if val, ok := d.GetOk("iops"); ok {
 		if !diskOffering.CustomIops {
-			return fmt.Errorf("disk offering %s doesn't allow custom IOPS", diskOffering.Id)
+			return fmt.Errorf("Disk offering %s doesn't allow custom IOPS", diskOffering.Id)
 		}
 		volumeToCreate.Iops = val.(int)
 	}
@@ -184,7 +184,7 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 		if val, ok := d.GetOk("size_in_gb"); ok {
 			volumeToResize.GbSize = val.(int)
 			if curVolume.GbSize > volumeToResize.GbSize {
-				return fmt.Errorf("cannot reduce size of a volume")
+				return fmt.Errorf("Cannot reduce size of a volume")
 			}
 		}
 		if val, ok := d.GetOk("iops"); ok {
@@ -229,7 +229,7 @@ func retrieveZoneID(ccaResources *cloudca.Resources, zoneName string) (zoneID st
 			return zone.Id, nil
 		}
 	}
-	return "", fmt.Errorf("zone with name %s could not be found", zoneName)
+	return "", fmt.Errorf("Zone with name %s could not be found", zoneName)
 }
 
 func retrieveDiskOffering(ccaRes *cloudca.Resources, name string) (diskOffering *cloudca.DiskOffering, err error) {
@@ -246,13 +246,13 @@ func retrieveDiskOffering(ccaRes *cloudca.Resources, name string) (diskOffering 
 			return &offering, nil
 		}
 	}
-	return nil, fmt.Errorf("disk offering with name %s not found", name)
+	return nil, fmt.Errorf("Disk offering with name %s not found", name)
 }
 
 func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			_ = fmt.Errorf("volume with id='%s' was not found", d.Id())
+			_ = fmt.Errorf("Volume with id='%s' was not found", d.Id())
 			d.SetId("")
 			return nil
 		}

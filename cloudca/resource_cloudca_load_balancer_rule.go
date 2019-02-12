@@ -227,7 +227,7 @@ func updateLbr(d *schema.ResourceData, meta interface{}) error {
 		} else {
 
 			if _, ok := d.GetOk("stickiness_params"); ok {
-				return errors.New("stickiness params should be removed if the stickiness method is removed")
+				return errors.New("Stickiness params should be removed if the stickiness method is removed")
 			}
 			err := ccaResources.LoadBalancerRules.RemoveLoadBalancerRuleStickinessPolicy(d.Id())
 			if err != nil {
@@ -271,7 +271,7 @@ func getStickinessPolicyParameterMap(policyMap map[string]interface{}) map[strin
 func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			_ = fmt.Errorf("load balancer rule with id %s was not found", d.Id())
+			_ = fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
 			d.SetId("")
 			return nil
 		}

@@ -95,7 +95,7 @@ func resourceCloudcaNetworkCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 	newNetwork, err := ccaResources.Networks.Create(networkToCreate, options)
 	if err != nil {
-		return fmt.Errorf("error creating the new network %s: %s", networkToCreate.Name, err)
+		return fmt.Errorf("Error creating the new network %s: %s", networkToCreate.Name, err)
 	}
 	d.SetId(newNetwork.Id)
 	return resourceCloudcaNetworkRead(d, meta)
@@ -123,7 +123,7 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 	if offErr != nil {
 		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("network offering %s not found", network.NetworkOfferingId)
+				_ = fmt.Errorf("Network offering %s not found", network.NetworkOfferingId)
 				d.SetId("")
 				return nil
 			}
@@ -201,7 +201,7 @@ func resourceCloudcaNetworkDelete(d *schema.ResourceData, meta interface{}) erro
 	if _, err := ccaResources.Networks.Delete(d.Id()); err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("network %s not found", d.Id())
+				_ = fmt.Errorf("Network %s not found", d.Id())
 				d.SetId("")
 				return nil
 			}
@@ -226,7 +226,7 @@ func retrieveNetworkOfferingID(ccaRes *cloudca.Resources, name string) (id strin
 			return offering.Id, nil
 		}
 	}
-	return "", fmt.Errorf("network offering with name %s not found", name)
+	return "", fmt.Errorf("Network offering with name %s not found", name)
 }
 
 func retrieveNetworkACLID(ccaRes *cloudca.Resources, name, vpcID string) (id string, err error) {
@@ -242,5 +242,5 @@ func retrieveNetworkACLID(ccaRes *cloudca.Resources, name, vpcID string) (id str
 			return acl.Id, nil
 		}
 	}
-	return "", fmt.Errorf("network ACL with name %s not found", name)
+	return "", fmt.Errorf("Network ACL with name %s not found", name)
 }

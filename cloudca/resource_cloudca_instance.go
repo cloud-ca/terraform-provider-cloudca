@@ -167,7 +167,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 	if cerr != nil {
 		return cerr
 	} else if !computeOffering.Custom && hasCustomFields {
-		return fmt.Errorf("cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
+		return fmt.Errorf("Cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
 	}
 
 	if rootVolumeSizeInGb, ok := d.GetOk("root_volume_size_in_gb"); ok {
@@ -180,7 +180,7 @@ func resourceCloudcaInstanceCreate(d *schema.ResourceData, meta interface{}) err
 
 	newInstance, err := ccaResources.Instances.Create(instanceToCreate)
 	if err != nil {
-		return fmt.Errorf("error creating the new instance %s: %s", instanceToCreate.Name, err)
+		return fmt.Errorf("Error creating the new instance %s: %s", instanceToCreate.Name, err)
 	}
 
 	d.SetId(newInstance.Id)
@@ -281,7 +281,7 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		if cerr != nil {
 			return cerr
 		} else if !computeOffering.Custom && hasCustomFields {
-			return fmt.Errorf("cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
+			return fmt.Errorf("Cannot have a CPU count or memory in MB because \"%s\" isn't a custom compute offering", computeOffering.Name)
 		}
 
 		_, err := ccaResources.Instances.ChangeComputeOffering(instanceToUpdate)
@@ -302,7 +302,7 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if d.HasChange("private_ip") {
-		return fmt.Errorf("cannot update the private IP of an instance")
+		return fmt.Errorf("Cannot update the private IP of an instance")
 	}
 
 	d.Partial(false)
@@ -348,7 +348,7 @@ func retrieveComputeOfferingID(ccaRes *cloudca.Resources, name string) (id strin
 		}
 	}
 
-	return "", fmt.Errorf("compute offering with name %s not found", name)
+	return "", fmt.Errorf("Compute offering with name %s not found", name)
 }
 
 func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err error) {
@@ -368,7 +368,7 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 		}
 	}
 
-	return "", fmt.Errorf("template with name %s not found", name)
+	return "", fmt.Errorf("Template with name %s not found", name)
 }
 
 func getDedicatedGroupID(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
