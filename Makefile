@@ -54,7 +54,7 @@ format: log-format ## Format all go files
 checkfmt: SHELL :=/bin/bash
 checkfmt: RESULT = $(shell gofmt -l $(GOFILES) | tee >(if [ "$$(wc -l)" = 0 ]; then echo "OK"; fi))
 checkfmt: log-checkfmt ## Check formatting of all go files
-	@echo $(RESULT)
+	@echo "$(RESULT)"
 	@if [ "$(RESULT)" != "OK" ]; then exit 1; fi
 
 .PHONY: test
