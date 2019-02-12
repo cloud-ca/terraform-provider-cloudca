@@ -218,7 +218,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	_ = d.Set("network_id", instance.NetworkId)
 	_ = d.Set("private_ip_id", instance.IpAddressId)
 	_ = d.Set("private_ip", instance.IpAddress)
-	dID, dIDErr := getDedicatedGroupId(ccaResources, instance)
+	dID, dIDErr := getDedicatedGroupID(ccaResources, instance)
 	if dIDErr != nil {
 		return dIDErr
 	}
@@ -350,7 +350,7 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	return "", fmt.Errorf("template with name %s not found", name)
 }
 
-func getDedicatedGroupId(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
+func getDedicatedGroupID(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
 	dedicatedGroups, err := ccaRes.AffinityGroups.ListWithOptions(map[string]string{
 		"type": "ExplicitDedication",
 	})
@@ -358,8 +358,8 @@ func getDedicatedGroupId(ccaRes cloudca.Resources, instance *cloudca.Instance) (
 		return "", err
 	}
 	for _, dedicatedGroup := range dedicatedGroups {
-		for _, affinityGroupId := range instance.AffinityGroupIds {
-			if strings.EqualFold(dedicatedGroup.Id, affinityGroupId) {
+		for _, affinityGroupID := range instance.AffinityGroupIds {
+			if strings.EqualFold(dedicatedGroup.Id, affinityGroupID) {
 				return dedicatedGroup.Id, nil
 			}
 		}
