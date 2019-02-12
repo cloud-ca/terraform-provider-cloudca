@@ -62,7 +62,9 @@ func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error
 	if rerr != nil {
 		return rerr
 	}
+
 	publicIP, err := ccaResources.PublicIps.Get(d.Id())
+
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
@@ -73,8 +75,15 @@ func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error
 		}
 		return err
 	}
-	_ = d.Set("vpc_id", publicIP.VpcId)
-	_ = d.Set("ip_address", publicIP.IpAddress)
+
+	if err := d.Set("vpc_id", publicIP.VpcId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("ip_address", publicIP.IpAddress); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	return nil
 }
 

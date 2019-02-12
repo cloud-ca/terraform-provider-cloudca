@@ -212,17 +212,38 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 	// Update the config
-	_ = d.Set("name", instance.Name)
-	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
-	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
-	_ = d.Set("network_id", instance.NetworkId)
-	_ = d.Set("private_ip_id", instance.IpAddressId)
-	_ = d.Set("private_ip", instance.IpAddress)
+	if err := d.Set("name", instance.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_id", instance.NetworkId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip_id", instance.IpAddressId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip", instance.IpAddress); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	dID, dIDErr := getDedicatedGroupID(ccaResources, instance)
 	if dIDErr != nil {
 		return dIDErr
 	}
-	_ = d.Set("dedicated_group_id", dID)
+
+	if err := d.Set("dedicated_group_id", dID); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }

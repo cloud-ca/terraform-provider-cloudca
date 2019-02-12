@@ -145,17 +145,49 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 		return handleLbrNotFoundError(err, d)
 	}
 
-	_ = d.Set("name", lbr.Name)
-	_ = d.Set("public_ip_id", lbr.PublicIpId)
-	_ = d.Set("network_id", lbr.NetworkId)
-	_ = d.Set("instance_ids", lbr.InstanceIds)
-	_ = d.Set("algorithm", lbr.Algorithm)
-	_ = d.Set("protocol", lbr.Protocol)
-	_ = d.Set("public_port", lbr.PublicPort)
-	_ = d.Set("private_port", lbr.PrivatePort)
-	_ = d.Set("public_ip", lbr.PublicIp)
-	_ = d.Set("stickiness_method", lbr.StickinessMethod)
-	_ = d.Set("stickiness_params", lbr.StickinessPolicyParameters)
+	if err := d.Set("name", lbr.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_ip_id", lbr.PublicIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_id", lbr.NetworkId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("instance_ids", lbr.InstanceIds); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("algorithm", lbr.Algorithm); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("protocol", lbr.Protocol); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_port", lbr.PublicPort); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_port", lbr.PrivatePort); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_ip", lbr.PublicIp); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("stickiness_method", lbr.StickinessMethod); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("stickiness_params", lbr.StickinessPolicyParameters); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }

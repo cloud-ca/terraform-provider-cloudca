@@ -1,6 +1,7 @@
 package cloudca
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/cloud-ca/go-cloudca"
@@ -123,16 +124,45 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 		return handleNotFoundError(err, d)
 	}
 
-	_ = d.Set("public_ip_id", pfr.PublicIpId)
-	_ = d.Set("private_ip_id", pfr.PrivateIpId)
-	_ = d.Set("instance_id", pfr.InstanceId)
-	_ = d.Set("protocol", pfr.Protocol)
-	_ = d.Set("public_port_start", pfr.PublicPortStart)
-	_ = d.Set("public_port_end", pfr.PublicPortEnd)
-	_ = d.Set("private_port_start", pfr.PrivatePortStart)
-	_ = d.Set("private_port_end", pfr.PrivatePortEnd)
-	_ = d.Set("private_ip", pfr.PrivateIp)
-	_ = d.Set("public_ip", pfr.PublicIp)
+	if err := d.Set("public_ip_id", pfr.PublicIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip_id", pfr.PrivateIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("instance_id", pfr.InstanceId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("protocol", pfr.Protocol); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_port_start", pfr.PublicPortStart); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_port_end", pfr.PublicPortEnd); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_port_start", pfr.PrivatePortStart); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_port_end", pfr.PrivatePortEnd); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip", pfr.PrivateIp); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_ip", pfr.PublicIp); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }

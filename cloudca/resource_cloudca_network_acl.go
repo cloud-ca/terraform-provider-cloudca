@@ -83,9 +83,17 @@ func resourceCloudcaNetworkACLRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	// Update the config
-	_ = d.Set("name", acl.Name)
-	_ = d.Set("description", acl.Description)
-	_ = d.Set("vpc_id", acl.VpcId)
+	if err := d.Set("name", acl.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("description", acl.Description); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("vpc_id", acl.VpcId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }

@@ -65,7 +65,9 @@ func readSSHKey(d *schema.ResourceData, meta interface{}) error {
 	if rerr != nil {
 		return rerr
 	}
+
 	sk, err := ccaResources.SSHKeys.Get(d.Id())
+
 	if err != nil {
 		if ccaError, ok := err.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
@@ -76,7 +78,11 @@ func readSSHKey(d *schema.ResourceData, meta interface{}) error {
 		}
 		return err
 	}
-	_ = d.Set("name", sk.Name)
+
+	if err := d.Set("name", sk.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	return nil
 }
 

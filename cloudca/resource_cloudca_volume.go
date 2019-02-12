@@ -123,11 +123,27 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return handleVolumeNotFoundError(err, d)
 	}
-	_ = d.Set("name", volume.Name)
-	setValueOrID(d, "disk_offering", strings.ToLower(volume.DiskOfferingName), volume.DiskOfferingId)
-	_ = d.Set("size_in_gb", volume.GbSize)
-	_ = d.Set("iops", volume.Iops)
-	_ = d.Set("instance_id", volume.InstanceId)
+
+	if err := d.Set("name", volume.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "disk_offering", strings.ToLower(volume.DiskOfferingName), volume.DiskOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("size_in_gb", volume.GbSize); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("iops", volume.Iops); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("instance_id", volume.InstanceId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	return nil
 }
 

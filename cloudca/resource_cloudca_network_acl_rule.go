@@ -170,15 +170,41 @@ func resourceCloudcaNetworkACLRuleRead(d *schema.ResourceData, meta interface{})
 		return aErr
 	}
 
-	_ = d.Set("rule_number", aclRule.RuleNumber)
-	_ = d.Set("action", strings.ToLower(aclRule.Action))
-	_ = d.Set("protocol", strings.ToLower(aclRule.Protocol))
-	_ = d.Set("traffic_type", strings.ToLower(aclRule.TrafficType))
-	_ = d.Set("icmp_type", readIntFromString(aclRule.IcmpType))
-	_ = d.Set("icmp_code", readIntFromString(aclRule.IcmpCode))
-	_ = d.Set("start_port", readIntFromString(aclRule.StartPort))
-	_ = d.Set("end_port", readIntFromString(aclRule.EndPort))
-	_ = d.Set("network_acl_id", aclRule.NetworkAclId)
+	if err := d.Set("rule_number", aclRule.RuleNumber); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("action", strings.ToLower(aclRule.Action)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("protocol", strings.ToLower(aclRule.Protocol)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("traffic_type", strings.ToLower(aclRule.TrafficType)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("icmp_type", readIntFromString(aclRule.IcmpType)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("icmp_code", readIntFromString(aclRule.IcmpCode)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("start_port", readIntFromString(aclRule.StartPort)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("end_port", readIntFromString(aclRule.EndPort)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_acl_id", aclRule.NetworkAclId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }

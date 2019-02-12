@@ -132,12 +132,30 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	// Update the config
-	_ = d.Set("name", network.Name)
-	_ = d.Set("description", network.Description)
-	setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId)
-	_ = d.Set("vpc_id", network.VpcId)
-	setValueOrID(d, "network_acl", network.NetworkAclName, network.NetworkAclId)
-	_ = d.Set("cidr", network.Cidr)
+	if err := d.Set("name", network.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("description", network.Description); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("vpc_id", network.VpcId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "network_acl", network.NetworkAclName, network.NetworkAclId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("cidr", network.Cidr); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	return nil
 }
 

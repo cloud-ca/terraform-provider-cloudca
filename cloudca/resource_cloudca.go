@@ -29,12 +29,11 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 	}
 }
 
-func setValueOrID(d *schema.ResourceData, key string, value string, id string) {
+func setValueOrID(d *schema.ResourceData, key string, value string, id string) error {
 	if isID(d.Get(key).(string)) {
-		_ = d.Set(key, id)
-	} else {
-		_ = d.Set(key, value)
+		return d.Set(key, id)
 	}
+	return d.Set(key, value)
 }
 
 func isID(id string) bool {

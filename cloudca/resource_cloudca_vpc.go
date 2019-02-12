@@ -124,7 +124,9 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	setValueOrID(d, "zone", vpc.ZoneName, vpc.ZoneId)
+	if err := setValueOrID(d, "zone", vpc.ZoneName, vpc.ZoneId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	vpcOffering, offErr := ccaResources.VpcOfferings.Get(vpc.VpcOfferingId)
 	if offErr != nil {
@@ -139,10 +141,21 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Update the config
-	_ = d.Set("name", vpc.Name)
-	_ = d.Set("description", vpc.Description)
-	setValueOrID(d, "vpc_offering", strings.ToLower(vpcOffering.Name), vpc.VpcOfferingId)
-	_ = d.Set("network_domain", vpc.NetworkDomain)
+	if err := d.Set("name", vpc.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("description", vpc.Description); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "vpc_offering", strings.ToLower(vpcOffering.Name), vpc.VpcOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_domain", vpc.NetworkDomain); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }

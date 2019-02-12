@@ -71,7 +71,9 @@ func resourceCloudcaStaticNATRead(d *schema.ResourceData, meta interface{}) erro
 		d.SetId("")
 		return nil
 	}
-	_ = d.Set("private_ip_id", publicIP.PrivateIpId)
+	if err := d.Set("private_ip_id", publicIP.PrivateIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 	return nil
 }
 
