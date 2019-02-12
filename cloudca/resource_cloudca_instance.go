@@ -350,7 +350,6 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	return "", fmt.Errorf("template with name %s not found", name)
 }
 
-
 func getDedicatedGroupId(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
 	dedicatedGroups, err := ccaRes.AffinityGroups.ListWithOptions(map[string]string{
 		"type": "ExplicitDedication",
