@@ -63,7 +63,7 @@ test: log-test ## Run tests
 
 .PHONY: tools
 tools: log-tools ## Install required tools
-	@curl -L https://git.io/vp6lP | sh && mv ./bin/* $${GOPATH}/bin && rm -rf ./bin # gometalinter
+	@cd $$GOPATH && curl -L https://git.io/vp6lP | sh # gometalinter
 	@cd /tmp && go get -v -u github.com/mitchellh/gox # gox
 	@cd /tmp && go get -v -u github.com/git-chglog/git-chglog/cmd/git-chglog # git-chglog
 
