@@ -32,7 +32,7 @@ version: ## Show version of provider
 #########################
 .PHONY: clean
 clean: log-clean ## Clean builds
-	rm -rf ./bin ./$(BUILD_DIR) $(NAME)
+	rm -rf ./$(BUILD_DIR) $(NAME)
 
 .PHONY: vendor
 vendor: log-vendor ## Install 'vendor' dependencies
