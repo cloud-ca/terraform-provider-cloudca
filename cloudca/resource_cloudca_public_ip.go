@@ -2,10 +2,8 @@ package cloudca
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -66,14 +64,7 @@ func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error
 	publicIP, err := ccaResources.PublicIps.Get(d.Id())
 
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				log.Printf("Public IP with id='%s' was not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Public IP", false, err, d)
 	}
 
 	if err := d.Set("vpc_id", publicIP.VpcId); err != nil {
@@ -95,14 +86,7 @@ func resourceCloudcaPublicIPDelete(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if _, err := ccaResources.PublicIps.Release(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Public IP %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Public IP", true, err, d)
 	}
 
 	return nil

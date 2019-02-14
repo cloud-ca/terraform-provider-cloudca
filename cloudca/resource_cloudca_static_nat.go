@@ -63,7 +63,7 @@ func resourceCloudcaStaticNATRead(d *schema.ResourceData, meta interface{}) erro
 	}
 	publicIP, err := ccaResources.PublicIps.Get(d.Id())
 	if err != nil {
-		return handleNotFoundError(err, d)
+		return handleNotFoundError("Static NAT", false, err, d)
 	}
 	if publicIP.PrivateIpId == "" {
 		// If the private IP ID is missing, it means the public IP no longer has static NAT
@@ -84,5 +84,5 @@ func resourceCloudcaStaticNATDelete(d *schema.ResourceData, meta interface{}) er
 		return rerr
 	}
 	_, err := ccaResources.PublicIps.DisableStaticNat(d.Id())
-	return handleNotFoundError(err, d)
+	return handleNotFoundError("Static NAT", true, err, d)
 }

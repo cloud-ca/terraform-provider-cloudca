@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -202,14 +201,7 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	// Get the virtual machine details
 	instance, err := ccaResources.Instances.Get(d.Id())
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				d.SetId("")
-				fmt.Printf("Instance %s no longer exist", d.Get("name").(string))
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Instance", false, err, d)
 	}
 	// Update the config
 	if err := d.Set("name", instance.Name); err != nil {
@@ -318,14 +310,7 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	}
 	fmt.Printf("[INFO] Destroying instance: %s\n", d.Get("name").(string))
 	if _, err := ccaResources.Instances.Destroy(d.Id(), true); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				d.SetId("")
-				fmt.Printf("Instance %s no longer exist", d.Get("name").(string))
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Instance", true, err, d)
 	}
 
 	return nil

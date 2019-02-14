@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -160,14 +159,7 @@ func resourceCloudcaNetworkACLRuleRead(d *schema.ResourceData, meta interface{})
 	}
 	aclRule, aErr := ccaResources.NetworkAclRules.Get(d.Id())
 	if aErr != nil {
-		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("ACL rule %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return aErr
+		return handleNotFoundError("Network ACL rule", false, aErr, d)
 	}
 
 	if err := d.Set("rule_number", aclRule.RuleNumber); err != nil {
@@ -216,14 +208,7 @@ func resourceCloudcaNetworkACLRuleDelete(d *schema.ResourceData, meta interface{
 		return rerr
 	}
 	if _, err := ccaResources.NetworkAclRules.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Network ACL rule %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Network ACL rule", true, err, d)
 	}
 	return nil
 }

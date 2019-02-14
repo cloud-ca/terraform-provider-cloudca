@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -72,14 +71,7 @@ func resourceCloudcaNetworkACLRead(d *schema.ResourceData, meta interface{}) err
 	}
 	acl, aErr := ccaResources.NetworkAcls.Get(d.Id())
 	if aErr != nil {
-		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("ACL %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return aErr
+		return handleNotFoundError("Network ACL", false, aErr, d)
 	}
 
 	// Update the config
@@ -105,14 +97,7 @@ func resourceCloudcaNetworkACLDelete(d *schema.ResourceData, meta interface{}) e
 		return rerr
 	}
 	if _, err := ccaResources.NetworkAcls.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Network ACL %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Network ACL", true, err, d)
 	}
 	return nil
 }

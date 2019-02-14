@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -142,7 +141,7 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 
 	lbr, err := ccaResources.LoadBalancerRules.Get(d.Id())
 	if err != nil {
-		return handleLbrNotFoundError(err, d)
+		return handleNotFoundError("Load balancer rule", false, err, d)
 	}
 
 	if err := d.Set("name", lbr.Name); err != nil {
@@ -199,7 +198,7 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
 		return rerr
 	}
 	if err := ccaResources.LoadBalancerRules.Delete(d.Id()); err != nil {
-		return handleLbrNotFoundError(err, d)
+		return handleNotFoundError("Load balancer rule", true, err, d)
 	}
 	return nil
 }
@@ -266,16 +265,4 @@ func getStickinessPolicyParameterMap(policyMap map[string]interface{}) map[strin
 		paramMap[k] = v.(string)
 	}
 	return paramMap
-}
-
-func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
-	if ccaError, ok := err.(api.CcaErrorResponse); ok {
-		if ccaError.StatusCode == 404 {
-			_ = fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
-			d.SetId("")
-			return nil
-		}
-	}
-
-	return err
 }

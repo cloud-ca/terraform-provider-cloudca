@@ -2,6 +2,7 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 
@@ -50,12 +51,15 @@ func readIntFromString(valStr string) int {
 }
 
 // Provides a common, simple way to deal with 404s.
-func handleNotFoundError(err error, d *schema.ResourceData) error {
+func handleNotFoundError(entity string, deleted bool, err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			_ = fmt.Errorf("Entity (id=%s) not found", d.Id())
 			d.SetId("")
-			return nil
+			if deleted {
+				log.Printf("%s (id=%s) not found", entity, d.Id())
+				return nil
+			}
+			return fmt.Errorf("%s (id=%s) not found", entity, d.Id())
 		}
 	}
 	return err

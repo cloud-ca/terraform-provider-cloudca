@@ -2,10 +2,8 @@ package cloudca
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -69,14 +67,7 @@ func readSSHKey(d *schema.ResourceData, meta interface{}) error {
 	sk, err := ccaResources.SSHKeys.Get(d.Id())
 
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				log.Printf("SSH key with id='%s' was not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("SSH key", false, err, d)
 	}
 
 	if err := d.Set("name", sk.Name); err != nil {
@@ -94,14 +85,7 @@ func deleteSSHKey(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if _, err := ccaResources.SSHKeys.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Printf("SSH key %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("SSH key", true, err, d)
 	}
 
 	return nil

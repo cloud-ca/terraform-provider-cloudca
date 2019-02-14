@@ -114,14 +114,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	// Get the vpc details
 	vpc, err := ccaResources.Vpcs.Get(d.Id())
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("VPC", false, err, d)
 	}
 
 	if err := setValueOrID(d, "zone", vpc.ZoneName, vpc.ZoneId); err != nil {
@@ -132,7 +125,7 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	if offErr != nil {
 		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("VPC offering id=%s does no longer exist", vpc.VpcOfferingId)
+				log.Printf("VPC offering id=%s does no longer exist", vpc.VpcOfferingId)
 				d.SetId("")
 				return nil
 			}
@@ -187,14 +180,7 @@ func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 	fmt.Printf("[INFO] Destroying VPC: %s\n", d.Get("name").(string))
 	if _, err := ccaResources.Vpcs.Destroy(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("VPC", true, err, d)
 	}
 
 	return nil

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -121,7 +120,7 @@ func resourceCloudcaVolumeRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	volume, err := ccaResources.Volumes.Get(d.Id())
 	if err != nil {
-		return handleVolumeNotFoundError(err, d)
+		return handleNotFoundError("Volume", false, err, d)
 	}
 
 	if err := d.Set("name", volume.Name); err != nil {
@@ -214,7 +213,7 @@ func resourceCloudcaVolumeDelete(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 	if err := ccaResources.Volumes.Delete(d.Id()); err != nil {
-		return handleVolumeNotFoundError(err, d)
+		return handleNotFoundError("Volume", true, err, d)
 	}
 	return nil
 }
@@ -247,15 +246,4 @@ func retrieveDiskOffering(ccaRes *cloudca.Resources, name string) (diskOffering 
 		}
 	}
 	return nil, fmt.Errorf("Disk offering with name %s not found", name)
-}
-
-func handleVolumeNotFoundError(err error, d *schema.ResourceData) error {
-	if ccaError, ok := err.(api.CcaErrorResponse); ok {
-		if ccaError.StatusCode == 404 {
-			_ = fmt.Errorf("Volume with id='%s' was not found", d.Id())
-			d.SetId("")
-			return nil
-		}
-	}
-	return err
 }

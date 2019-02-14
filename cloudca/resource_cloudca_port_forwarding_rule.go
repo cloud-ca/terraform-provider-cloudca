@@ -121,7 +121,7 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 	}
 	pfr, err := ccaResources.PortForwardingRules.Get(d.Id())
 	if err != nil {
-		return handleNotFoundError(err, d)
+		return handleNotFoundError("Port forwarding rule", false, err, d)
 	}
 
 	if err := d.Set("public_ip_id", pfr.PublicIpId); err != nil {
@@ -174,7 +174,7 @@ func deletePortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 		return rerr
 	}
 	if _, err := ccaResources.PortForwardingRules.Delete(d.Id()); err != nil {
-		return handleNotFoundError(err, d)
+		return handleNotFoundError("Port forwarding rule", true, err, d)
 	}
 	return nil
 }

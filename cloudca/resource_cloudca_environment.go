@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/configuration"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -87,14 +86,7 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	ccaClient := meta.(*cca.CcaClient)
 	environment, err := ccaClient.Environments.Get(d.Id())
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Environment %s does not exist", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Environment", false, err, d)
 	}
 
 	adminRoleUsers, userRoleUsers, readOnlyRoleUsers := getUsersFromRoles(environment)
@@ -160,14 +152,7 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 	ccaClient := meta.(*cca.CcaClient)
 	fmt.Printf("[INFO] Destroying environment: %s\n", d.Get(Name).(string))
 	if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				_ = fmt.Errorf("Environment %s does not exist", d.Get(Name).(string))
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Environment", true, err, d)
 	}
 	return nil
 }
