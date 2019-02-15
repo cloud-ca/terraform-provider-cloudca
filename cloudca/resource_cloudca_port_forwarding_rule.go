@@ -1,6 +1,7 @@
 package cloudca
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/cloud-ca/go-cloudca"
@@ -120,19 +121,48 @@ func readPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 	}
 	pfr, err := ccaResources.PortForwardingRules.Get(d.Id())
 	if err != nil {
-		return handleNotFoundError(err, d)
+		return handleNotFoundError("Port forwarding rule", false, err, d)
 	}
 
-	d.Set("public_ip_id", pfr.PublicIpId)
-	d.Set("private_ip_id", pfr.PrivateIpId)
-	d.Set("instance_id", pfr.InstanceId)
-	d.Set("protocol", pfr.Protocol)
-	d.Set("public_port_start", pfr.PublicPortStart)
-	d.Set("public_port_end", pfr.PublicPortEnd)
-	d.Set("private_port_start", pfr.PrivatePortStart)
-	d.Set("private_port_end", pfr.PrivatePortEnd)
-	d.Set("private_ip", pfr.PrivateIp)
-	d.Set("public_ip", pfr.PublicIp)
+	if err := d.Set("public_ip_id", pfr.PublicIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip_id", pfr.PrivateIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("instance_id", pfr.InstanceId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("protocol", pfr.Protocol); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_port_start", pfr.PublicPortStart); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_port_end", pfr.PublicPortEnd); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_port_start", pfr.PrivatePortStart); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_port_end", pfr.PrivatePortEnd); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip", pfr.PrivateIp); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_ip", pfr.PublicIp); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }
@@ -144,7 +174,7 @@ func deletePortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 		return rerr
 	}
 	if _, err := ccaResources.PortForwardingRules.Delete(d.Id()); err != nil {
-		return handleNotFoundError(err, d)
+		return handleNotFoundError("Port forwarding rule", true, err, d)
 	}
 	return nil
 }

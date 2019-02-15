@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/configuration"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+// role names and fields
 const (
-	//role name
+	// role name
 	EnvironmentAdminRole = "Environment admin"
 	UserRole             = "User"
 	ReadOnlyRole         = "Read-only"
@@ -86,14 +86,7 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	ccaClient := meta.(*cca.CcaClient)
 	environment, err := ccaClient.Environments.Get(d.Id())
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Environment %s does not exist", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Environment", false, err, d)
 	}
 
 	adminRoleUsers, userRoleUsers, readOnlyRoleUsers := getUsersFromRoles(environment)
@@ -101,11 +94,25 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	userRole, _ := d.GetOk(UserRoleUsers)
 	readOnlyRole, _ := d.GetOk(ReadOnlyRoleUsers)
 
-	d.Set(Name, environment.Name)
-	d.Set(Description, environment.Description)
-	d.Set(AdminRoleUsers, getListOfUsersByIDOrUsername(adminRoleUsers, adminRole.(*schema.Set)))
-	d.Set(UserRoleUsers, getListOfUsersByIDOrUsername(userRoleUsers, userRole.(*schema.Set)))
-	d.Set(ReadOnlyRoleUsers, getListOfUsersByIDOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set)))
+	if err := d.Set(Name, environment.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set(Description, environment.Description); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set(AdminRoleUsers, getListOfUsersByIDOrUsername(adminRoleUsers, adminRole.(*schema.Set))); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set(UserRoleUsers, getListOfUsersByIDOrUsername(userRoleUsers, userRole.(*schema.Set))); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set(ReadOnlyRoleUsers, getListOfUsersByIDOrUsername(readOnlyRoleUsers, readOnlyRole.(*schema.Set))); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }
@@ -145,14 +152,7 @@ func resourceCloudcaEnvironmentDelete(d *schema.ResourceData, meta interface{}) 
 	ccaClient := meta.(*cca.CcaClient)
 	fmt.Printf("[INFO] Destroying environment: %s\n", d.Get(Name).(string))
 	if _, err := ccaClient.Environments.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Environment %s does not exist", d.Get(Name).(string))
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Environment", true, err, d)
 	}
 	return nil
 }
@@ -243,17 +243,11 @@ func getUsersFromRoles(environment *configuration.Environment) (adminRoleUsers [
 	for _, envRole := range environment.Roles {
 		switch {
 		case strings.EqualFold(envRole.Name, EnvironmentAdminRole):
-			for _, user := range envRole.Users {
-				adminRoleUsers = append(adminRoleUsers, user)
-			}
+			adminRoleUsers = append(adminRoleUsers, envRole.Users...)
 		case strings.EqualFold(envRole.Name, UserRole):
-			for _, user := range envRole.Users {
-				userRoleUsers = append(userRoleUsers, user)
-			}
+			userRoleUsers = append(userRoleUsers, envRole.Users...)
 		case strings.EqualFold(envRole.Name, ReadOnlyRole):
-			for _, user := range envRole.Users {
-				readOnlyRoleUsers = append(readOnlyRoleUsers, user)
-			}
+			readOnlyRoleUsers = append(readOnlyRoleUsers, envRole.Users...)
 		}
 	}
 	return

@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -142,20 +141,52 @@ func readLbr(d *schema.ResourceData, meta interface{}) error {
 
 	lbr, err := ccaResources.LoadBalancerRules.Get(d.Id())
 	if err != nil {
-		return handleLbrNotFoundError(err, d)
+		return handleNotFoundError("Load balancer rule", false, err, d)
 	}
 
-	d.Set("name", lbr.Name)
-	d.Set("public_ip_id", lbr.PublicIpId)
-	d.Set("network_id", lbr.NetworkId)
-	d.Set("instance_ids", lbr.InstanceIds)
-	d.Set("algorithm", lbr.Algorithm)
-	d.Set("protocol", lbr.Protocol)
-	d.Set("public_port", lbr.PublicPort)
-	d.Set("private_port", lbr.PrivatePort)
-	d.Set("public_ip", lbr.PublicIp)
-	d.Set("stickiness_method", lbr.StickinessMethod)
-	d.Set("stickiness_params", lbr.StickinessPolicyParameters)
+	if err := d.Set("name", lbr.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_ip_id", lbr.PublicIpId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_id", lbr.NetworkId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("instance_ids", lbr.InstanceIds); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("algorithm", lbr.Algorithm); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("protocol", lbr.Protocol); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_port", lbr.PublicPort); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_port", lbr.PrivatePort); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("public_ip", lbr.PublicIp); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("stickiness_method", lbr.StickinessMethod); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("stickiness_params", lbr.StickinessPolicyParameters); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }
@@ -167,7 +198,7 @@ func deleteLbr(d *schema.ResourceData, meta interface{}) error {
 		return rerr
 	}
 	if err := ccaResources.LoadBalancerRules.Delete(d.Id()); err != nil {
-		return handleLbrNotFoundError(err, d)
+		return handleNotFoundError("Load balancer rule", true, err, d)
 	}
 	return nil
 }
@@ -234,16 +265,4 @@ func getStickinessPolicyParameterMap(policyMap map[string]interface{}) map[strin
 		paramMap[k] = v.(string)
 	}
 	return paramMap
-}
-
-func handleLbrNotFoundError(err error, d *schema.ResourceData) error {
-	if ccaError, ok := err.(api.CcaErrorResponse); ok {
-		if ccaError.StatusCode == 404 {
-			fmt.Errorf("Load balancer rule with id %s was not found", d.Id())
-			d.SetId("")
-			return nil
-		}
-	}
-
-	return err
 }

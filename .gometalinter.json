@@ -1,24 +1,27 @@
 {
-  "Vendor": true,
   "Concurrency": 2,
+  "Deadline": "10m",
   "DisableAll": true,
-  "Skip": [
-  ],
-  "Exclude": [
-    "should have comment or be unexported",
-    "should have comment \\(or a comment on this block\\) or be unexported"
-  ],
-  "Deadline": "5m",
+  "EnableGC": true,
   "Enable": [
     "vet",
     "golint",
     "varcheck",
     "structcheck",
-    "gosimple",
-    "unused",
-    "errcheck"
+    "staticcheck",
+    "errcheck",
+    "misspell",
+    "unconvert"
+  ],
+  "Exclude": [
+    "func getResources is unused"
   ],
   "Linters": {
-    "unused": {"Command": "unused -tags e2e"}
-  }
+  },
+  "Sort": [
+    "path",
+    "line"
+  ],
+  "Vendor": true,
+  "WarnUnmatchedDirective": true
 }

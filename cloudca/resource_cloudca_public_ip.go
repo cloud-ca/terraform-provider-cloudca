@@ -2,10 +2,8 @@ package cloudca
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -50,7 +48,7 @@ func resourceCloudcaPublicIPCreate(d *schema.ResourceData, meta interface{}) err
 	}
 	newPublicIP, err := ccaResources.PublicIps.Acquire(publicIPToCreate)
 	if err != nil {
-		return fmt.Errorf("Error acquiring the new public ip %s", err)
+		return fmt.Errorf("Error acquiring the new public IP %s", err)
 	}
 	d.SetId(newPublicIP.Id)
 	return resourceCloudcaPublicIPRead(d, meta)
@@ -62,19 +60,21 @@ func resourceCloudcaPublicIPRead(d *schema.ResourceData, meta interface{}) error
 	if rerr != nil {
 		return rerr
 	}
+
 	publicIP, err := ccaResources.PublicIps.Get(d.Id())
+
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				log.Printf("Public Ip with id='%s' was not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Public IP", false, err, d)
 	}
-	d.Set("vpc_id", publicIP.VpcId)
-	d.Set("ip_address", publicIP.IpAddress)
+
+	if err := d.Set("vpc_id", publicIP.VpcId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("ip_address", publicIP.IpAddress); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	return nil
 }
 
@@ -86,14 +86,7 @@ func resourceCloudcaPublicIPDelete(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if _, err := ccaResources.PublicIps.Release(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Public Ip %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Public IP", true, err, d)
 	}
 
 	return nil

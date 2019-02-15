@@ -121,23 +121,34 @@ func resourceCloudcaNetworkRead(d *schema.ResourceData, meta interface{}) error 
 
 	offering, offErr := ccaResources.NetworkOfferings.Get(network.NetworkOfferingId)
 	if offErr != nil {
-		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network offering %s not found", network.NetworkOfferingId)
-				d.SetId("")
-				return nil
-			}
-		}
-		return offErr
+		return handleNotFoundError("Network", false, offErr, d)
 	}
 
 	// Update the config
-	d.Set("name", network.Name)
-	d.Set("description", network.Description)
-	setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId)
-	d.Set("vpc_id", network.VpcId)
-	setValueOrID(d, "network_acl", network.NetworkAclName, network.NetworkAclId)
-	d.Set("cidr", network.Cidr)
+	if err := d.Set("name", network.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("description", network.Description); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "network_offering", offering.Name, network.NetworkOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("vpc_id", network.VpcId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "network_acl", network.NetworkAclName, network.NetworkAclId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("cidr", network.Cidr); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	return nil
 }
 
@@ -181,14 +192,7 @@ func resourceCloudcaNetworkDelete(d *schema.ResourceData, meta interface{}) erro
 		return rerr
 	}
 	if _, err := ccaResources.Networks.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Network", true, err, d)
 	}
 
 	return nil

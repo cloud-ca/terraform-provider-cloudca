@@ -2,6 +2,7 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+// GetCloudCAResourceMap resutrn the available Resource map
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		"cloudca_instance":             resourceCloudcaInstance(),
@@ -28,12 +30,11 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 	}
 }
 
-func setValueOrID(d *schema.ResourceData, key string, value string, id string) {
+func setValueOrID(d *schema.ResourceData, key string, value string, id string) error {
 	if isID(d.Get(key).(string)) {
-		d.Set(key, id)
-	} else {
-		d.Set(key, value)
+		return d.Set(key, id)
 	}
+	return d.Set(key, value)
 }
 
 func isID(id string) bool {
@@ -50,12 +51,15 @@ func readIntFromString(valStr string) int {
 }
 
 // Provides a common, simple way to deal with 404s.
-func handleNotFoundError(err error, d *schema.ResourceData) error {
+func handleNotFoundError(entity string, deleted bool, err error, d *schema.ResourceData) error {
 	if ccaError, ok := err.(api.CcaErrorResponse); ok {
 		if ccaError.StatusCode == 404 {
-			fmt.Errorf("Entity (id=%s) not found", d.Id())
 			d.SetId("")
-			return nil
+			if deleted {
+				log.Printf("%s (id=%s) not found", entity, d.Id())
+				return nil
+			}
+			return fmt.Errorf("%s (id=%s) not found", entity, d.Id())
 		}
 	}
 	return err

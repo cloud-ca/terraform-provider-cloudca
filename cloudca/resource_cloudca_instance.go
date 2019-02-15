@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -202,27 +201,41 @@ func resourceCloudcaInstanceRead(d *schema.ResourceData, meta interface{}) error
 	// Get the virtual machine details
 	instance, err := ccaResources.Instances.Get(d.Id())
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				d.SetId("")
-				fmt.Printf("Instance %s no longer exist", d.Get("name").(string))
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Instance", false, err, d)
 	}
 	// Update the config
-	d.Set("name", instance.Name)
-	setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId)
-	setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId)
-	d.Set("network_id", instance.NetworkId)
-	d.Set("private_ip_id", instance.IpAddressId)
-	d.Set("private_ip", instance.IpAddress)
-	dID, dIDErr := getDedicatedGroupId(ccaResources, instance)
+	if err := d.Set("name", instance.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "template", strings.ToLower(instance.TemplateName), instance.TemplateId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "compute_offering", strings.ToLower(instance.ComputeOfferingName), instance.ComputeOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_id", instance.NetworkId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip_id", instance.IpAddressId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("private_ip", instance.IpAddress); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	dID, dIDErr := getDedicatedGroupID(ccaResources, instance)
 	if dIDErr != nil {
 		return dIDErr
 	}
-	d.Set("dedicated_group_id", dID)
+
+	if err := d.Set("dedicated_group_id", dID); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }
@@ -297,14 +310,7 @@ func resourceCloudcaInstanceDelete(d *schema.ResourceData, meta interface{}) err
 	}
 	fmt.Printf("[INFO] Destroying instance: %s\n", d.Get("name").(string))
 	if _, err := ccaResources.Instances.Destroy(d.Id(), true); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				d.SetId("")
-				fmt.Printf("Instance %s no longer exist", d.Get("name").(string))
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Instance", true, err, d)
 	}
 
 	return nil
@@ -350,8 +356,7 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 	return "", fmt.Errorf("Template with name %s not found", name)
 }
 
-
-func getDedicatedGroupId(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
+func getDedicatedGroupID(ccaRes cloudca.Resources, instance *cloudca.Instance) (string, error) {
 	dedicatedGroups, err := ccaRes.AffinityGroups.ListWithOptions(map[string]string{
 		"type": "ExplicitDedication",
 	})
@@ -359,8 +364,8 @@ func getDedicatedGroupId(ccaRes cloudca.Resources, instance *cloudca.Instance) (
 		return "", err
 	}
 	for _, dedicatedGroup := range dedicatedGroups {
-		for _, affinityGroupId := range instance.AffinityGroupIds {
-			if strings.EqualFold(dedicatedGroup.Id, affinityGroupId) {
+		for _, affinityGroupID := range instance.AffinityGroupIds {
+			if strings.EqualFold(dedicatedGroup.Id, affinityGroupID) {
 				return dedicatedGroup.Id, nil
 			}
 		}

@@ -114,23 +114,18 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	// Get the vpc details
 	vpc, err := ccaResources.Vpcs.Get(d.Id())
 	if err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("VPC", false, err, d)
 	}
 
-	setValueOrID(d, "zone", vpc.ZoneName, vpc.ZoneId)
+	if err := setValueOrID(d, "zone", vpc.ZoneName, vpc.ZoneId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	vpcOffering, offErr := ccaResources.VpcOfferings.Get(vpc.VpcOfferingId)
 	if offErr != nil {
 		if ccaError, ok := offErr.(api.CcaErrorResponse); ok {
 			if ccaError.StatusCode == 404 {
-				fmt.Errorf("VPC offering id=%s does no longer exist", vpc.VpcOfferingId)
+				log.Printf("VPC offering id=%s does no longer exist", vpc.VpcOfferingId)
 				d.SetId("")
 				return nil
 			}
@@ -139,10 +134,21 @@ func resourceCloudcaVpcRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Update the config
-	d.Set("name", vpc.Name)
-	d.Set("description", vpc.Description)
-	setValueOrID(d, "vpc_offering", strings.ToLower(vpcOffering.Name), vpc.VpcOfferingId)
-	d.Set("network_domain", vpc.NetworkDomain)
+	if err := d.Set("name", vpc.Name); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("description", vpc.Description); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := setValueOrID(d, "vpc_offering", strings.ToLower(vpcOffering.Name), vpc.VpcOfferingId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_domain", vpc.NetworkDomain); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }
@@ -174,14 +180,7 @@ func resourceCloudcaVpcDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 	fmt.Printf("[INFO] Destroying VPC: %s\n", d.Get("name").(string))
 	if _, err := ccaResources.Vpcs.Destroy(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("VPC %s does no longer exist", d.Get("name").(string))
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("VPC", true, err, d)
 	}
 
 	return nil

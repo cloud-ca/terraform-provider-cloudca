@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
-	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+// type of ACL rules
 const (
 	TCP  = "TCP"
 	UDP  = "UDP"
@@ -159,25 +159,44 @@ func resourceCloudcaNetworkACLRuleRead(d *schema.ResourceData, meta interface{})
 	}
 	aclRule, aErr := ccaResources.NetworkAclRules.Get(d.Id())
 	if aErr != nil {
-		if ccaError, ok := aErr.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("ACL rule %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return aErr
+		return handleNotFoundError("Network ACL rule", false, aErr, d)
 	}
 
-	d.Set("rule_number", aclRule.RuleNumber)
-	d.Set("action", strings.ToLower(aclRule.Action))
-	d.Set("protocol", strings.ToLower(aclRule.Protocol))
-	d.Set("traffic_type", strings.ToLower(aclRule.TrafficType))
-	d.Set("icmp_type", readIntFromString(aclRule.IcmpType))
-	d.Set("icmp_code", readIntFromString(aclRule.IcmpCode))
-	d.Set("start_port", readIntFromString(aclRule.StartPort))
-	d.Set("end_port", readIntFromString(aclRule.EndPort))
-	d.Set("network_acl_id", aclRule.NetworkAclId)
+	if err := d.Set("rule_number", aclRule.RuleNumber); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("action", strings.ToLower(aclRule.Action)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("protocol", strings.ToLower(aclRule.Protocol)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("traffic_type", strings.ToLower(aclRule.TrafficType)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("icmp_type", readIntFromString(aclRule.IcmpType)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("icmp_code", readIntFromString(aclRule.IcmpCode)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("start_port", readIntFromString(aclRule.StartPort)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("end_port", readIntFromString(aclRule.EndPort)); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set("network_acl_id", aclRule.NetworkAclId); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
 
 	return nil
 }
@@ -189,14 +208,7 @@ func resourceCloudcaNetworkACLRuleDelete(d *schema.ResourceData, meta interface{
 		return rerr
 	}
 	if _, err := ccaResources.NetworkAclRules.Delete(d.Id()); err != nil {
-		if ccaError, ok := err.(api.CcaErrorResponse); ok {
-			if ccaError.StatusCode == 404 {
-				fmt.Errorf("Network ACL rule %s not found", d.Id())
-				d.SetId("")
-				return nil
-			}
-		}
-		return err
+		return handleNotFoundError("Network ACL rule", true, err, d)
 	}
 	return nil
 }
