@@ -10,7 +10,9 @@ resource "cloudca_instance" "my_instance" {
     name                   = "test-instance"
     network_id             = "672016ef-05ee-4e88-b68f-ac9cc462300b"
     template               = "Ubuntu 16.04.03 HVM"
-    compute_offering       = "1vCPU.512MB"
+    compute_offering       = "Standard"
+    cpu_count              = 4
+    memory_in_mb           = 8192
     ssh_key_name           = "my_ssh_key"
     root_volume_size_in_gb = 100
     private_ip             = "10.2.1.124"
@@ -28,7 +30,7 @@ The following arguments are supported:
 - [template](#template) - (Required) Name of template to use for the instance
 - [compute_offering](#compute_offering) - (Required) Name of the compute offering to use for the instance
 - [cpu_count](#cpu_count) - (Required) Number of CPUs the instance should be created with.
-- [memory_in_mb](#memory_in_mb) - (Required) Amount of memory in MB the instance should be created with.
+- [memory_in_mb](#memory_in_mb) - (Required) Amount of memory in MB the instance should be created with. `[512,768,1024,2048,3072,4096,5120,6144,7168,8192,10240,12288,14336,16384,18432,20480,22528,24576]`
 - [user_data](#user_data) - (Optional) User data to add to the instance
 - [ssh_key_name](#ssh_key_name) - (Optional) Name of the SSH key pair to attach to the instance. Mutually exclusive with public_key.
 - [public_key](#public_key) - (Optional) Public key to attach to the instance. Mutually exclusive with ssh_key_name.
