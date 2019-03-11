@@ -32,3 +32,11 @@ The following attributes are returned:
 
 - [id](#id) - ID of network.
 - [cidr](#cidr) - Cidr of network
+
+## Import
+
+Networks can be imported using the network id, e.g.
+
+```bash
+terraform import cloudca_network.my_network eb662105-faa6-4e36-9a90-af1e14f0e3d2
+```

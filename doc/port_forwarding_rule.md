@@ -38,3 +38,11 @@ The following attributes are returned:
 - [public_ip](#public_ip) - the public IP address of this rule
 - [private_ip](#private_ip) - the private IP address of this rule
 - [instance_id](#instance_id) - the instance associated with the private IP address of this rule
+
+## Import
+
+Port forwarding rules can be imported using the port forwarding rules id, e.g.
+
+```bash
+terraform import cloudca_port_forwarding_rule.web_pfr 816bd39d-5379-45be-b7a1-6b2ea18cec62
+```

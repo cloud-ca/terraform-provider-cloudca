@@ -34,6 +34,10 @@ func resourceCloudcaEnvironment() *schema.Resource {
 		Update: resourceCloudcaEnvironmentUpdate,
 		Delete: resourceCloudcaEnvironmentDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			OrganizationCode: {
 				Type:        schema.TypeString,

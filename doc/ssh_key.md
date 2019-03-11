@@ -19,3 +19,11 @@ The following arguments are supported:
 - [environment_id](#environment_id) - (Required) ID of environment
 - [name](#name) - (Required) The name of the SSH key to add
 - [public_key](#public_key) - (Required) The public key data
+
+## Import
+
+SSH keys can be imported using the SSH key id, e.g.
+
+```bash
+terraform import cloudca_ssh_key.dev_ssh_key 919dd040-2b1e-4192-b25f-e3b8beca96e1
+```

@@ -24,6 +24,10 @@ func resourceCloudcaNetworkACLRule() *schema.Resource {
 		Read:   resourceCloudcaNetworkACLRuleRead,
 		Delete: resourceCloudcaNetworkACLRuleDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

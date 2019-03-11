@@ -33,3 +33,11 @@ The following attributes are returned:
 
 - [id](#id) - ID of the environment.
 - [name](#name) - Name of the environment.
+
+## Import
+
+Environments can be imported using the environment id, e.g.
+
+```bash
+terraform import cloudca_environment.my_environment caeca36a-ccc9-4dc0-a7d1-eb88cbd7d0c0
+```

@@ -17,6 +17,10 @@ func resourceCloudcaVolume() *schema.Resource {
 		Update: resourceCloudcaVolumeUpdate,
 		Delete: resourceCloudcaVolumeDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

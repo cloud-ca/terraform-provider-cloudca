@@ -28,3 +28,11 @@ The following attributes are returned:
 
 - [id](#id) - ID of network ACL.
 - [name](#name) - Name of network ACL.
+
+## Import
+
+Network ACLs can be imported using network ACL id, e.g.
+
+```bash
+terraform import cloudca_network_acl.my_acl fe20c7bd-9aa2-4cdd-aa73-e13e49158a6e
+```

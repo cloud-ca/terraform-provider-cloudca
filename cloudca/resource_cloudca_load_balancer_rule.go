@@ -17,6 +17,10 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 		Delete: deleteLbr,
 		Update: updateLbr,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

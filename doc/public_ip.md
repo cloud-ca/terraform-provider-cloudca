@@ -24,3 +24,11 @@ The following attributes are returned:
 
 - [id](#id) - The public IP ID.
 - [ip_address](#ip_address) - The public IP address
+
+## Import
+
+Public IPs can be imported using the public IP id, e.g.
+
+```bash
+terraform import cloudca_public_ip.my_publicip 56fd2565-edc9-444c-994d-9b7c46435d68
+```

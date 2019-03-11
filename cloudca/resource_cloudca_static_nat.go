@@ -14,6 +14,10 @@ func resourceCloudcaStaticNAT() *schema.Resource {
 		Read:   resourceCloudcaStaticNATRead,
 		Delete: resourceCloudcaStaticNATDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

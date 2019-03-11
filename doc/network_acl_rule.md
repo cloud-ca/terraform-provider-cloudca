@@ -40,3 +40,11 @@ The following attributes are returned:
 
 - [id](#id) - ID of network ACL.
 - [name](#name) - Name of network ACL.
+
+## Import
+
+Network ACL rules can be imported using the network ACL rule id, e.g.
+
+```bash
+terraform import cloudca_network_acl_rule.my_acl 24323470-336e-4244-be26-5b25a262bcce
+```
