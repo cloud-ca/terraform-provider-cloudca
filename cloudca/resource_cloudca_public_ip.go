@@ -14,6 +14,10 @@ func resourceCloudcaPublicIP() *schema.Resource {
 		Read:   resourceCloudcaPublicIPRead,
 		Delete: resourceCloudcaPublicIPDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

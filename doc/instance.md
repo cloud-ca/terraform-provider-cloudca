@@ -43,3 +43,11 @@ The following attributes are returned:
 - [id](#id) - ID of instance.
 - [private_ip_id](#private_ip_id) - ID of instance's private IP
 - [private_ip](#private_ip) - Instance's private IP
+
+## Import
+
+Instances can be imported using the instance id, e.g.
+
+```bash
+terraform import cloudca_instance.my_instance c33dc4e3-0067-4c26-a588-53c9a936b9de
+```

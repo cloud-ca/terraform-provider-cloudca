@@ -14,6 +14,10 @@ func resourceCloudcaSSHKey() *schema.Resource {
 		Read:   readSSHKey,
 		Delete: deleteSSHKey,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

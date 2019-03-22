@@ -41,3 +41,11 @@ The following arguments are supported:
 The following attributes are returned:
 
 - [id](#id) - the load balancer rule ID
+
+## Import
+
+Load balancer rules can be imported using the load balancer rule id, e.g.
+
+```bash
+terraform import cloudca_load_balancer_rule.lbr e798936b-b05d-4dbf-ade1-21f98c5fd0f0
+```

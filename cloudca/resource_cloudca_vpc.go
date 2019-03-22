@@ -18,6 +18,10 @@ func resourceCloudcaVpc() *schema.Resource {
 		Update: resourceCloudcaVpcUpdate,
 		Delete: resourceCloudcaVpcDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,

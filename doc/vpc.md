@@ -29,3 +29,11 @@ The following arguments are supported:
 The following attributes are returned:
 
 - [id](#id) - ID of VPC.
+
+## Import
+
+VPCs can be imported using the VPC id, e.g.
+
+```bash
+terraform import cloudca_vpc.my_vpc 06dca131-8c68-4054-bd6b-9e47c5a099ea
+```

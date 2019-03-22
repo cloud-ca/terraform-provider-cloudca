@@ -33,3 +33,11 @@ The following arguments are supported:
 The following attributes are returned:
 
 - [id](#id) - the volume ID
+
+## Import
+
+Volumes can be imported using the volume id, e.g.
+
+```bash
+terraform import cloudca_volume.data_volume b24f94f7-098f-458b-aeb3-b38992ae8d67
+```

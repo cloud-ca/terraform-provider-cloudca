@@ -19,3 +19,11 @@ The following arguments are supported:
 - [environment_id](#environment_id) - (Required) ID of environment
 - [public_ip_id](#public_ip_id) - (Required) The public IP to configure static NAT on. Cannot have any other purpose (e.g. load balancing, port forwarding)
 - [private_ip_id](#private_ip_id) - (Required) A private IP of the instance to configure static NAT on. Must be in the same VPC as the public IP. Secondary IPs can be used here
+
+## Import
+
+Static NATs can be imported using the static NAT id, e.g.
+
+```bash
+terraform import cloudca_static_nat.dev_static_nat e604761e-765e-4593-96a5-8c99e8d55bae
+```
