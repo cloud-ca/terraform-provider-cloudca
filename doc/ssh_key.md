@@ -20,6 +20,10 @@ The following arguments are supported:
 - [name](#name) - (Required) The name of the SSH key to add
 - [public_key](#public_key) - (Required) The public key data
 
+## Attribute Reference
+
+Only the arguments listed above are returned.
+
 ## Import
 
 SSH keys can be imported using the SSH key id, e.g.

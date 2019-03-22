@@ -20,7 +20,7 @@ The following arguments are supported:
 
 ## Attribute Reference
 
-The following attributes are returned:
+In addition to the arguments listed above, the following computed attributes are returned:
 
 - [id](#id) - The public IP ID.
 - [ip_address](#ip_address) - The public IP address
