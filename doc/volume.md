@@ -30,7 +30,7 @@ The following arguments are supported:
 
 ## Attribute Reference
 
-The following attributes are returned:
+In addition to the arguments listed above, the following computed attributes are returned:
 
 - [id](#id) - the volume ID
 
