@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// GetCloudCAResourceMap resutrn the available Resource map
+// GetCloudCAResourceMap return the available Resource map
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		"cloudca_instance":             resourceCloudcaInstance(),
@@ -27,6 +27,8 @@ func GetCloudCAResourceMap() map[string]*schema.Resource {
 		"cloudca_network_acl_rule":     resourceCloudcaNetworkACLRule(),
 		"cloudca_static_nat":           resourceCloudcaStaticNAT(),
 		"cloudca_ssh_key":              resourceCloudcaSSHKey(),
+		"cloudca_vpn":                  resourceCloudcaVpn(),
+		"cloudca_vpn_user":             resourceCloudcaVpnUser(),
 	}
 }
 

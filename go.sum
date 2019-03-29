@@ -23,6 +23,8 @@ github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528 h1:DPBpPNdP0
 github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
 github.com/cloud-ca/go-cloudca v1.3.0 h1:LhoCxu+Tna/OOoDbSD2adgwlA+WgKfUzzcHBcEu5akE=
 github.com/cloud-ca/go-cloudca v1.3.0/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
+github.com/cloud-ca/go-cloudca v1.3.1-0.20190304205722-70b4395e647b h1:zK9sYJ1e9xNBUM4dA4ri4iRXSdApG/wwy1PXk3WeELw=
+github.com/cloud-ca/go-cloudca v1.3.1-0.20190304205722-70b4395e647b/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
@@ -40,7 +42,7 @@ github.com/hashicorp/errwrap v1.0.0 h1:hLrqtEDnRye3+sgx6z4qVLNuviH3MR5aQ0ykNJa/U
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
 github.com/hashicorp/go-cleanhttp v0.5.0 h1:wvCrVc9TjDls6+YGAF2hAifE1E5U1+b4tH6KdvN3Gig=
 github.com/hashicorp/go-cleanhttp v0.5.0/go.mod h1:JpRdi6/HCYpAwUzNwuwqhbovhLtngrth3wmdIIUrZ80=
-github.com/hashicorp/go-getter v1.0.3 h1:CelOrh4nPI/kzBsweEXM8f1dZFNSf1jH4ReJZXWHymY=
+github.com/hashicorp/go-getter v1.0.3 h1:2DC/ST3YctAlaw+vJwSHUL3nguMmvGXSKnHA/bmae4c=
 github.com/hashicorp/go-getter v1.0.3/go.mod h1:q+PoBhh16brIKwJS9kt18jEtXHTg2EGkmrA9P7HVS+U=
 github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
 github.com/hashicorp/go-hclog v0.0.0-20190109152822-4783caec6f2e h1:SS6R03q1M5bxjbOL2JziQUUu7opiRocL4R2H5Y2I6rY=

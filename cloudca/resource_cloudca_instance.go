@@ -33,7 +33,6 @@ func resourceCloudcaInstance() *schema.Resource {
 				Required:    true,
 				Description: "Name of instance",
 			},
-
 			"template": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -43,7 +42,6 @@ func resourceCloudcaInstance() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-
 			"compute_offering": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -52,39 +50,33 @@ func resourceCloudcaInstance() *schema.Resource {
 					return strings.ToLower(val.(string))
 				},
 			},
-
 			"network_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "Id of the network into which the new instance will be created",
 			},
-
 			"ssh_key_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "SSH key name to attach to the new instance. Note: Cannot be used with public key.",
 			},
-
 			"public_key": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Public key to attach to the new instance. Note: Cannot be used with SSH key name.",
 			},
-
 			"user_data": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Additional data passed to the new instance during its initialization",
 			},
-
 			"cpu_count": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Computed:    true,
 				Description: "The instances CPU count. If the compute offering is custom, this value is required",
 			},
-
 			"memory_in_mb": {
 				Type:        schema.TypeInt,
 				Optional:    true,
