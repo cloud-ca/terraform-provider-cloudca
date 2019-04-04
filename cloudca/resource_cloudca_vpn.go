@@ -20,40 +20,46 @@ func resourceCloudcaVpn() *schema.Resource {
 				ForceNew:    true,
 				Description: "ID of the environment where the vpn should be created",
 			},
+			"vpc_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Id of the VPC for the vpn",
+			},
 			"certificate": {
 				Type:        schema.TypeString,
-				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "Certificate to use when using IKEV2 vpn type",
 			},
 			"preshared_key": {
 				Type:        schema.TypeString,
-				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "Preshared key to use when using L2TP vpn type",
 			},
 			"public_ip": {
 				Type:        schema.TypeString,
-				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "Public IP address associated with the vpn",
 			},
 			"public_ip_id": {
 				Type:        schema.TypeString,
-				Required:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "ID of the public IP address associated with the vpn",
 			},
 			"state": {
 				Type:        schema.TypeString,
-				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "State of the vpn",
 			},
 			"type": {
 				Type:        schema.TypeString,
-				Optional:    true,
 				ForceNew:    true,
+				Computed:    true,
 				Description: "Type of vpn connection",
 			},
 		},
@@ -61,15 +67,33 @@ func resourceCloudcaVpn() *schema.Resource {
 }
 
 func resourceCloudcaVpnCreate(d *schema.ResourceData, meta interface{}) error {
+	VPN_IP_PURPOSE := "SOURCE_NAT"
 	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 	if rerr != nil {
 		return rerr
 	}
-	_, err := ccaResources.RemoteAccessVpn.Enable(d.Get("public_ip_id").(string))
+
+	var vpnPubIpId string
+	pubIps, _ := ccaResources.PublicIps.List()
+	for _, ip := range pubIps {
+		if ip.VpcId == d.Get("vpc_id").(string) {
+			for _, purpose := range ip.Purposes {
+				if purpose == VPN_IP_PURPOSE {
+					vpnPubIpId = ip.Id
+				}
+			}
+		}
+	}
+
+	if vpnPubIpId == "" {
+		return fmt.Errorf("Error enabling the VPN because no Source NAT IP was found for the VPC.")
+	}
+
+	_, err := ccaResources.RemoteAccessVpn.Enable(vpnPubIpId)
 	if err != nil {
 		return fmt.Errorf("Error enabling the VPN: %s", err)
 	}
-	d.SetId(d.Get("public_ip_id").(string))
+	d.SetId(vpnPubIpId)
 	return resourceCloudcaVpnRead(d, meta)
 }
 
@@ -79,7 +103,7 @@ func resourceCloudcaVpnRead(d *schema.ResourceData, meta interface{}) error {
 		return rerr
 	}
 
-	vpn, err := ccaResources.RemoteAccessVpn.Get(d.Get("public_ip_id").(string))
+	vpn, err := ccaResources.RemoteAccessVpn.Get(d.Id())
 	if err != nil {
 		return handleNotFoundError("VPN", false, err, d)
 	}
@@ -89,9 +113,6 @@ func resourceCloudcaVpnRead(d *schema.ResourceData, meta interface{}) error {
 		// so this entity is "missing" (at least as far as terraform is concerned).
 		d.SetId("")
 		return nil
-	}
-	if err := d.Set("id", vpn.Id); err != nil {
-		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
 	if err := d.Set("state", vpn.State); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)

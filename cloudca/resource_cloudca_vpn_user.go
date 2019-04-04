@@ -51,7 +51,26 @@ func resourceCloudcaVpnUserCreate(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		return fmt.Errorf("Error adding VPN user: %s", err)
 	}
-	return resourceCloudcaVpnRead(d, meta)
+
+	// TODO: When the CMC API actually returns the ID of the created user, use it.
+	// Currently there is no way to do a 'Get' based on the username, and we don't have the ID, so
+	// we have to list all users and then loop through to match the username in order to find the ID.
+	vpnUsers, err := ccaResources.RemoteAccessVpnUser.List()
+	if err != nil {
+		return fmt.Errorf("Error getting the created VPN user ID: %s", err)
+	}
+	var userID string
+	for _, user := range vpnUsers {
+		if user.Username == d.Get("username").(string) {
+			userID = user.Id
+		}
+	}
+	if userID != "" {
+		d.SetId(userID)
+	} else {
+		return fmt.Errorf("Error finding the created VPN user ID: %s", err)
+	}
+	return resourceCloudcaVpnUserRead(d, meta)
 }
 
 func resourceCloudcaVpnUserRead(d *schema.ResourceData, meta interface{}) error {
@@ -60,29 +79,13 @@ func resourceCloudcaVpnUserRead(d *schema.ResourceData, meta interface{}) error 
 		return rerr
 	}
 
-	// to set the Id, we need to list and loop through to find the Id we just created
-	vpnUsers, err := ccaResources.RemoteAccessVpnUser.List()
+	// Get the user based on the ID
+	vpnUser, err := ccaResources.RemoteAccessVpnUser.Get(d.Id())
 	if err != nil {
-		return fmt.Errorf("Error getting VPN user: %s", err)
-	}
-	found := false
-	var vpnUser cloudca.RemoteAccessVpnUser
-	for _, user := range vpnUsers {
-		if user.Username == d.Get("username").(string) {
-			vpnUser = user
-			found = true
-			break
-		}
-	}
-	if !found {
-		// If we can not find the user based on their 'username' then this
-		// entity is "missing" (at least as far as terraform is concerned).
 		d.SetId("")
 		return nil
 	}
-	if err := d.Set("id", vpnUser.Id); err != nil {
-		return fmt.Errorf("Error reading Trigger: %s", err)
-	}
+
 	if err := d.Set("username", vpnUser.Username); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
@@ -95,7 +98,7 @@ func resourceCloudcaVpnUserDelete(d *schema.ResourceData, meta interface{}) erro
 		return rerr
 	}
 	remoteAccessVpnUser := cloudca.RemoteAccessVpnUser{
-		Id:       d.Get("id").(string),
+		Id:       d.Id(),
 		Username: d.Get("username").(string),
 	}
 	if _, err := ccaResources.RemoteAccessVpnUser.Delete(remoteAccessVpnUser); err != nil {
