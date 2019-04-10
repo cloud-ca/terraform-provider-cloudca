@@ -67,33 +67,33 @@ func resourceCloudcaVpn() *schema.Resource {
 }
 
 func resourceCloudcaVpnCreate(d *schema.ResourceData, meta interface{}) error {
-	VPN_IP_PURPOSE := "SOURCE_NAT"
+	vpnIPPurpose := "SOURCE_NAT"
 	ccaResources, rerr := getResourcesForEnvironmentID(meta.(*cca.CcaClient), d.Get("environment_id").(string))
 	if rerr != nil {
 		return rerr
 	}
 
-	var vpnPubIpId string
+	var vpnPubIPID string
 	pubIps, _ := ccaResources.PublicIps.List()
 	for _, ip := range pubIps {
 		if ip.VpcId == d.Get("vpc_id").(string) {
 			for _, purpose := range ip.Purposes {
-				if purpose == VPN_IP_PURPOSE {
-					vpnPubIpId = ip.Id
+				if purpose == vpnIPPurpose {
+					vpnPubIPID = ip.Id
 				}
 			}
 		}
 	}
 
-	if vpnPubIpId == "" {
-		return fmt.Errorf("Error enabling the VPN because no Source NAT IP was found for the VPC.")
+	if vpnPubIPID == "" {
+		return fmt.Errorf("Error enabling the VPN because no Source NAT IP was found for the VPC")
 	}
 
-	_, err := ccaResources.RemoteAccessVpn.Enable(vpnPubIpId)
+	_, err := ccaResources.RemoteAccessVpn.Enable(vpnPubIPID)
 	if err != nil {
 		return fmt.Errorf("Error enabling the VPN: %s", err)
 	}
-	d.SetId(vpnPubIpId)
+	d.SetId(vpnPubIPID)
 	return resourceCloudcaVpnRead(d, meta)
 }
 
