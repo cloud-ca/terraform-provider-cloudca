@@ -13,6 +13,10 @@ func resourceCloudcaVpn() *schema.Resource {
 		Read:   resourceCloudcaVpnRead,
 		Delete: resourceCloudcaVpnDelete,
 
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
+
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
 				Type:        schema.TypeString,
