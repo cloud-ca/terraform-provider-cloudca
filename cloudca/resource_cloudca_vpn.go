@@ -120,7 +120,7 @@ func resourceCloudcaVpnRead(d *schema.ResourceData, meta interface{}) error {
 		// If the VPN is disabled, it means the VPN is not active
 		// so this entity is "missing" (at least as far as terraform is concerned).
 		d.SetId("")
-		return nil
+		return handleNotFoundError("VPN Disabled", false, err, d)
 	}
 	if err := d.Set("state", vpn.State); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)

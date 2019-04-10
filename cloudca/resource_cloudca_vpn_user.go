@@ -88,6 +88,9 @@ func resourceCloudcaVpnUserRead(d *schema.ResourceData, meta interface{}) error 
 	vpnUser, err := ccaResources.RemoteAccessVpnUser.Get(d.Id())
 	if err != nil {
 		d.SetId("")
+		// If we return an error instead of nil, then if a VPN user is removed via the web UI
+		// it will break the ability for terraform to plan or apply any changes, so terraform
+		// will be in a broken state which can not be recovered from.
 		return nil
 	}
 
