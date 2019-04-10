@@ -67,6 +67,7 @@ func resourceCloudcaVpnUserCreate(d *schema.ResourceData, meta interface{}) erro
 	for _, user := range vpnUsers {
 		if user.Username == d.Get("username").(string) {
 			userID = user.Id
+			break
 		}
 	}
 	if userID != "" {

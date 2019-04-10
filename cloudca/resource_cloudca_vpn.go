@@ -84,8 +84,12 @@ func resourceCloudcaVpnCreate(d *schema.ResourceData, meta interface{}) error {
 			for _, purpose := range ip.Purposes {
 				if purpose == vpnIPPurpose {
 					vpnPubIPID = ip.Id
+					break
 				}
 			}
+		}
+		if vpnPubIPID != "" {
+			break
 		}
 	}
 
