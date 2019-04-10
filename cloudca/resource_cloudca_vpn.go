@@ -2,8 +2,10 @@ package cloudca
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/cloud-ca/go-cloudca"
+	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -149,6 +151,14 @@ func resourceCloudcaVpnDelete(d *schema.ResourceData, meta interface{}) error {
 		return rerr
 	}
 	if _, err := ccaResources.RemoteAccessVpn.Disable(d.Id()); err != nil {
+		if ccaError, ok := err.(api.CcaErrorResponse); ok {
+			if ccaError.StatusCode == 404 {
+				log.Printf("VPN with id=%s no longer exists", d.Id())
+				d.SetId("")
+				return nil
+			}
+			return handleNotFoundError("VPN Delete", true, err, d)
+		}
 		return handleNotFoundError("VPN Delete", true, err, d)
 	}
 	return nil
