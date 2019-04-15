@@ -17,14 +17,8 @@ github.com/blang/semver v3.5.1+incompatible h1:cQNTCjp13qL8KC3Nbxr/y2Bqb63oX6wdn
 github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnwebNt5EWlYSAyrTnjyyk=
 github.com/bsm/go-vlq v0.0.0-20150828105119-ec6e8d4f5f4e/go.mod h1:N+BjUcTjSxc2mtRGSCPsat1kze3CUtvJN3/jTXlp29k=
 github.com/cheggaaa/pb v1.0.27/go.mod h1:pQciLPpbU0oxA0h+VJYYLxO+XeDQb5pZijXscXHm81s=
-github.com/cloud-ca/go-cloudca v1.2.0 h1:215x34c2XUMxj9GV5gYH9JhqtabDysX2quXvNiKIgco=
-github.com/cloud-ca/go-cloudca v1.2.0/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
-github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528 h1:DPBpPNdP0SD6InpeChFXPksAPK+3UQFQNY6vBua0QPc=
-github.com/cloud-ca/go-cloudca v1.2.1-0.20190211191729-cd925097c528/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
-github.com/cloud-ca/go-cloudca v1.3.0 h1:LhoCxu+Tna/OOoDbSD2adgwlA+WgKfUzzcHBcEu5akE=
-github.com/cloud-ca/go-cloudca v1.3.0/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
-github.com/cloud-ca/go-cloudca v1.3.1-0.20190304205722-70b4395e647b h1:zK9sYJ1e9xNBUM4dA4ri4iRXSdApG/wwy1PXk3WeELw=
-github.com/cloud-ca/go-cloudca v1.3.1-0.20190304205722-70b4395e647b/go.mod h1:L8yDVtO6lmn2H50a6nMxYcGINgU6kVwpDeF/IxZVpsg=
+github.com/cloud-ca/go-cloudca v1.4.0 h1:R8ZWca1EtZrMS3t05Un11LwGX21/phuPp7kpMNT82DU=
+github.com/cloud-ca/go-cloudca v1.4.0/go.mod h1:+BpT2i2e5Zn+IDBVcZiqOBrZXSQpo/ObZ/MMTUh/RhI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
@@ -32,6 +26,7 @@ github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5Kwzbycv
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/go-test/deep v1.0.1/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
+github.com/golang/mock v1.2.0/go.mod h1:oTYuIxOrZwtPieC+H1uAHpcLFnEyAGVDL/k47Jfbm0A=
 github.com/golang/protobuf v1.1.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
@@ -42,7 +37,7 @@ github.com/hashicorp/errwrap v1.0.0 h1:hLrqtEDnRye3+sgx6z4qVLNuviH3MR5aQ0ykNJa/U
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
 github.com/hashicorp/go-cleanhttp v0.5.0 h1:wvCrVc9TjDls6+YGAF2hAifE1E5U1+b4tH6KdvN3Gig=
 github.com/hashicorp/go-cleanhttp v0.5.0/go.mod h1:JpRdi6/HCYpAwUzNwuwqhbovhLtngrth3wmdIIUrZ80=
-github.com/hashicorp/go-getter v1.0.3 h1:2DC/ST3YctAlaw+vJwSHUL3nguMmvGXSKnHA/bmae4c=
+github.com/hashicorp/go-getter v1.0.3 h1:CelOrh4nPI/kzBsweEXM8f1dZFNSf1jH4ReJZXWHymY=
 github.com/hashicorp/go-getter v1.0.3/go.mod h1:q+PoBhh16brIKwJS9kt18jEtXHTg2EGkmrA9P7HVS+U=
 github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
 github.com/hashicorp/go-hclog v0.0.0-20190109152822-4783caec6f2e h1:SS6R03q1M5bxjbOL2JziQUUu7opiRocL4R2H5Y2I6rY=

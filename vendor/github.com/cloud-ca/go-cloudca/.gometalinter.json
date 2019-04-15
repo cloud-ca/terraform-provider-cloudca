@@ -1,0 +1,27 @@
+{
+  "Concurrency": 2,
+  "Deadline": "10m",
+  "DisableAll": true,
+  "EnableGC": true,
+  "Enable": [
+    "vet",
+    "golint",
+    "varcheck",
+    "structcheck",
+    "staticcheck",
+    "errcheck",
+    "misspell",
+    "unconvert"
+  ],
+  "Exclude": [
+    "composite literal uses unkeyed fields"
+  ],
+  "Linters": {
+  },
+  "Sort": [
+    "path",
+    "line"
+  ],
+  "Vendor": true,
+  "WarnUnmatchedDirective": true
+}

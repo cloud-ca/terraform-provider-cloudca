@@ -345,7 +345,7 @@ func retrieveTemplateID(ccaRes *cloudca.Resources, name string) (id string, err 
 
 		if strings.EqualFold(template.Name, name) {
 			log.Printf("Found template: %+v", template)
-			return template.Id, nil
+			return template.ID, nil
 		}
 	}
 
