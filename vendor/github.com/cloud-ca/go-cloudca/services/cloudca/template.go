@@ -8,27 +8,32 @@ import (
 )
 
 type Template struct {
-	Id               string   `json:"id,omitempty"`
-	Name             string   `json:"name,omitempty"`
-	Description      string   `json:"description,omitempty"`
-	Size             int      `json:"size,omitempty"`
-	IsPublic         bool     `json:"isPublic,omitempty"`
-	IsReady          bool     `json:"isReady,omitempty"`
-	SSHKeyEnabled    bool     `json:"sshKeyEnabled,omitempty"`
-	Extractable      bool     `json:"extractable,omitempty"`
-	Resizable        bool     `json:"resizable,omitempty"`
-	OSType           string   `json:"osType,omitempty"`
-	OSTypeId         string   `json:"osTypeId,omitempty"`
-	Hypervisor       string   `json:"hypervisor,omitempty"`
-	Format           string   `json:"format,omitempty"`
-	ProjectId        string   `json:"projectId,omitempty"`
-	AvailableInZones []string `json:"availableInZones,omitempty"`
+	ID                string   `json:"id,omitempty"`
+	Name              string   `json:"name,omitempty"`
+	Description       string   `json:"description,omitempty"`
+	Size              int      `json:"size,omitempty"`
+	AvailablePublicly bool     `json:availablePublicly`
+	Ready             bool     `json:"ready,omitempty"`
+	SSHKeyEnabled     bool     `json:"sshKeyEnabled,omitempty"`
+	PassowordEnabled  bool     `json:"passwordEnabled,omitempty"`
+	Extractable       bool     `json:"extractable,omitempty"`
+	Resizable         bool     `json:"resizable,omitempty"`
+	OSType            string   `json:"osType,omitempty"`
+	OSTypeID          string   `json:"osTypeId,omitempty"`
+	Hypervisor        string   `json:"hypervisor,omitempty"`
+	Format            string   `json:"format,omitempty"`
+	ProjectID         string   `json:"projectId,omitempty"`
+	URL               string   `json:"url,omitempty"`
+	ZoneID            string   `json:"zoneId,omitempty"`
+	AvailableInZones  []string `json:"availableInZones,omitempty"`
 }
 
 type TemplateService interface {
 	Get(id string) (*Template, error)
 	List() ([]Template, error)
 	ListWithOptions(options map[string]string) ([]Template, error)
+	Create(Template) (*Template, error)
+	Delete(id string) (bool, error)
 }
 
 type TemplateApi struct {
@@ -74,4 +79,21 @@ func (templateApi *TemplateApi) ListWithOptions(options map[string]string) ([]Te
 		return nil, err
 	}
 	return parseTemplateList(data), nil
+}
+
+func (templateApi *TemplateApi) Create(t Template) (*Template, error) {
+	send, merr := json.Marshal(t)
+	if merr != nil {
+		return nil, merr
+	}
+	body, err := templateApi.entityService.Create(send, map[string]string{})
+	if err != nil {
+		return nil, err
+	}
+	return parseTemplate(body), nil
+}
+
+func (templateApi *TemplateApi) Delete(id string) (bool, error) {
+	_, err := templateApi.entityService.Delete(id, []byte{}, map[string]string{})
+	return err == nil, err
 }

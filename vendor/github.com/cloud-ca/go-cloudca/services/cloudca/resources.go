@@ -29,6 +29,8 @@ type Resources struct {
 	Zones               ZoneService
 	PortForwardingRules PortForwardingRuleService
 	LoadBalancerRules   LoadBalancerRuleService
+	RemoteAccessVpn     RemoteAccessVpnService
+	RemoteAccessVpnUser RemoteAccessVpnUserService
 }
 
 func NewResources(apiClient api.ApiClient, serviceCode string, environmentName string) Resources {
@@ -53,6 +55,8 @@ func NewResources(apiClient api.ApiClient, serviceCode string, environmentName s
 		LoadBalancerRules:   NewLoadBalancerRuleService(apiClient, serviceCode, environmentName),
 		Zones:               NewZoneService(apiClient, serviceCode, environmentName),
 		SSHKeys:             NewSSHKeyService(apiClient, serviceCode, environmentName),
+		RemoteAccessVpn:     NewRemoteAccessVpnService(apiClient, serviceCode, environmentName),
+		RemoteAccessVpnUser: NewRemoteAccessVpnUserService(apiClient, serviceCode, environmentName),
 	}
 }
 
