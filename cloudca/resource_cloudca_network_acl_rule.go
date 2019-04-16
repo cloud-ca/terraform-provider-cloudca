@@ -2,7 +2,6 @@ package cloudca
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/cloud-ca/go-cloudca"
@@ -36,7 +35,7 @@ func resourceCloudcaNetworkACLRule() *schema.Resource {
 				Description: "ID of environment where the network ACL rule should be created",
 			},
 			"rule_number": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The rule number of network ACL",
 			},
@@ -71,22 +70,22 @@ func resourceCloudcaNetworkACLRule() *schema.Resource {
 				},
 			},
 			"icmp_type": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The ICMP type. Can only be used with ICMP protocol.",
 			},
 			"icmp_code": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The ICMP code. Can only be used with ICMP protocol.",
 			},
 			"start_port": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The start port. Can only be used with TCP/UDP protocol.",
 			},
 			"end_port": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "The end port. Can only be used with TCP/UDP protocol.",
 			},
@@ -107,7 +106,7 @@ func resourceCloudcaNetworkACLRuleCreate(d *schema.ResourceData, meta interface{
 		return rerr
 	}
 	aclRuleToCreate := cloudca.NetworkAclRule{
-		RuleNumber:   strconv.Itoa(d.Get("rule_number").(int)),
+		RuleNumber:   d.Get("rule_number").(string),
 		Cidr:         d.Get("cidr").(string),
 		Action:       d.Get("action").(string),
 		Protocol:     d.Get("protocol").(string),
@@ -139,7 +138,7 @@ func resourceCloudcaNetworkACLRuleUpdate(d *schema.ResourceData, meta interface{
 	}
 	aclRuleToUpdate := cloudca.NetworkAclRule{
 		Id:          d.Id(),
-		RuleNumber:  strconv.Itoa(d.Get("rule_number").(int)),
+		RuleNumber:  d.Get("rule_number").(string),
 		Cidr:        d.Get("cidr").(string),
 		Action:      d.Get("action").(string),
 		Protocol:    d.Get("protocol").(string),
@@ -182,19 +181,19 @@ func resourceCloudcaNetworkACLRuleRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
 
-	if err := d.Set("icmp_type", readIntFromString(aclRule.IcmpType)); err != nil {
+	if err := d.Set("icmp_type", aclRule.IcmpType); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
 
-	if err := d.Set("icmp_code", readIntFromString(aclRule.IcmpCode)); err != nil {
+	if err := d.Set("icmp_code", aclRule.IcmpCode); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
 
-	if err := d.Set("start_port", readIntFromString(aclRule.StartPort)); err != nil {
+	if err := d.Set("start_port", aclRule.StartPort); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
 
-	if err := d.Set("end_port", readIntFromString(aclRule.EndPort)); err != nil {
+	if err := d.Set("end_port", aclRule.EndPort); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
 
@@ -219,18 +218,18 @@ func resourceCloudcaNetworkACLRuleDelete(d *schema.ResourceData, meta interface{
 
 func fillPortFields(d *schema.ResourceData, aclRule *cloudca.NetworkAclRule) {
 	if v, ok := d.GetOk("start_port"); ok {
-		aclRule.StartPort = strconv.Itoa(v.(int))
+		aclRule.StartPort = v.(string)
 	}
 	if v, ok := d.GetOk("end_port"); ok {
-		aclRule.EndPort = strconv.Itoa(v.(int))
+		aclRule.EndPort = v.(string)
 	}
 }
 
 func fillIcmpFields(d *schema.ResourceData, aclRule *cloudca.NetworkAclRule) {
 	if v, ok := d.GetOk("icmp_type"); ok {
-		aclRule.IcmpType = strconv.Itoa(v.(int))
+		aclRule.IcmpType = v.(string)
 	}
 	if v, ok := d.GetOk("icmp_code"); ok {
-		aclRule.IcmpCode = strconv.Itoa(v.(int))
+		aclRule.IcmpCode = v.(string)
 	}
 }
