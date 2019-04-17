@@ -3,7 +3,6 @@ package cloudca
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
@@ -37,11 +36,12 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "The public IP to which the rule should be applied",
+				Description: "ID of the public IP to which the rule should be applied",
 			},
 			"public_ip": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "The public IP to which the rule should be applied",
 			},
 			"network_id": {
 				Type:        schema.TypeString,
@@ -61,13 +61,13 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 				Description: "The algorithm used to load balance",
 			},
 			"public_port": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The port on the public IP",
 			},
 			"private_port": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The port to which the traffic will be load balanced internally",
@@ -105,8 +105,8 @@ func createLbr(d *schema.ResourceData, meta interface{}) error {
 		NetworkId:   d.Get("network_id").(string),
 		Protocol:    d.Get("protocol").(string),
 		Algorithm:   d.Get("algorithm").(string),
-		PublicPort:  strconv.Itoa(d.Get("public_port").(int)),
-		PrivatePort: strconv.Itoa(d.Get("private_port").(int)),
+		PublicPort:  d.Get("public_port").(string),
+		PrivatePort: d.Get("private_port").(string),
 	}
 
 	_, instanceIdsPresent := d.GetOk("instance_ids")

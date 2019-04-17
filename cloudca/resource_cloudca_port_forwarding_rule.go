@@ -2,7 +2,6 @@ package cloudca
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
@@ -45,26 +44,26 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 				Description: "The protocol that this rule should use (eg. TCP, UDP)",
 			},
 			"private_port_start": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The start of the private port range for this rule",
 			},
 			"private_port_end": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
 				Description: "The end of the private port range for this rule",
 			},
 			"public_port_start": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
 				Description: "The start of the public port range for this rule",
 			},
 			"public_port_end": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Optional:    true,
 				ForceNew:    true,
 				Computed:    true,
@@ -95,17 +94,17 @@ func createPortForwardingRule(d *schema.ResourceData, meta interface{}) error {
 	pfr := cloudca.PortForwardingRule{
 		PublicIpId:       d.Get("public_ip_id").(string),
 		Protocol:         d.Get("protocol").(string),
-		PublicPortStart:  strconv.Itoa(d.Get("public_port_start").(int)),
+		PublicPortStart:  d.Get("public_port_start").(string),
 		PrivateIpId:      d.Get("private_ip_id").(string),
-		PrivatePortStart: strconv.Itoa(d.Get("private_port_start").(int)),
+		PrivatePortStart: d.Get("private_port_start").(string),
 	}
 
 	if _, ok := d.GetOk("public_port_end"); ok {
-		pfr.PublicPortEnd = strconv.Itoa(d.Get("public_port_end").(int))
+		pfr.PublicPortEnd = d.Get("public_port_end").(string)
 	}
 
 	if _, ok := d.GetOk("private_port_end"); ok {
-		pfr.PrivatePortEnd = strconv.Itoa(d.Get("private_port_end").(int))
+		pfr.PrivatePortEnd = d.Get("private_port_end").(string)
 	}
 
 	newPfr, err := ccaResources.PortForwardingRules.Create(pfr)
