@@ -74,12 +74,12 @@ tools: log-tools ## Install required tools
 build: GOOS   = $(shell go env GOOS)
 build: GOARCH = $(shell go env GOARCH)
 build: clean log-build ## Build binary for current OS/ARCH
-	@ GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION) && echo "./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)"
+	@ GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION) && echo "./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)"
 
 .PHONY: build-all
 build-all: SHELL :=/bin/bash
 build-all: clean log-build-all ## Build binary for all OS/ARCH
-	@gox -verbose \
+	@ CGO_ENABLED=0 gox -verbose \
 		-ldflags "${LDFLAGS}" \
 		-gcflags=-trimpath=${GOPATH} \
 		-os="${GOOS}" \
