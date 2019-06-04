@@ -1,6 +1,6 @@
 defaults: &defaults
   docker:
-  - image: golang:1.11
+    - image: golang:1.12
   working_directory: /go/src/github.com/cloud-ca/terraform-provider-cloudca
 
 version: 2
@@ -23,7 +23,7 @@ jobs:
         name: "Verify 'vendor' dependencies"
         command: make verify
 
-  format:
+  checkfmt:
     <<: *defaults
     steps:
     - restore_cache:
@@ -78,7 +78,7 @@ workflows:
         filters:
           tags:
             only: /v.*/
-    - format:
+    - checkfmt:
         requires:
         - checkout
         filters:
