@@ -1,6 +1,6 @@
 defaults: &defaults
   docker:
-  - image: golang:1.11
+    - image: golang:1.12
   working_directory: /go/src/github.com/cloud-ca/terraform-provider-cloudca
 
 version: 2
