@@ -5,6 +5,9 @@ VENDOR      := cloud.ca
 URL         := https://github.com/cloud-ca/terraform-provider-cloudca
 LICENSE     := MIT
 
+# Repository variables
+PACKAGE     := github.com/cloud-ca/$(NAME)
+
 # Build variables
 BUILD_DIR   := bin
 COMMIT_HASH ?= $(shell git rev-parse --short HEAD 2>/dev/null)
@@ -87,7 +90,7 @@ build: GOOS   := $(shell go env GOOS)
 build: GOARCH := $(shell go env GOARCH)
 build: clean ## Build binary for current OS/ARCH
 	@ $(MAKE) --no-print-directory log-$@
-	@ GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION) && echo "./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)"
+	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)
 
 .PHONY: build-all
 build-all: SHELL := /bin/bash
