@@ -28,6 +28,8 @@ const (
 
 	// endpoint discovery group
 	enableEndpointDiscoveryKey = `endpoint_discovery_enabled` // optional
+	// External Credential Process
+	credentialProcessKey = `credential_process`
 
 	// DefaultSharedConfigProfile is the default profile to be used when
 	// loading configuration from the config files if another profile name
@@ -59,6 +61,9 @@ type sharedConfig struct {
 
 	AssumeRole       assumeRoleConfig
 	AssumeRoleSource *sharedConfig
+
+	// An external process to request credentials
+	CredentialProcess string
 
 	// Region is the region the SDK should use for looking up AWS service endpoints
 	// and signing requests.
@@ -151,10 +156,20 @@ func (cfg *sharedConfig) setAssumeRoleSource(origProfile string, files []sharedC
 		if err != nil {
 			return err
 		}
+
+		// Chain if profile depends of other profiles
+		if len(assumeRoleSrc.AssumeRole.SourceProfile) > 0 {
+			err := assumeRoleSrc.setAssumeRoleSource(cfg.AssumeRole.SourceProfile, files)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
-	if len(assumeRoleSrc.Creds.AccessKeyID) == 0 {
-		return SharedConfigAssumeRoleError{RoleARN: cfg.AssumeRole.RoleARN}
+	if cfg.AssumeRole.SourceProfile == origProfile || len(assumeRoleSrc.AssumeRole.SourceProfile) == 0 {
+		if len(assumeRoleSrc.AssumeRole.CredentialSource) == 0 && len(assumeRoleSrc.Creds.AccessKeyID) == 0 {
+			return SharedConfigAssumeRoleError{RoleARN: cfg.AssumeRole.RoleARN}
+		}
 	}
 
 	cfg.AssumeRoleSource = &assumeRoleSrc
@@ -221,6 +236,11 @@ func (cfg *sharedConfig) setFromIniFile(profile string, file sharedConfigFile) e
 			MFASerial:        section.String(mfaSerialKey),
 			RoleSessionName:  section.String(roleSessionNameKey),
 		}
+	}
+
+	// `credential_process`
+	if credProc := section.String(credentialProcessKey); len(credProc) > 0 {
+		cfg.CredentialProcess = credProc
 	}
 
 	// Region
