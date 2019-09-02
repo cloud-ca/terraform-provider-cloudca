@@ -14,18 +14,18 @@ import (
 // GetCloudCAResourceMap return the available Resource map
 func GetCloudCAResourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"cloudca_instance":             resourceCloudcaInstance(),
 		"cloudca_environment":          resourceCloudcaEnvironment(),
-		"cloudca_vpc":                  resourceCloudcaVpc(),
-		"cloudca_network":              resourceCloudcaNetwork(),
-		"cloudca_port_forwarding_rule": resourceCloudcaPortForwardingRule(),
-		"cloudca_public_ip":            resourceCloudcaPublicIP(),
-		"cloudca_volume":               resourceCloudcaVolume(),
+		"cloudca_instance":             resourceCloudcaInstance(),
 		"cloudca_load_balancer_rule":   resourceCloudcaLoadBalancerRule(),
+		"cloudca_network":              resourceCloudcaNetwork(),
 		"cloudca_network_acl":          resourceCloudcaNetworkACL(),
 		"cloudca_network_acl_rule":     resourceCloudcaNetworkACLRule(),
-		"cloudca_static_nat":           resourceCloudcaStaticNAT(),
+		"cloudca_port_forwarding_rule": resourceCloudcaPortForwardingRule(),
+		"cloudca_public_ip":            resourceCloudcaPublicIP(),
 		"cloudca_ssh_key":              resourceCloudcaSSHKey(),
+		"cloudca_static_nat":           resourceCloudcaStaticNAT(),
+		"cloudca_volume":               resourceCloudcaVolume(),
+		"cloudca_vpc":                  resourceCloudcaVpc(),
 		"cloudca_vpn":                  resourceCloudcaVpn(),
 		"cloudca_vpn_user":             resourceCloudcaVpnUser(),
 	}
