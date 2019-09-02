@@ -1,10 +1,9 @@
-package main
+package cloudca
 
 import (
 	"os"
 	"strconv"
 
-	"github.com/cloud-ca/terraform-provider-cloudca/cloudca"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -25,7 +24,7 @@ func Provider() terraform.ResourceProvider {
 			},
 		},
 		ResourcesMap: mergeResourceMaps(
-			cloudca.GetCloudCAResourceMap(),
+			GetCloudCAResourceMap(),
 		),
 		ConfigureFunc: providerConfigure,
 	}

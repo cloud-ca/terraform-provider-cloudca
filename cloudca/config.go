@@ -1,6 +1,8 @@
-package main
+package cloudca
 
-import "github.com/cloud-ca/go-cloudca"
+import (
+	"github.com/cloud-ca/go-cloudca"
+)
 
 // Config is the configuration structure used to instantiate a
 // new cloudca client.
