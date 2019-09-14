@@ -16,7 +16,7 @@ resource "cloudca_load_balancer_rule" "lbr" {
     private_port      = 80
     instance_ids      = ["071e2929-672e-45bc-a5b6-703d17c08367"]
     stickiness_method = "AppCookie"
-    stickiness_params {
+    stickiness_params = {
         cookieName = "allo"
     }
 }
