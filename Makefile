@@ -1,17 +1,18 @@
 # Project variables
+ORG         := cloud-ca
 NAME        := terraform-provider-cloudca
 DESCRIPTION := Terraform provider to interact with cloud.ca infrastructure
-VENDOR      := cloud.ca
+AUTHOR      := cloud.ca
 URL         := https://github.com/cloud-ca/terraform-provider-cloudca
 LICENSE     := MIT
 
 # Repository variables
-PACKAGE     := github.com/cloud-ca/$(NAME)
+PACKAGE     := github.com/$(ORG)/$(NAME)
 
 # Build variables
 BUILD_DIR   := bin
 COMMIT_HASH ?= $(shell git rev-parse --short HEAD 2>/dev/null)
-VERSION     ?= $(shell git describe --tags --exact-match 2>/dev/null || git describe --tags 2>/dev/null || echo "v0.0.0-$(COMMIT_HASH)")
+VERSION     ?= $(shell git describe --tags --exact-match 2>/dev/null || git describe --tags 2>/dev/null || echo "v0.0.1-$(COMMIT_HASH)")
 BUILD_DATE  ?= $(shell date +%FT%T%z)
 
 # Go variables
@@ -28,14 +29,14 @@ GOLDFLAGS   += -X $(PACKAGE)/main.commitHash=$(COMMIT_HASH)
 GOLDFLAGS   += -X $(PACKAGE)/main.buildDate=$(BUILD_DATE)
 GOLDFLAGS   +="
 
-GOBUILD     := $(GOCMD) build $(MODVENDOR) -ldflags $(GOLDFLAGS)
+GOBUILD     := GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOCMD) build $(MODVENDOR) -ldflags $(GOLDFLAGS)
 
 # Binary versions
-GOLANGCI_VERSION  := v1.16.0
 GITCHGLOG_VERSION := 0.8.0
-GOX_VERSION       := v1.0.1
+GOLANGCI_VERSION  := v1.18.0
 
-.DEFAULT_GOAL := help
+.PHONY: default
+default: help
 
 .PHONY: version
 version: ## Show version of provider
@@ -64,15 +65,15 @@ lint: ## Run linter
 	@ $(MAKE) --no-print-directory log-$@
 	GO111MODULE=on golangci-lint run ./...
 
-.PHONY: format
-format: ## Format all go files
+.PHONY: fmt
+fmt: ## Format go files
 	@ $(MAKE) --no-print-directory log-$@
-	$(GOCMD) fmt $(GOPKGS)
+	goimports -w $(GOFILES)
 
 .PHONY: checkfmt
-checkfmt: RESULT ?= $(shell gofmt -l $(GOFILES) | tee >(if [ "$$(wc -l)" = 0 ]; then echo "OK"; fi))
-checkfmt: SHELL  := /bin/bash
-checkfmt: ## Check formatting of all go files
+checkfmt: RESULT = $(shell goimports -l $(GOFILES) | tee >(if [ "$$(wc -l)" = 0 ]; then echo "OK"; fi))
+checkfmt: SHELL := /usr/bin/env bash
+checkfmt: ## Check formatting of go files
 	@ $(MAKE) --no-print-directory log-$@
 	@ echo "$(RESULT)"
 	@ if [ "$(RESULT)" != "OK" ]; then exit 1; fi
@@ -90,54 +91,13 @@ build: GOOS   := $(shell go env GOOS)
 build: GOARCH := $(shell go env GOARCH)
 build: clean ## Build binary for current OS/ARCH
 	@ $(MAKE) --no-print-directory log-$@
-	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)
+	$(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)
 
 .PHONY: build-all
-build-all: SHELL := /bin/bash
-build-all: clean ## Build binary for all OS/ARCH
+build-all: clean ## Build binaries for all OS/ARCH
 	@ $(MAKE) --no-print-directory log-$@
-	@ CGO_ENABLED=0 gox -verbose \
-		-ldflags "$(LDFLAGS)" \
-		-gcflags=-trimpath=$(GOPATH) \
-		-os="$(GOOS)" \
-		-arch="$(GOARCH)" \
-		-osarch="!darwin/arm !darwin/386" \
-		-output="$(BUILD_DIR)/{{.OS}}-{{.Arch}}/{{.Dir}}_$(VERSION)" .
-
-	@ printf "\n"
-	@ for platform in `find ./$(BUILD_DIR) -mindepth 1 -maxdepth 1 -type d` ; do \
-		OSARCH=`basename $${platform}` ; \
-		printf -- "--> %15s: Done\n" "$${OSARCH}" ; \
-		pushd $${platform} >/dev/null 2>&1 ; \
-		zip -q ../$(NAME)_$(VERSION)_$${OSARCH}.zip ./* ; \
-		popd >/dev/null 2>&1 ; \
-	done
-
-	@ pushd ./$(BUILD_DIR) >/dev/null 2>&1 ; \
-	shasum -a256 *.zip > ./$(NAME)_${VERSION}_SHA256SUMS ; \
-	popd >/dev/null 2>&1 ; \
-	printf -- "\n--> %15s: Done\n" "sha256sum"
-
-####################
-## Helper targets ##
-####################
-.PHONY: tools
-tools: ## Install required tools
-	@ $(MAKE) --no-print-directory log-$@
-	@ curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s  -- -b $(shell go env GOPATH)/bin $(GOLANGCI_VERSION)
-	@ curl -sfL https://github.com/git-chglog/git-chglog/releases/download/$(GITCHGLOG_VERSION)/git-chglog_$(shell go env GOOS)_$(shell go env GOARCH) -o $(shell go env GOPATH)/bin/git-chglog && chmod +x $(shell go env GOPATH)/bin/git-chglog
-	@ cd /tmp && go get -v -u github.com/mitchellh/gox
-
-.PHONY: authors
-authors: ## Generate list of Authors
-	@ $(MAKE) --no-print-directory log-$@
-	@ echo "# Authors\n" > AUTHORS.md
-	git log --all --format='- %aN \<%aE\>' | sort -u | egrep -v noreply >> AUTHORS.md
-
-.PHONY: changelog
-changelog: ## Generate content of Changelog
-	@ $(MAKE) --no-print-directory log-$@
-	git-chglog --output CHANGELOG.md
+	@ ./scripts/build/build-all.sh "$(BUILD_DIR)" "$(VERSION)" "$(GOOS)" "$(GOARCH)" $(GOLDFLAGS)
+	@ ./scripts/build/compress.sh "$(BUILD_DIR)" "$(NAME)" "$(VERSION)"
 
 #####################
 ## Release targets ##
@@ -146,31 +106,50 @@ changelog: ## Generate content of Changelog
 PATTERN =
 
 release: version ?= $(shell echo $(VERSION) | sed 's/^v//' | awk -F'[ .]' '{print $(PATTERN)}')
-release: push    := false
-release: SHELL   := /bin/bash
+release: push    ?= false
 release: ## Prepare release
 	@ $(MAKE) --no-print-directory log-$@
-	@ if [ -z "$(version)" ]; then \
-		echo "Error: missing value for 'version'. e.g. 'make release version=x.y.z'"; \
-	elif [ "v$(version)" = "$(VERSION)" ] ; then \
-		echo "Error: provided version (v$(version)) exists."; \
-	else \
-		git tag --annotate --message "v$(version) Release" v$(version); \
-		echo "Tag v$(version) Release"; \
-		if [ $(push) = "true" ]; then \
-			git push origin v$(version); \
-			echo "Push v$(version) Release"; \
-		fi \
-	fi
+	@ ./scripts/release/release.sh "$(version)" "$(push)" "$(VERSION)" "1"
 
 patch: PATTERN = '\$$1\".\"\$$2\".\"\$$3+1'
-patch: release ## Prepare Module Patch release
+patch: release ## Prepare Patch release
 
 minor: PATTERN = '\$$1\".\"\$$2+1\".0\"'
-minor: release ## Prepare Module Minor release
+minor: release ## Prepare Minor release
 
 major: PATTERN = '\$$1+1\".0.0\"'
-major: release ## Prepare Module Major release
+major: release ## Prepare Major release
+
+####################
+## Helper targets ##
+####################
+.PHONY: changelog
+changelog: push ?= false
+changelog: next ?=
+changelog: ## Generate Changelog
+	@ $(MAKE) --no-print-directory log-$@
+	git-chglog --config ./scripts/chglog/config-full-history.yml --tag-filter-pattern v[0-9]+.[0-9]+.[0-9]+$$ --output CHANGELOG.md $(next)
+	@ git add CHANGELOG.md
+	@ git commit -m "Update Changelog"
+	@ if $(push) = "true"; then git push origin master; fi
+
+.PHONY: tools git-chglog goimports golangci gox
+
+git-chglog:
+	curl -sfL https://github.com/git-chglog/git-chglog/releases/download/$(GITCHGLOG_VERSION)/git-chglog_$(shell go env GOOS)_$(shell go env GOARCH) -o $(shell go env GOPATH)/bin/git-chglog && chmod +x $(shell go env GOPATH)/bin/git-chglog
+
+goimports:
+	GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
+
+golangci:
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s  -- -b $(shell go env GOPATH)/bin $(GOLANGCI_VERSION)
+
+gox:
+	GO111MODULE=off go get -u github.com/mitchellh/gox
+
+tools: ## Install required tools
+	@ $(MAKE) --no-print-directory log-$@
+	@ $(MAKE) --no-print-directory git-chglog goimports golangci gox
 
 ####################################
 ## Self-Documenting Makefile Help ##
