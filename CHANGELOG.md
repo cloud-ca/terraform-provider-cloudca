@@ -3,6 +3,13 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+
+<a name="v1.5.0"></a>
+## [v1.5.0] - 2019-10-01
+
+- Fix release action
+- Use GitHub Actions instead of CircleCI ([#81](https://github.com/cloud-ca/terraform-provider-cloudca/issues/81))
 - Upgrade for Terraform v0.12.0 ([#78](https://github.com/cloud-ca/terraform-provider-cloudca/issues/78))
 - Use golangci lint instead of gometalinter ([#77](https://github.com/cloud-ca/terraform-provider-cloudca/issues/77))
 - Compile provider with static binaries ([#76](https://github.com/cloud-ca/terraform-provider-cloudca/issues/76))
@@ -295,7 +302,8 @@
 - Initial commit
 
 
-[Unreleased]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.5.0...HEAD
+[v1.5.0]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.4.1...v1.5.0
 [v1.4.1]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.3.0...v1.4.0
 [v1.3.0]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.2.0...v1.3.0
