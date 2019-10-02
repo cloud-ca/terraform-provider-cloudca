@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/configuration"
 	"github.com/hashicorp/terraform/helper/schema"
 )

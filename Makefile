@@ -29,7 +29,7 @@ GOLDFLAGS   += -X $(PACKAGE)/main.commitHash=$(COMMIT_HASH)
 GOLDFLAGS   += -X $(PACKAGE)/main.buildDate=$(BUILD_DATE)
 GOLDFLAGS   +="
 
-GOBUILD     := GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOCMD) build $(MODVENDOR) -ldflags $(GOLDFLAGS)
+GOBUILD     := $(GOCMD) build $(MODVENDOR) -ldflags $(GOLDFLAGS)
 
 # Binary versions
 GITCHGLOG_VERSION := 0.8.0
@@ -91,7 +91,7 @@ build: GOOS   := $(shell go env GOOS)
 build: GOARCH := $(shell go env GOARCH)
 build: clean ## Build binary for current OS/ARCH
 	@ $(MAKE) --no-print-directory log-$@
-	$(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)
+	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 $(GOBUILD) -o ./$(BUILD_DIR)/$(GOOS)-$(GOARCH)/$(NAME)_$(VERSION)
 
 .PHONY: build-all
 build-all: clean ## Build binaries for all OS/ARCH
