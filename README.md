@@ -1,7 +1,5 @@
-# terraform-provider-cloudca
+# terraform-provider-cloudca [![Build Status](https://github.com/cloud-ca/terraform-provider-cloudca/workflows/build/badge.svg)](https://github.com/cloud-ca/terraform-provider-cloudca/actions) [![GoDoc](https://godoc.org/github.com/cloud-ca/terraform-provider-cloudca?status.svg)](https://godoc.org/github.com/cloud-ca/terraform-provider-cloudca) [![Go Report Card](https://goreportcard.com/badge/github.com/cloud-ca/terraform-provider-cloudca)](https://goreportcard.com/report/github.com/cloud-ca/terraform-provider-cloudca) [![license](https://img.shields.io/github/license/cloud-ca/terraform-provider-cloudca.svg)](https://github.com/cloud-ca/terraform-provider-cloudca/blob/master/LICENSE)
 
-[![Build Status](https://circleci.com/gh/cloud-ca/terraform-provider-cloudca.svg?style=svg)](https://circleci.com/gh/cloud-ca/terraform-provider-cloudca)
-[![license](https://img.shields.io/github/license/cloud-ca/terraform-provider-cloudca.svg)](https://github.com/cloud-ca/terraform-provider-cloudca/blob/master/LICENSE)
 
 Terraform provider for cloud.ca
 
