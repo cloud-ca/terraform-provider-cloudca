@@ -83,7 +83,7 @@ func resourceCloudcaInstance() *schema.Resource {
 				Computed:    true,
 				Description: "The instance's memory in MB. If the compute offering is custom, this value is required",
 			},
-			"root_volume_size_in_gb": &schema.Schema{
+			"root_volume_size_in_gb": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Computed:    true,
