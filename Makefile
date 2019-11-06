@@ -60,6 +60,11 @@ verify: ## Verify 'vendor' dependencies
 	@ $(MAKE) --no-print-directory log-$@
 	$(GOCMD) mod verify
 
+.PHONY: tidy
+tidy: ## Tidy up 'vendor' dependencies
+	@ $(MAKE) --no-print-directory log-$@
+	$(GOCMD) mod tidy
+
 .PHONY: lint
 lint: ## Run linter
 	@ $(MAKE) --no-print-directory log-$@
@@ -71,8 +76,8 @@ fmt: ## Format go files
 	goimports -w $(GOFILES)
 
 .PHONY: checkfmt
-checkfmt: RESULT = $(shell goimports -l $(GOFILES) | tee >(if [ "$$(wc -l)" = 0 ]; then echo "OK"; fi))
-checkfmt: SHELL := /usr/bin/env bash
+checkfmt: RESULT ?= $(shell goimports -l $(GOFILES) | tee >(if [ "$$(wc -l)" = 0 ]; then echo "OK"; fi))
+checkfmt: SHELL  := /usr/bin/env bash
 checkfmt: ## Check formatting of go files
 	@ $(MAKE) --no-print-directory log-$@
 	@ echo "$(RESULT)"
