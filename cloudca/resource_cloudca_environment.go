@@ -7,7 +7,7 @@ import (
 
 	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/configuration"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // role names and fields

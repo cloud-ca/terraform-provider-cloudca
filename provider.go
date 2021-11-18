@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/cloud-ca/terraform-provider-cloudca/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 // Provider returns a terraform.ResourceProvider.
