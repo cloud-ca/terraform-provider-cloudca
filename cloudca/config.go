@@ -1,4 +1,4 @@
-package main
+package cloudca
 
 import cca "github.com/cloud-ca/go-cloudca"
 
