@@ -276,7 +276,6 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		if err != nil {
 			return err
 		}
-		d.SetPartial("compute_offering")
 	}
 
 	if d.HasChange("ssh_key_name") {
@@ -286,7 +285,6 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		if err != nil {
 			return err
 		}
-		d.SetPartial("ssh_key_name")
 	}
 
 	if d.HasChange("private_ip") {
