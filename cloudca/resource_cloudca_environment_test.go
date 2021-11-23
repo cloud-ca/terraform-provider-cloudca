@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/cloud-ca/go-cloudca"
+  "github.com/cloud-ca/go-cloudca"
 )
 
 func TestAccEnvironmentCreate(t *testing.T) {
@@ -38,8 +38,8 @@ func TestAccEnvironmentCreate(t *testing.T) {
 func testAccEnvironmentCreate(name string) string {
 	return fmt.Sprintf(`
 resource "cloudca_environment" "foobar" {
-	organization_code = "lab"
-	service_code      = "compute-on"
+	organization_code = "system"
+	service_code      = "beta2r1"
 	name              = "%s"
 	description       = "Environment for %s workloads"
 	admin_role        = []

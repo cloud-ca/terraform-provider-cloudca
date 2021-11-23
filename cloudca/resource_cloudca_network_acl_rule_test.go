@@ -13,8 +13,8 @@ import (
 func TestAccNetworkACLRuleCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
+	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
+	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193" 
 	networkACLRuleName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{

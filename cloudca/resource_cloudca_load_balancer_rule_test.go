@@ -13,9 +13,9 @@ import (
 func TestAccLoadBalancerRuleCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
-	networkID := "1d5c1e64-59f1-4a34-8539-77af5153058c"
+	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
+	networkID := "719af2c3-2da8-474f-b03e-63fce6e1a827"
+	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193" 
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -44,7 +44,7 @@ resource "cloudca_instance" "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
-	template         = "Ubuntu 18.04.2"
+	template         = "Ubuntu 20.04.2"
 	compute_offering = "Standard"
 	cpu_count        = 1
 	memory_in_mb     = 1024
