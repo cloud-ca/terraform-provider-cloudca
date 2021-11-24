@@ -26,11 +26,6 @@ func TestAccEnvironmentCreate(t *testing.T) {
 					testAccCheckEnvironmentCreateExists("cloudca_environment.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_environment.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }

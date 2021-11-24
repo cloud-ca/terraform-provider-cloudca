@@ -28,11 +28,6 @@ func TestAccNetworkACLCreate(t *testing.T) {
 					testAccCheckNetworkACLCreateExists("cloudca_network_acl.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_network_acl.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }

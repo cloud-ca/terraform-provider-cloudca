@@ -28,11 +28,6 @@ func TestAccInstanceCreateBasic(t *testing.T) {
 					testAccCheckInstanceCreateBasicExists("cloudca_instance.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_instance.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -54,11 +49,6 @@ func TestAccInstanceCreateDataDrive(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckInstanceCreateDataDriveExists("cloudca_instance.foobar"),
 				),
-			},
-			{
-				ResourceName:      "cloudca_instance.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -101,8 +91,8 @@ func testAccCheckInstanceCreateBasicExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
-		}
+      return fmt.Errorf("Not found: %s", name)
+    }
 
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No ID is set")
@@ -135,8 +125,8 @@ func testAccCheckInstanceCreateDataDriveExists(name string) resource.TestCheckFu
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
-		}
+      return fmt.Errorf("cannot find %s in state", name)
+    }
 
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No ID is set")
