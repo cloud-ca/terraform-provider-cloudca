@@ -24,7 +24,7 @@ func resourceCloudcaNetworkACLRule() *schema.Resource {
 		Delete: resourceCloudcaNetworkACLRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

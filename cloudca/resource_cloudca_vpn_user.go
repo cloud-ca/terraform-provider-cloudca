@@ -17,7 +17,7 @@ func resourceCloudcaVpnUser() *schema.Resource {
 		Delete: resourceCloudcaVpnUserDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

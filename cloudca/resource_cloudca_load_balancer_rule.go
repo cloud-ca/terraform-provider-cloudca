@@ -17,7 +17,7 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 		Update: updateLbr,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

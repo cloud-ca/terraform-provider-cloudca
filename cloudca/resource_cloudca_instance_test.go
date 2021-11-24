@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+const cloudcaInstance = "cloudca_instance"
+
 func TestAccInstanceCreateBasic(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
-	networkID := "719af2c3-2da8-474f-b03e-63fce6e1a827"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -35,7 +35,6 @@ func TestAccInstanceCreateBasic(t *testing.T) {
 func TestAccInstanceCreateDataDrive(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
 	networkID := "719af2c3-2da8-474f-b03e-63fce6e1a827"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
@@ -56,7 +55,7 @@ func TestAccInstanceCreateDataDrive(t *testing.T) {
 
 func testAccInstanceCreateBasic(environment, network, name string) string {
 	return fmt.Sprintf(`
-resource "cloudca_instance" "foobar" {
+resource %s "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
@@ -64,12 +63,12 @@ resource "cloudca_instance" "foobar" {
 	compute_offering = "Standard"
 	cpu_count        = 1
 	memory_in_mb     = 1024
-}`, environment, network, name)
+}`, cloudcaInstance, environment, network, name)
 }
 
 func testAccInstanceCreateDataDrive(environment, network, name string) string {
 	return fmt.Sprintf(`
-resource "cloudca_instance" "foobar" {
+resource %s "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
@@ -84,7 +83,7 @@ resource "cloudca_volume" "foobar" {
 	disk_offering  = "Performance, No QoS"
 	size_in_gb     = "10"
     instance_id    = "${cloudca_instance.foobar.id}"
-}`, environment, network, name, environment, name)
+}`, cloudcaInstance, environment, network, name, environment, name)
 }
 
 func testAccCheckInstanceCreateBasicExists(name string) resource.TestCheckFunc {
@@ -159,7 +158,7 @@ func testAccCheckInstanceCreateBasicDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cca.CcaClient)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type == "cloudca_instance" {
+		if rs.Type == cloudcaInstance {
 			if rs.Primary.Attributes["environment_id"] == "" {
 				return fmt.Errorf("Environment ID is missing")
 			}
@@ -183,7 +182,7 @@ func testAccCheckInstanceCreateDataDriveDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cca.CcaClient)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type == "cloudca_instance" {
+		if rs.Type == cloudcaInstance {
 			if rs.Primary.Attributes["environment_id"] == "" {
 				return fmt.Errorf("Environment ID is missing")
 			}

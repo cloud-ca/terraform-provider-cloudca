@@ -13,9 +13,6 @@ import (
 func TestAccLoadBalancerRuleCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
-	networkID := "405e35c3-3e69-4e02-a162-a4112d94acd9"
-	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
