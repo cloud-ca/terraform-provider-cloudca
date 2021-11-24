@@ -178,7 +178,6 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 				return err
 			}
 		}
-		d.SetPartial("instance_id")
 	}
 	if d.HasChange("size_in_gb") || d.HasChange("iops") {
 		volumeToResize := cloudca.Volume{
@@ -194,8 +193,6 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 			volumeToResize.Iops = val.(int)
 		}
 		_ = ccaResources.Volumes.Resize(&volumeToResize)
-		d.SetPartial("size_in_gb")
-		d.SetPartial("iops")
 	}
 	d.Partial(false)
 	return resourceCloudcaVolumeRead(d, meta)
