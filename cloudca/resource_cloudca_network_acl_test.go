@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccNetworkACLCreate(t *testing.T) {
 	t.Parallel()
 
 	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
-	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193" 
+	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
 	networkACLName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{

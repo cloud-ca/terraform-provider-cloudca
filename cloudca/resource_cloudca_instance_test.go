@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-	"github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccInstanceCreateBasic(t *testing.T) {
@@ -91,8 +91,8 @@ func testAccCheckInstanceCreateBasicExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-      return fmt.Errorf("Not found: %s", name)
-    }
+			return fmt.Errorf("Not found: %s", name)
+		}
 
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No ID is set")
@@ -125,8 +125,8 @@ func testAccCheckInstanceCreateDataDriveExists(name string) resource.TestCheckFu
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-      return fmt.Errorf("cannot find %s in state", name)
-    }
+			return fmt.Errorf("cannot find %s in state", name)
+		}
 
 		if rs.Primary.ID == "" {
 			return fmt.Errorf("No ID is set")

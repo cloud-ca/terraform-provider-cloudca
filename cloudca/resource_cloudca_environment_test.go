@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
-  "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccEnvironmentCreate(t *testing.T) {
