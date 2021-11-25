@@ -15,7 +15,7 @@ func TestAccPortForwardingRuleCreate(t *testing.T) {
 
 	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
 	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
-	networkID := "719af2c3-2da8-474f-b03e-63fce6e1a827"
+	networkID := "405e35c3-3e69-4e02-a162-a4112d94acd9"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -29,11 +29,6 @@ func TestAccPortForwardingRuleCreate(t *testing.T) {
 					testAccCheckPortForwardingRuleCreateExists("cloudca_port_forwarding_rule.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_port_forwarding_rule.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -44,7 +39,7 @@ resource "cloudca_instance" "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
-	template         = "Ubuntu 20.04"
+	template         = "Ubuntu 20.04.2"
 	compute_offering = "Standard"
 	cpu_count        = 1
 	memory_in_mb     = 1024

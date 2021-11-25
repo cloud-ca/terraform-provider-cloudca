@@ -26,11 +26,6 @@ func TestAccPublicIPCreate(t *testing.T) {
 					testAccCheckPublicIPCreateExists("cloudca_public_ip.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_public_ip.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }

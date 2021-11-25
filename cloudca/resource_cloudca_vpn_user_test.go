@@ -11,7 +11,11 @@ import (
 )
 
 func TestAccRemoteAccessVPNUserCreate(t *testing.T) {
-	t.Parallel()
+	/*
+	 this tests conflicts with the VPN Enable test, since it
+	 expects the VPN to be disabled,
+	*/
+	// t.Parallel()
 
 	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
 	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
@@ -28,11 +32,6 @@ func TestAccRemoteAccessVPNUserCreate(t *testing.T) {
 					testAccCheckRemoteAccessVPNUserCreateExists("cloudca_vpn_user.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_vpn_user.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -47,7 +46,6 @@ resource "cloudca_vpn_user" "foobar" {
 	environment_id = "%s"
 	username       = "%s"
 	password       = "foopassword"
-	depends_on     = ["cloudca_vpn.foobar"]
 }`, environment, vpc, environment, username)
 }
 

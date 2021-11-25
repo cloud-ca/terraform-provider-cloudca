@@ -28,11 +28,6 @@ func TestAccVolumeCreate(t *testing.T) {
 					testAccCheckVolumeCreateExists("cloudca_volume.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_volume.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -42,7 +37,7 @@ func testAccVolumeCreate(environment, instance, name string) string {
 resource "cloudca_volume" "foobar" {
 	environment_id = "%s"
 	name           = "%s"
-	disk_offering  = "NVMe data disk"
+	disk_offering  = "fd78763c-f33a-43f3-b1e3-63bf59a48350"
     instance_id    = "%s"
 	size_in_gb     = "10"
 }`, environment, name, instance)
@@ -69,7 +64,7 @@ func testAccCheckVolumeCreateExists(n string) resource.TestCheckFunc {
 			return err
 		}
 
-		found, err := resources.Vpcs.Get(rs.Primary.ID)
+		found, err := resources.Volumes.Get(rs.Primary.ID)
 		if err != nil {
 			fmt.Println(err)
 			return err

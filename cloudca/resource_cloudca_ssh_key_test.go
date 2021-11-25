@@ -32,11 +32,6 @@ func TestAccSSHKeyCreate(t *testing.T) {
 					testAccCheckSSHKeyCreateExists("cloudca_ssh_key.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_ssh_key.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }

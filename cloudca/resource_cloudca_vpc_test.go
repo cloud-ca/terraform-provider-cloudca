@@ -27,11 +27,6 @@ func TestAccVPCCreate(t *testing.T) {
 					testAccCheckVPCCreateExists("cloudca_vpc.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_vpc.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }

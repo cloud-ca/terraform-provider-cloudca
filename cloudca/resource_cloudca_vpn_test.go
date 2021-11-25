@@ -10,7 +10,7 @@ import (
 )
 
 func TestAccRemoteAccessVPNEnable(t *testing.T) {
-	t.Parallel()
+	// t.Parallel()
 
 	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
 	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
@@ -25,11 +25,6 @@ func TestAccRemoteAccessVPNEnable(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRemoteAccessVPNEnableExists("cloudca_vpn.foobar"),
 				),
-			},
-			{
-				ResourceName:      "cloudca_vpn.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
