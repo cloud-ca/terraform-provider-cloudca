@@ -10,10 +10,11 @@ import (
 )
 
 func TestAccRemoteAccessVPNEnable(t *testing.T) {
+	/*
+		test is run in series since it uses a vpn that is changes
+		in another test
+	*/
 	// t.Parallel()
-
-	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
-	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -88,7 +89,7 @@ func testAccCheckRemoteAccessVPNEnableDestroy(s *terraform.State) error {
 			}
 
 			found, er := resources.RemoteAccessVpn.Get(rs.Primary.ID)
-			if er == nil && found.State != "Disabled" {
+			if er == nil && found.State != DISABLED {
 				return fmt.Errorf("Remote Access VPN still exists")
 			}
 		}

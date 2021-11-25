@@ -2,6 +2,7 @@ package tftypes
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math/big"
 	"sort"

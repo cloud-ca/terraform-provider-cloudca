@@ -13,7 +13,6 @@ import (
 func TestAccVolumeCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
 	instanceID := "6f26111d-464d-4fc8-9c72-7a181a96c257"
 	volumeName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 

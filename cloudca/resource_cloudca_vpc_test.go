@@ -13,7 +13,6 @@ import (
 func TestAccVPCCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
 	vpcName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
