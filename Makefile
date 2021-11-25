@@ -33,7 +33,7 @@ GOBUILD     := $(GOCMD) build $(MODVENDOR) -ldflags $(GOLDFLAGS)
 
 # Binary versions
 GITCHGLOG_VERSION := 0.8.0
-GOLANGCI_VERSION  := v1.18.0
+GOLANGCI_VERSION  := v1.43.0
 
 .PHONY: default
 default: help
@@ -86,7 +86,12 @@ checkfmt: ## Check formatting of go files
 .PHONY: test
 test: ## Run tests
 	@ $(MAKE) --no-print-directory log-$@
-	$(GOCMD) test $(MODVENDOR) -v $(GOPKGS)
+	TF_ACC= $(GOCMD) test $(MODVENDOR) -v $(GOPKGS)
+
+.PHONY: testacc
+testacc: ## Run acceptance tests
+	@ $(MAKE) --no-print-directory log-$@
+	TF_ACC=1 $(GOCMD) test $(MODVENDOR) -v $(GOPKGS)
 
 ###################
 ## Build targets ##
@@ -147,7 +152,7 @@ goimports:
 	GO111MODULE=off go get -u golang.org/x/tools/cmd/goimports
 
 golangci:
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s  -- -b $(shell go env GOPATH)/bin $(GOLANGCI_VERSION)
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)bin $(GOLANGCI_VERSION)
 
 gox:
 	GO111MODULE=off go get -u github.com/mitchellh/gox
