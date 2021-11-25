@@ -19,7 +19,7 @@ func resourceCloudcaVpc() *schema.Resource {
 		Delete: resourceCloudcaVpcDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
