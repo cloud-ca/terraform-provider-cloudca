@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+const cloudcaInstance = "cloudca_instance"
 
 func TestAccInstanceCreateBasic(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	networkID := "1d5c1e64-59f1-4a34-8539-77af5153058c"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -28,11 +28,6 @@ func TestAccInstanceCreateBasic(t *testing.T) {
 					testAccCheckInstanceCreateBasicExists("cloudca_instance.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_instance.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -40,8 +35,7 @@ func TestAccInstanceCreateBasic(t *testing.T) {
 func TestAccInstanceCreateDataDrive(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	networkID := "1d5c1e64-59f1-4a34-8539-77af5153058c"
+	networkID := "719af2c3-2da8-474f-b03e-63fce6e1a827"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -55,47 +49,41 @@ func TestAccInstanceCreateDataDrive(t *testing.T) {
 					testAccCheckInstanceCreateDataDriveExists("cloudca_instance.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_instance.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
 
 func testAccInstanceCreateBasic(environment, network, name string) string {
 	return fmt.Sprintf(`
-resource "cloudca_instance" "foobar" {
+resource %s "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
-	template         = "Ubuntu 18.04.2"
+	template         = "Ubuntu 20.04.2"
 	compute_offering = "Standard"
 	cpu_count        = 1
 	memory_in_mb     = 1024
-}`, environment, network, name)
+}`, cloudcaInstance, environment, network, name)
 }
 
 func testAccInstanceCreateDataDrive(environment, network, name string) string {
 	return fmt.Sprintf(`
-resource "cloudca_instance" "foobar" {
+resource %s "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
-	template         = "Ubuntu 18.04.2"
+	template         = "Ubuntu 20.04.2"
 	compute_offering = "Standard"
 	cpu_count        = 1
 	memory_in_mb     = 1024
 }
-
 resource "cloudca_volume" "foobar" {
 	environment_id = "%s"
     name           = "%s"
 	disk_offering  = "Performance, No QoS"
 	size_in_gb     = "10"
     instance_id    = "${cloudca_instance.foobar.id}"
-}`, environment, network, name, environment, name)
+}`, cloudcaInstance, environment, network, name, environment, name)
 }
 
 func testAccCheckInstanceCreateBasicExists(name string) resource.TestCheckFunc {
@@ -136,7 +124,7 @@ func testAccCheckInstanceCreateDataDriveExists(name string) resource.TestCheckFu
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("Not found: %s", name)
+			return fmt.Errorf("cannot find %s in state", name)
 		}
 
 		if rs.Primary.ID == "" {
@@ -170,7 +158,7 @@ func testAccCheckInstanceCreateBasicDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cca.CcaClient)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type == "cloudca_instance" {
+		if rs.Type == cloudcaInstance {
 			if rs.Primary.Attributes["environment_id"] == "" {
 				return fmt.Errorf("Environment ID is missing")
 			}
@@ -194,7 +182,7 @@ func testAccCheckInstanceCreateDataDriveDestroy(s *terraform.State) error {
 	client := testAccProvider.Meta().(*cca.CcaClient)
 
 	for _, rs := range s.RootModule().Resources {
-		if rs.Type == "cloudca_instance" {
+		if rs.Type == cloudcaInstance {
 			if rs.Primary.Attributes["environment_id"] == "" {
 				return fmt.Errorf("Environment ID is missing")
 			}

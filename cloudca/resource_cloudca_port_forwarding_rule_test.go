@@ -4,18 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccPortForwardingRuleCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
-	networkID := "1d5c1e64-59f1-4a34-8539-77af5153058c"
 	instanceName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -29,11 +26,6 @@ func TestAccPortForwardingRuleCreate(t *testing.T) {
 					testAccCheckPortForwardingRuleCreateExists("cloudca_port_forwarding_rule.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_port_forwarding_rule.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -44,17 +36,15 @@ resource "cloudca_instance" "foobar" {
 	environment_id   = "%s"
 	network_id       = "%s"
 	name             = "%s"
-	template         = "Ubuntu 18.04.2"
+	template         = "Ubuntu 20.04.2"
 	compute_offering = "Standard"
 	cpu_count        = 1
 	memory_in_mb     = 1024
 }
-
 resource "cloudca_public_ip" "foobar" {
 	environment_id = "%s"
 	vpc_id         = "%s"
 }
-
 resource "cloudca_port_forwarding_rule" "foobar" {
 	environment_id     = "%s"
 	public_ip_id       = "${cloudca_public_ip.foobar.id}"

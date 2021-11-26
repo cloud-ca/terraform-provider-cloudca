@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccPublicIPCreate(t *testing.T) {
 	t.Parallel()
-
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -25,11 +22,6 @@ func TestAccPublicIPCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckPublicIPCreateExists("cloudca_public_ip.foobar"),
 				),
-			},
-			{
-				ResourceName:      "cloudca_public_ip.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

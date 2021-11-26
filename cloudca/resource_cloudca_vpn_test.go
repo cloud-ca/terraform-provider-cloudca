@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccRemoteAccessVPNEnable(t *testing.T) {
-	t.Parallel()
-
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
+	/*
+		test is run in series since it uses a vpn that changes
+		in another test
+	*/
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -25,11 +25,6 @@ func TestAccRemoteAccessVPNEnable(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRemoteAccessVPNEnableExists("cloudca_vpn.foobar"),
 				),
-			},
-			{
-				ResourceName:      "cloudca_vpn.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -93,7 +88,7 @@ func testAccCheckRemoteAccessVPNEnableDestroy(s *terraform.State) error {
 			}
 
 			found, er := resources.RemoteAccessVpn.Get(rs.Primary.ID)
-			if er == nil && found.State != "Disabled" {
+			if er == nil && found.State != DISABLED {
 				return fmt.Errorf("Remote Access VPN still exists")
 			}
 		}
