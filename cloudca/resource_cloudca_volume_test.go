@@ -22,7 +22,7 @@ func TestAccVolumeCreate(t *testing.T) {
 		CheckDestroy: testAccCheckVolumeCreateDestroy,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccVolumeCreate(environmentID, instanceID, volumeName),
+				Config: testAccVolumeCreate(environmentID, instanceID, diskOfferingID, volumeName),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVolumeCreateExists("cloudca_volume.foobar"),
 				),
@@ -31,15 +31,15 @@ func TestAccVolumeCreate(t *testing.T) {
 	})
 }
 
-func testAccVolumeCreate(environment, instance, name string) string {
+func testAccVolumeCreate(environment, instance, diskOffering, name string) string {
 	return fmt.Sprintf(`
 resource "cloudca_volume" "foobar" {
 	environment_id = "%s"
 	name           = "%s"
-	disk_offering  = "fd78763c-f33a-43f3-b1e3-63bf59a48350"
+	disk_offering  = "%s"
     instance_id    = "%s"
 	size_in_gb     = "10"
-}`, environment, name, instance)
+}`, environment, name, diskOffering, instance)
 }
 
 func testAccCheckVolumeCreateExists(n string) resource.TestCheckFunc {

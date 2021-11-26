@@ -11,10 +11,9 @@ import (
 
 func TestAccRemoteAccessVPNEnable(t *testing.T) {
 	/*
-		test is run in series since it uses a vpn that is changes
+		test is run in series since it uses a vpn that is changed
 		in another test
 	*/
-	// t.Parallel()
 
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
