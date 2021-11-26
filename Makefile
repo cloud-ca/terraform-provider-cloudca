@@ -86,12 +86,7 @@ checkfmt: ## Check formatting of go files
 .PHONY: test
 test: ## Run tests
 	@ $(MAKE) --no-print-directory log-$@
-	TF_ACC= $(GOCMD) test $(MODVENDOR) -v $(GOPKGS)
-
-.PHONY: testacc
-testacc: ## Run acceptance tests
-	@ $(MAKE) --no-print-directory log-$@
-	TF_ACC=1 $(GOCMD) test $(MODVENDOR) -v $(GOPKGS)
+	$(GOCMD) test $(MODVENDOR) -v $(GOPKGS)
 
 ###################
 ## Build targets ##
