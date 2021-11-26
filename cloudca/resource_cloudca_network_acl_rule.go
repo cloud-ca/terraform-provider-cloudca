@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // type of ACL rules
@@ -24,7 +24,7 @@ func resourceCloudcaNetworkACLRule() *schema.Resource {
 		Delete: resourceCloudcaNetworkACLRuleDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

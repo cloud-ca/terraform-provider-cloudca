@@ -5,9 +5,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaVolume() *schema.Resource {
@@ -18,7 +18,7 @@ func resourceCloudcaVolume() *schema.Resource {
 		Delete: resourceCloudcaVolumeDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -178,7 +178,6 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 				return err
 			}
 		}
-		d.SetPartial("instance_id")
 	}
 	if d.HasChange("size_in_gb") || d.HasChange("iops") {
 		volumeToResize := cloudca.Volume{
@@ -194,8 +193,6 @@ func resourceCloudcaVolumeUpdate(d *schema.ResourceData, meta interface{}) error
 			volumeToResize.Iops = val.(int)
 		}
 		_ = ccaResources.Volumes.Resize(&volumeToResize)
-		d.SetPartial("size_in_gb")
-		d.SetPartial("iops")
 	}
 	d.Partial(false)
 	return resourceCloudcaVolumeRead(d, meta)

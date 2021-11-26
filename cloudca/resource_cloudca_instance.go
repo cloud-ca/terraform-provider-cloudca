@@ -5,9 +5,9 @@ import (
 	"log"
 	"strings"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaInstance() *schema.Resource {
@@ -18,7 +18,7 @@ func resourceCloudcaInstance() *schema.Resource {
 		Delete: resourceCloudcaInstanceDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -83,7 +83,7 @@ func resourceCloudcaInstance() *schema.Resource {
 				Computed:    true,
 				Description: "The instance's memory in MB. If the compute offering is custom, this value is required",
 			},
-			"root_volume_size_in_gb": &schema.Schema{
+			"root_volume_size_in_gb": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Computed:    true,
@@ -276,7 +276,6 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		if err != nil {
 			return err
 		}
-		d.SetPartial("compute_offering")
 	}
 
 	if d.HasChange("ssh_key_name") {
@@ -286,7 +285,6 @@ func resourceCloudcaInstanceUpdate(d *schema.ResourceData, meta interface{}) err
 		if err != nil {
 			return err
 		}
-		d.SetPartial("ssh_key_name")
 	}
 
 	if d.HasChange("private_ip") {
