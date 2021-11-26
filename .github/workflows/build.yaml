@@ -31,7 +31,7 @@ jobs:
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v2
       with:
-        version: v1.29
+        version: v1.37.0
         # Optional: show only new issues if it's a pull request. default is false
         # only-new-issues: true
   test:
