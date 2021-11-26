@@ -4,17 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccNetworkCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
 	networkName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -28,11 +26,6 @@ func TestAccNetworkCreate(t *testing.T) {
 					testAccCheckNetworkCreateExists("cloudca_network.foobar"),
 				),
 			},
-			{
-				ResourceName:      "cloudca_network.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
 		},
 	})
 }
@@ -44,7 +37,7 @@ resource "cloudca_network" "foobar" {
 	vpc_id           = "%s"
 	name             = "%s"
 	description      = "This is a %s network"
-	network_offering = "Standard Tier"
+	network_offering = "DefaultIsolatedNetworkOfferingForVpcNetworks"
 	network_acl      = "default_allow"
 }`, environment, vpc, name, name)
 }

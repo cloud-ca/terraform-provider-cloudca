@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccVPCCreate(t *testing.T) {
 	t.Parallel()
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
 	vpcName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -26,11 +25,6 @@ func TestAccVPCCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckVPCCreateExists("cloudca_vpc.foobar"),
 				),
-			},
-			{
-				ResourceName:      "cloudca_vpc.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})

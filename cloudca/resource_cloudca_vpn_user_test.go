@@ -4,17 +4,20 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cloud-ca/go-cloudca"
-	"github.com/hashicorp/terraform/helper/acctest"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	cca "github.com/cloud-ca/go-cloudca"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func TestAccRemoteAccessVPNUserCreate(t *testing.T) {
-	t.Parallel()
+	/*
+		test is run in series since it uses a vpn that changes
+		in another test
+	*/
 
-	environmentID := "a225a598-f440-439e-a51e-1c5275bc6d57"
-	vpcID := "438fe7a0-d7a6-44f8-875d-b976021a6ae4"
+	environmentID := "c67a090f-b66f-42e1-b444-10cdff9d8be2"
+	vpcID := "2c01d952-d010-4811-b66d-4c7f5f805193"
 	vpnUserName := fmt.Sprintf("terraform-test-%s", acctest.RandString(10))
 
 	resource.Test(t, resource.TestCase{
@@ -27,11 +30,6 @@ func TestAccRemoteAccessVPNUserCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckRemoteAccessVPNUserCreateExists("cloudca_vpn_user.foobar"),
 				),
-			},
-			{
-				ResourceName:      "cloudca_vpn_user.foobar",
-				ImportState:       true,
-				ImportStateVerify: true,
 			},
 		},
 	})
@@ -47,7 +45,6 @@ resource "cloudca_vpn_user" "foobar" {
 	environment_id = "%s"
 	username       = "%s"
 	password       = "foopassword"
-	depends_on     = ["cloudca_vpn.foobar"]
 }`, environment, vpc, environment, username)
 }
 

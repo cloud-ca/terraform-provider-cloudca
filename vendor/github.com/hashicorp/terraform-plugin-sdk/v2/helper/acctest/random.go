@@ -10,9 +10,11 @@ import (
 	"fmt"
 	"math/big"
 	"math/rand"
+	"net"
 	"strings"
 	"time"
 
+	"github.com/apparentlymart/go-cidr/cidr"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -34,11 +36,12 @@ func RandomWithPrefix(name string) string {
 	return fmt.Sprintf("%s-%d", name, rand.New(rand.NewSource(time.Now().UnixNano())).Int())
 }
 
+// RandIntRange returns a random integer between min (inclusive) and max (exclusive)
 func RandIntRange(min int, max int) int {
 	source := rand.New(rand.NewSource(time.Now().UnixNano()))
 	rangeMax := max - min
 
-	return int(source.Int31n(int32(rangeMax)))
+	return int(source.Int31n(int32(rangeMax))) + min
 }
 
 // RandString generates a random alphanumeric string of the length specified
@@ -103,6 +106,39 @@ func RandTLSCert(orgName string) (string, string, error) {
 	}
 
 	return certPEM, privateKeyPEM, nil
+}
+
+// RandIpAddress returns a random IP address in the specified CIDR block.
+// The prefix length must be less than 31.
+func RandIpAddress(s string) (string, error) {
+	_, network, err := net.ParseCIDR(s)
+	if err != nil {
+		return "", err
+	}
+
+	firstIp, lastIp := cidr.AddressRange(network)
+	first := &big.Int{}
+	first.SetBytes([]byte(firstIp))
+	last := &big.Int{}
+	last.SetBytes([]byte(lastIp))
+	r := &big.Int{}
+	r.Sub(last, first)
+	if len := r.BitLen(); len > 31 {
+		return "", fmt.Errorf("CIDR range is too large: %d", len)
+	}
+
+	max := int(r.Int64())
+	if max == 0 {
+		// panic: invalid argument to Int31n
+		return firstIp.String(), nil
+	}
+
+	host, err := cidr.Host(network, RandIntRange(0, max))
+	if err != nil {
+		return "", err
+	}
+
+	return host.String(), nil
 }
 
 func genPrivateKey() (*rsa.PrivateKey, string, error) {
