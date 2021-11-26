@@ -12,7 +12,7 @@ import (
 
 func TestAccRemoteAccessVPNUserCreate(t *testing.T) {
 	/*
-		test is run in series since it uses a vpn that is changed
+		test is run in series since it uses a vpn that changes
 		in another test
 	*/
 
