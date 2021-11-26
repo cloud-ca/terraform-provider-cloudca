@@ -154,7 +154,6 @@ goimports:
 golangci:
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)bin $(GOLANGCI_VERSION)
 
-
 gox:
 	GO111MODULE=off go get -u github.com/mitchellh/gox
 
