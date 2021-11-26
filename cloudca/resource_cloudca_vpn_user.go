@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaVpnUser() *schema.Resource {
@@ -17,7 +17,7 @@ func resourceCloudcaVpnUser() *schema.Resource {
 		Delete: resourceCloudcaVpnUserDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

@@ -3,9 +3,9 @@ package cloudca
 import (
 	"fmt"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaPortForwardingRule() *schema.Resource {
@@ -15,7 +15,7 @@ func resourceCloudcaPortForwardingRule() *schema.Resource {
 		Delete: deletePortForwardingRule,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

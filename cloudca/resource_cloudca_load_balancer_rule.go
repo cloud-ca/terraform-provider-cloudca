@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaLoadBalancerRule() *schema.Resource {
@@ -17,7 +17,7 @@ func resourceCloudcaLoadBalancerRule() *schema.Resource {
 		Update: updateLbr,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

@@ -1,12 +1,16 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+
 	"github.com/cloud-ca/terraform-provider-cloudca/cloudca"
-	"github.com/hashicorp/terraform/plugin"
 )
 
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
-		ProviderFunc: cloudca.Provider,
+		ProviderFunc: func() *schema.Provider {
+			return cloudca.Provider()
+		},
 	})
 }

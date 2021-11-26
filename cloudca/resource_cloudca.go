@@ -5,10 +5,10 @@ import (
 	"log"
 	"regexp"
 
-	"github.com/cloud-ca/go-cloudca"
+	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // GetCloudCAResourceMap return the available Resource map
