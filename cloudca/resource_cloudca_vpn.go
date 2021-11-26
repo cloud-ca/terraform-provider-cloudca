@@ -6,7 +6,7 @@ import (
 
 	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/api"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaVpn() *schema.Resource {
@@ -16,7 +16,7 @@ func resourceCloudcaVpn() *schema.Resource {
 		Delete: resourceCloudcaVpnDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

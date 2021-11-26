@@ -5,7 +5,7 @@ import (
 
 	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/services/cloudca"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceCloudcaPublicIP() *schema.Resource {
@@ -15,7 +15,7 @@ func resourceCloudcaPublicIP() *schema.Resource {
 		Delete: resourceCloudcaPublicIPDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{

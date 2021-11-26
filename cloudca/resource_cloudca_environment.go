@@ -7,7 +7,7 @@ import (
 
 	cca "github.com/cloud-ca/go-cloudca"
 	"github.com/cloud-ca/go-cloudca/configuration"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // role names and fields
@@ -35,7 +35,7 @@ func resourceCloudcaEnvironment() *schema.Resource {
 		Delete: resourceCloudcaEnvironmentDelete,
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
