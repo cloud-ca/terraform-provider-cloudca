@@ -23,6 +23,10 @@ Pull requests have to meet the following requirements:
 
 1. **Tests**: Code changes need to be tested with code and tests being located in the same folder. Make sure that your tests pass using `make test`.
 
+   Acceptance tests can be run using the `testacc` target in the Makefile. In order to run these, the `CLOUDCA_API_KEY` and `CLOUDCA_API_URL` environment variables must be set. In addition, several of the tests require certain resources to already exist, and to have the IDs of these resources specified in the `cloudca/provider_test.go` constants section.
+
+   Keep in mind that the acceptance tests spin up real resources temporarily, and upon failure may not delete all resources properly. 
+
 2. **Documentation**: Pull requests need to update the [documentation](https://github.com/cloud-ca/terraform-provider-cloudca/tree/master/README.md) together with the code change.
 
 3. **Commits**: Commits should be as small as possible while ensuring that each commit compiles and passes tests independently. [Write good commit messages](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html). If needed, [squash your commits](https://davidwalsh.name/squash-commits-git) prior to submission.
