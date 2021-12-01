@@ -98,6 +98,14 @@ func resourceCloudcaEnvironmentRead(d *schema.ResourceData, meta interface{}) er
 	userRole, _ := d.GetOk(UserRoleUsers)
 	readOnlyRole, _ := d.GetOk(ReadOnlyRoleUsers)
 
+	if err := d.Set(OrganizationCode, environment.Organization.EntryPoint); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
+	if err := d.Set(ServiceCode, environment.ServiceConnection.ServiceCode); err != nil {
+		return fmt.Errorf("Error reading Trigger: %s", err)
+	}
+
 	if err := d.Set(Name, environment.Name); err != nil {
 		return fmt.Errorf("Error reading Trigger: %s", err)
 	}
