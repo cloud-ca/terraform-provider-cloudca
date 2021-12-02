@@ -47,5 +47,5 @@ signs:
 release:
   draft: false
 changelog:
-  skip: true
-
+  skip: false
+  use: git
