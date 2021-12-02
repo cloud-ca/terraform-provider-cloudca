@@ -5,9 +5,24 @@
 
 
 
+<a name="v1.6.0"></a>
+## [v1.6.0] - 2021-12-02
+
+- Change to use goreleaser for the release as per terraform doc ([#97](https://github.com/cloud-ca/terraform-provider-cloudca/issues/97))
+- MC-15601: Generate skeleton for documentation ([#98](https://github.com/cloud-ca/terraform-provider-cloudca/issues/98))
+- Update contribution doc to include acctest info
+- Testacc ([#86](https://github.com/cloud-ca/terraform-provider-cloudca/issues/86))
+- Upgrade terraform to SDK V2 ([#91](https://github.com/cloud-ca/terraform-provider-cloudca/issues/91))
+- Updating go version to 1.17 ([#95](https://github.com/cloud-ca/terraform-provider-cloudca/issues/95))
+- Replace makefile lint call in action to use recommended golangci-lint action ([#94](https://github.com/cloud-ca/terraform-provider-cloudca/issues/94))
+- Add 'tidy' target to Makefile ([#83](https://github.com/cloud-ca/terraform-provider-cloudca/issues/83))
+- Remove extra definition in map ([#82](https://github.com/cloud-ca/terraform-provider-cloudca/issues/82))
+
+
 <a name="v1.5.0"></a>
 ## [v1.5.0] - 2019-10-01
 
+- Update Changelog
 - Fix release action
 - Use GitHub Actions instead of CircleCI ([#81](https://github.com/cloud-ca/terraform-provider-cloudca/issues/81))
 - Upgrade for Terraform v0.12.0 ([#78](https://github.com/cloud-ca/terraform-provider-cloudca/issues/78))
@@ -302,7 +317,8 @@
 - Initial commit
 
 
-[Unreleased]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.6.0...HEAD
+[v1.6.0]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.4.1...v1.5.0
 [v1.4.1]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/cloud-ca/terraform-provider-cloudca/compare/v1.3.0...v1.4.0
