@@ -49,8 +49,8 @@ fi
 
 PWD=$(cd $(dirname "$0") && pwd -P)
 
-# Generate Changelog
-make --no-print-directory -f ${PWD}/../../Makefile changelog push="${PUSH}" next="--next-tag v${RELEASE_VERSION}"
+# Generate Changelog -- now handled by goreleaser
+# make --no-print-directory -f ${PWD}/../../Makefile changelog push="${PUSH}" next="--next-tag v${RELEASE_VERSION}"
 
 # Tag the release
 printf "\033[36m==> %s\033[0m\n" "Tag release v${RELEASE_VERSION}"
