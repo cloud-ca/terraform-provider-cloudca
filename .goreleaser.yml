@@ -1,8 +1,5 @@
-# Visit https://goreleaser.com for documentation on how to customize this
-# behavior.
 before:
   hooks:
-    # this is just an example and not a requirement for provider building/publishing
     - go mod tidy
 builds:
 - env:
@@ -51,3 +48,4 @@ release:
   draft: false
 changelog:
   skip: true
+

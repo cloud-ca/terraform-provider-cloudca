@@ -33,11 +33,6 @@ jobs:
         export PATH=$PATH:$(go env GOPATH)/bin
         make gox build-all compress=true
 
-    - name: Generate Changelog
-      run: |
-        export PATH=$PATH:$(go env GOPATH)/bin
-        ./scripts/release/release-note.sh
-
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2.8.0
       if: startsWith(github.ref, 'refs/tags/')
