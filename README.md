@@ -3,14 +3,34 @@
 
 Terraform provider for cloud.ca
 
-Tested with Terraform version : 0.12.4
+Tested with Terraform version : 1.0.11
 
-## Installation
+
+## How to use this provider
+
+To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
+
+#### Terraform 0.13+
+```
+terraform {
+  required_providers {
+    cloudca = {
+      source = "cloud-ca/cloudca"
+      version = "1.6.0"
+    }
+  }
+}
+
+provider "cloudca" {
+  # Configuration options
+}
+```
+## Alternate installations
 
 1. Download the cloud.ca Terraform provider binary for your OS from the [releases page](https://github.com/cloud-ca/terraform-provider-cloudca/releases).
 2. Copy the provider to the plugin directory `~/.terraform.d/plugins`.
 
-Alternate installation: [Terraform documentation](https://www.terraform.io/docs/plugins/basics.html)
+Alternate: [Terraform documentation](https://www.terraform.io/docs/plugins/basics.html)
 
 ## How to use
 
@@ -27,7 +47,7 @@ provider "cloudca" {
 ## Links
 
 - [**Resources documentation**](https://github.com/cloud-ca/terraform-provider-cloudca/tree/master/docs/resources)
-
+- [**Terraform registry**](https://registry.terraform.io/providers/cloud-ca/cloudca/latest)
 ## Build from source
 
 Install [Go](https://golang.org/doc/install) (version 1.12 is required)
