@@ -10,7 +10,10 @@ library(
 def cloudcaProviderRepo = 'terraform-provider-cloudca'
 
 def targetBranch = 'master'
+<<<<<<< HEAD
 def releaseTypeName
+=======
+>>>>>>> master
 
 properties([
     parameters([
@@ -23,10 +26,16 @@ properties([
     ])
 ])
 
+<<<<<<< HEAD
+=======
+String releaseTypeName
+
+>>>>>>> master
 pipeline {
     agent {
         label 'cca'
     }
+<<<<<<< HEAD
     stages {
         stage('Setup'){
             steps {
@@ -35,6 +44,15 @@ pipeline {
                 }
 
                 git url: "git@github.com:cloudca/$cloudcaProviderRepo"+".git", branch: targetBranch, credentialsId: 'gh-jenkins'
+=======
+
+    releaseTypeName = params.BUMP    
+
+    stages {
+        stage('Setup'){
+            steps {
+                checkout cloudcaProviderRepo targetBranch
+>>>>>>> master
                 sh 'git config user.name "jenkins"'
                 sh 'git config user.email "jenkins@cloudops.com"'
             }
@@ -49,5 +67,9 @@ pipeline {
 }
 
 def checkout(repo, branch) {
+<<<<<<< HEAD
     
+=======
+    git url: "git@github.com:cloudca/$repo"+".git", branch: branch, credentialsId: 'gh-jenkins'
+>>>>>>> master
 }
