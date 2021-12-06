@@ -47,7 +47,3 @@ pipeline {
         }
     }
 }
-
-def checkout(repo, branch) {
-    
-}
