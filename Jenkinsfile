@@ -23,7 +23,7 @@ properties([
     ])
 ])
 
-String releaseType targetRepo
+String releaseTypeName, targetRepo
 
 pipeline {
     agent {
