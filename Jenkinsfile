@@ -23,7 +23,7 @@ properties([
     ])
 ])
 
-String releaseTypeName, targetRepo
+String releaseTypeName
 
 pipeline {
     agent {
@@ -31,8 +31,6 @@ pipeline {
     }
 
     releaseTypeName = params.BUMP    
-    targetRepo = params.REPOSITORY
-
 
     stages {
         stage('Setup'){
