@@ -51,7 +51,6 @@ pipeline {
     }
 }
 
-// TODO update credentials
 def checkout(repo, branch) {
     git url: "git@github.com:cloudca/$repo"+".git", branch: branch, credentialsId: 'gh-jenkins'
 }
