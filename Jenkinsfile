@@ -10,7 +10,6 @@ library(
 def cloudcaProviderRepo = 'terraform-provider-cloudca'
 
 def targetBranch = 'master'
-def newVersion
 
 properties([
     parameters([
