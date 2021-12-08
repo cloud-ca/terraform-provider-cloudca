@@ -35,6 +35,8 @@ pipeline {
                     releaseTypeName = params.BUMP    
                     sh 'git config user.name "jenkins"'
                     sh 'git config user.email "jenkins@cloudops.com"'
+                    sh 'git checkout master'
+                    sh 'git pull'
                 }
             }
         }
