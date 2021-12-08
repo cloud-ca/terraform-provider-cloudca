@@ -25,8 +25,7 @@ properties([
 
 pipeline {
     agent {
-        label 'cmc'
-        label 'golang-1.7'
+        label 'cmc && golang-1.7'
     }
 
     stages {
