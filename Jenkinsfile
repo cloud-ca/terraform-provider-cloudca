@@ -33,7 +33,6 @@ pipeline {
             steps {
                 script {
                     releaseTypeName = params.BUMP    
-                    checkout cloudcaProviderRepo targetBranch
                     sh 'git config user.name "jenkins"'
                     sh 'git config user.email "jenkins@cloudops.com"'
                 }
@@ -48,8 +47,4 @@ pipeline {
             }
         }
     }
-}
-
-def checkout(repo, branch) {
-    git url: "git@github.com:cloudca/$repo"+".git", branch: branch, credentialsId: 'gh-jenkins'
 }
