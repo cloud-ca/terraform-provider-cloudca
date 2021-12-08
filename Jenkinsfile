@@ -8,8 +8,8 @@ library(
 )
 
 def cloudcaProviderRepo = 'terraform-provider-cloudca'
-
 def targetBranch = 'master'
+def releaseTypeName
 
 properties([
     parameters([
@@ -22,32 +22,29 @@ properties([
     ])
 ])
 
-String releaseTypeName
 
 pipeline {
     agent {
-        label 'cca'
+        label 'cmc && golang-1.7'
     }
-
-    releaseTypeName = params.BUMP    
 
     stages {
         stage('Setup'){
             steps {
-                checkout cloudcaProviderRepo targetBranch
-                sh 'git config user.name "jenkins"'
-                sh 'git config user.email "jenkins@cloudops.com"'
+                script {
+                    releaseTypeName = params.BUMP    
+                    sh 'git config user.name "jenkins"'
+                    sh 'git config user.email "jenkins@cloudops.com"'
+                }
             }
         }
 
         stage('Release') {
             steps {
-                sh "make ${releaseTypeName} push=true"
+                script {
+                    sh "make ${releaseTypeName} push=true"
+                }
             }
         }
     }
-}
-
-def checkout(repo, branch) {
-    git url: "git@github.com:cloudca/$repo"+".git", branch: branch, credentialsId: 'gh-jenkins'
 }
